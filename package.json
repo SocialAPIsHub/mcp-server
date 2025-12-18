@@ -2,6 +2,7 @@
   "name": "@socialapis/mcp",
   "version": "1.0.0",
   "description": "MCP server and client for SocialAPIs - Access social media data in Claude, Cursor, and any MCP-compatible tool",
+  "mcpName": "io.github.SocialAPIsHub/social-media-api", 
   "type": "module",
   "bin": {
     "socialapis-mcp": "./mcp-wrapper.js"
