@@ -8,4 +8,5 @@ coverage/
 .vscode/
 .idea/
 package-lock.json
-.npm/
+.npm/.mcpregistry_github_token
+.mcpregistry_registry_token

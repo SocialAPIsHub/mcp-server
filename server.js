@@ -1,22 +1,35 @@
 import express from 'express';
 import cors from 'cors';
 import { tools } from './src/tools.js';
+import { HealthChecker } from '../shared-service/utils/healthCheck.js';
+import redisClient from '../shared-service/config/redisClient.js';
+import esClient from '../shared-service/lib/elasticsearch.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-const API_BASE_URL = process.env.API_BASE_URL || 'https://api.socialapis.io/v1';
+const API_BASE_URL = process.env.API_BASE_URL || 'https://api.socialapis.io';
 
 app.use(cors());
 app.use(express.json());
 
 // Health check
-app.get('/health', (req, res) => {
-  res.json({ 
-    status: 'ok', 
-    service: 'socialapis-mcp-server',
-    version: '1.0.0',
-    tools: tools.length
-  });
+const healthChecker = new HealthChecker('socialapis-mcp-service', '1.0.0');
+healthChecker.setRedisClient(redisClient);
+healthChecker.setElasticsearchClient(esClient); // If applicable
+
+healthChecker.registerCheck('mongodb', () => healthChecker.checkMongo());
+healthChecker.registerCheck('redis', () => healthChecker.checkRedis());
+healthChecker.registerCheck('elasticsearch', () => healthChecker.checkElasticsearch());
+
+// Add health routes
+app.get('/health', async (req, res) => {
+  const health = await healthChecker.getHealth(false);
+  res.status(health.status === 'healthy' ? 200 : 503).json(health);
+});
+
+app.get('/health/detailed', async (req, res) => {
+  const health = await healthChecker.getHealth(true);
+  res.status(health.status === 'healthy' ? 200 : 503).json(health);
 });
 
 // List available tools

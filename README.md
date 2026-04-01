@@ -82,7 +82,7 @@ MCP_PROXY_URL=https://mcp.socialapis.io
 | `SOCIALAPIS_API_KEY` | Your SocialAPIs API key | None (required) |
 | `MCP_PROXY_URL` | MCP proxy server URL | `https://mcp.socialapis.io` |
 | `PORT` | HTTP server port | `3001` |
-| `API_BASE_URL` | Backend API URL | `https://api.socialapis.io/v1` |
+| `API_BASE_URL` | Backend API URL | `https://api.socialapis.io` |
 
 ### Get API Key
 
@@ -258,7 +258,7 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for deta
 ## 📖 Documentation
 
 - [Full Documentation](https://docs.socialapis.io)
-- [API Reference](https://docs.socialapis.io/api-reference)
+- [API Reference](https://docs.socialapis.io/api-reference/facebook)
 - [MCP Guide](https://docs.socialapis.io/mcp)
 - [Examples](https://github.com/SocialAPIsHub/examples)
 
