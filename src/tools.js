@@ -569,14 +569,15 @@ export const tools = [
   },
   {
     name: 'instagram_get_profile_posts',
-    description: 'Get posts from a user profile with pagination. Returns photos, videos, carousels with engagement metrics.',
+    description: 'Get posts from a user profile with pagination. Provide username (recommended for more results) or user_id.',
     inputSchema: {
       type: 'object',
       properties: {
-        user_id: { type: 'string', description: 'Instagram user ID (get from user/id endpoint)' },
+        username: { type: 'string', description: 'Instagram username (recommended — returns more results)' },
+        user_id: { type: 'string', description: 'Instagram user ID (alternative)' },
         end_cursor: { type: 'string', description: 'Pagination cursor for next page' },
       },
-      required: ['user_id'],
+      required: [],
     },
     endpoint: '/instagram/profile/posts',
     method: 'GET',
