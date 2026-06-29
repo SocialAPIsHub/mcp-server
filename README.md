@@ -114,49 +114,130 @@ Get Nike's Facebook page details
 
 ## 🛠️ Available Tools
 
-### Facebook Pages
-- `facebook_get_page_id` - Extract page ID from URL
-- `facebook_get_page_details` - Get page info, followers, likes
-- `facebook_get_page_posts` - Fetch posts with time filtering
-- `facebook_get_page_reels` - Get reels/short videos
+47 tools across Facebook and Instagram. Every tool maps 1:1 to a REST endpoint on `api.socialapis.io` — pricing notes in each tool description indicate per-call credit cost.
 
-### Facebook Groups
-- `facebook_get_group_id` - Extract group ID from URL
-- `facebook_get_group_details` - Get group metadata
-- `facebook_get_group_posts` - Fetch group posts
+### Facebook — Pages
+- `facebook_get_page_id` — Extract page ID from URL
+- `facebook_get_page_details` — Page info, followers, likes, category. Set `exact_followers_count=true` for the exact integer (charges 5 credits instead of 1)
+- `facebook_get_page_posts` — Fetch posts with `after_time` / `before_time` for date filtering. `limit` 3-9, charges scale per `ceil(returned / 3)`
+- `facebook_get_page_videos` — Page videos, `limit` 6-12
+- `facebook_get_page_reels` — Reels / short videos
 
-### Facebook Posts
-- `facebook_get_post_id` - Extract post ID from URL
-- `facebook_get_post_details` - Get reactions, comments, shares
-- `facebook_get_post_attachments` - Get media attachments
-- `facebook_get_video_details` - Get video metadata
-- `facebook_get_post_comments` - Fetch comments with pagination
+### Facebook — Groups
+- `facebook_get_group_id` — Extract group ID from URL
+- `facebook_get_group_metadata` — Lightweight metadata (name, id, cover image)
+- `facebook_get_group_details` — Full details (members, description, rules)
+- `facebook_get_group_posts` — Group posts, same `limit` + date filtering as page posts
+- `facebook_get_group_videos` — Group videos
 
-**More platforms coming soon:** Instagram, TikTok, YouTube, Twitter
+### Facebook — Posts
+- `facebook_get_post_id` — Extract post ID from URL
+- `facebook_get_post_details` — Reactions, comments count, shares, media
+- `facebook_get_post_attachments` — Full media attachments (5 credits per call)
+- `facebook_get_video_details` — Video post metadata + stats
+- `facebook_get_post_comments` — Top-level comments, `limit` up to 30
+- `facebook_get_comment_replies` — Replies to a specific comment
+
+### Facebook — Search
+- `facebook_search_pages` — Search pages by keyword + optional location filter
+- `facebook_search_people` — Search public profiles by keyword
+- `facebook_search_locations` — Look up Facebook location UIDs (for use in other endpoints)
+- `facebook_search_posts` — Search posts by keyword, recency, location
+- `facebook_search_videos` — Search Facebook Watch videos
+
+### Facebook — Ads Library (Meta Ad Transparency)
+- `facebook_ads_search` — Search ads by keyword, country, status
+- `facebook_ads_page_details` — All ads from a specific page
+- `facebook_ads_archive_details` — Full ad archive details
+- `facebook_ads_keywords` — Search ads by keyword
+- `facebook_ads_countries` — List of supported country codes
+
+### Facebook — Marketplace
+- `facebook_marketplace_search` — Item search with location, price, category, condition filters
+- `facebook_marketplace_listing` — Single listing details
+- `facebook_marketplace_seller` — Seller profile + their listings
+- `facebook_marketplace_categories` — Browse category hierarchy
+- `facebook_marketplace_city_coordinates` — Lat/long for a city (for radius search)
+- `facebook_marketplace_vehicles` — Vehicle-specific listing search
+- `facebook_marketplace_rentals` — Rental property listings
+
+### Facebook — Media
+- `facebook_download_media` — Direct download URL for FB media (images, videos)
+
+### Instagram — Profile
+- `instagram_get_user_id` — Resolve username → numeric ID
+- `instagram_get_profile_details` — Profile info, follower count, bio, post count
+- `instagram_get_profile_posts` — Recent posts from a profile
+- `instagram_get_profile_reels` — Reels from a profile
+- `instagram_get_profile_highlights` — Story highlights list
+- `instagram_get_highlight_details` — Full content of a specific highlight
+
+### Instagram — Posts + Reels
+- `instagram_get_post_id` — Resolve post URL → ID
+- `instagram_get_post_details` — Likes, comments, media, caption
+- `instagram_get_reels_feed` — Reels feed for a profile
+- `instagram_get_reels_by_audio` — Reels using a specific audio/music ID
+
+### Instagram — Discovery
+- `instagram_popular_search` — Trending queries / suggestions
+- `instagram_get_location_posts` — Posts tagged at a specific location
+- `instagram_get_nearby_locations` — Nearby location IDs (for use in location-posts)
+
+### Coming soon
+- TikTok (videos, profiles, hashtags)
+- X / Twitter (tweets, profiles, search)
+- LinkedIn (company pages, posts, employees)
+- YouTube (videos, channels, comments)
+
+Track the platform roadmap at [socialapis.io/api-sources](https://socialapis.io/api-sources).
 
 ---
 
-## 💡 Usage Examples
+## 💡 Usage examples
 
-### Brand Monitoring
+Each prompt below is a real Claude Desktop session. Some of these are single-tool-call patterns ("get me X"); some require Claude to chain multiple calls + aggregate the results (noted where).
+
+### Single-call patterns (fast, cheap)
+
 ```
-Monitor Nike's Facebook page and alert me if engagement drops below average
+What's Nike's follower count on Facebook?
+→ Uses facebook_get_page_details (1 credit)
+
+Get the latest 9 posts from facebook.com/EngenSA
+→ Uses facebook_get_page_posts with limit=9 (1-3 credits depending on actual returned count)
+
+Show me the Meta ads currently running for "Apple Vision Pro" in Germany
+→ Uses facebook_ads_search (1 credit)
 ```
 
-### Competitive Analysis
+### Multi-call patterns (Claude orchestrates these — but it's slower + more expensive)
+
 ```
-Compare engagement rates between Nike, Adidas, and Puma over the last month
+Compare engagement on Nike vs Adidas's last 9 Facebook posts
+→ Claude calls facebook_get_page_posts twice (~2-6 credits total),
+  aggregates reactions/comments/shares per post, returns a comparison.
+
+What are people saying in the comments on Coca-Cola's last 3 posts?
+→ Claude calls facebook_get_page_posts (1 credit) then
+  facebook_get_post_comments 3 times (3 credits) and summarizes.
+
+Show me marketplace listings for "PlayStation 5" under $400 in Berlin
+→ Claude calls facebook_marketplace_city_coordinates (1 credit) +
+  facebook_marketplace_search with filters (1 credit).
 ```
 
-### Content Strategy
-```
-What types of posts get the most engagement on Coca-Cola's Facebook page?
-```
+### What this MCP server does NOT do
 
-### Sentiment Analysis
-```
-Analyze comments on our recent posts and identify common themes
-```
+Some queries look natural in a chat ("compare engagement over the last month") but require aggregations the API doesn't expose as a single tool yet. Claude can still answer them, but it'll fan out into many tool calls — which is slow + expensive.
+
+| Query shape | Why it's hard |
+|---|---|
+| "Engagement rate over the last 30 days" for a page | Requires fetching every post in the date range (paginated, `limit` capped at 9 per call) and computing engagement per post. Hits the LLM tool-call budget on busy pages. |
+| "Compare engagement rates between Brand A, B, C over the last month" | Same problem, 3× — one paginated fetch per brand, then comparison math. Works for small windows; slow for "last month" on high-volume pages. |
+| Historical archive older than what Facebook itself serves | We surface what Facebook makes publicly visible. Posts that scrolled off Facebook's visible feed aren't retrievable. |
+| Server-side time-series (daily engagement, weekly growth) | Not yet — on the roadmap as a future `engagement-stats` endpoint with built-in aggregation. |
+
+If your use case maps to one of these patterns and you want the aggregation pre-computed instead of LLM-orchestrated, [contact support](https://socialapis.io/contact-us) with the specific query — we're prioritizing the aggregation endpoint based on customer demand.
 
 ---
 
