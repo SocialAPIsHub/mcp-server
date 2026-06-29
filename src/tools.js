@@ -17,11 +17,15 @@ export const tools = [
   },
   {
     name: 'facebook_get_page_details',
-    description: 'Get detailed information about a Facebook page including followers, likes, contact info, and category',
+    description: 'Get detailed information about a Facebook page including followers, likes, contact info, and category. Pricing: 1 credit per call; 5 credits when exact_followers_count=true.',
     inputSchema: {
       type: 'object',
       properties: {
         link: { type: 'string', description: 'Facebook page URL' },
+        exact_followers_count: {
+          type: 'boolean',
+          description: 'When true, performs a deeper scrape to return the exact follower count (e.g. 38,493,217 instead of "38M"). Charges 5 credits when true, 1 credit otherwise. Default: false.',
+        },
       },
       required: ['link'],
     },
@@ -30,11 +34,17 @@ export const tools = [
   },
   {
     name: 'facebook_get_page_posts',
-    description: 'Get recent posts from a Facebook page with optional pagination and time filtering',
+    description: 'Get recent posts from a Facebook page with optional pagination and time filtering. Pricing: ceil(posts_returned / 3) credits per call, minimum 1.',
     inputSchema: {
       type: 'object',
       properties: {
         link: { type: 'string', description: 'Facebook page URL' },
+        limit: {
+          type: 'number',
+          description: 'Maximum number of posts to return. Default: 3. Minimum: 3. Maximum: 9.',
+          minimum: 3,
+          maximum: 9,
+        },
         end_cursor: { type: 'string', description: 'Pagination cursor for next page of results' },
         after_time: { type: 'string', description: 'ISO 8601 timestamp - only return posts after this time' },
         before_time: { type: 'string', description: 'ISO 8601 timestamp - only return posts before this time' },
@@ -47,12 +57,18 @@ export const tools = [
   },
   {
     name: 'facebook_get_page_videos',
-    description: 'Get videos from a Facebook page (up to 6 per request) with pagination',
+    description: 'Get videos from a Facebook page with pagination. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
         link: { type: 'string', description: 'Facebook page URL' },
         profile_id: { type: 'string', description: 'Facebook profile ID (alternative to link)' },
+        limit: {
+          type: 'number',
+          description: 'Maximum number of videos to return. Default: 6. Minimum: 6. Maximum: 12.',
+          minimum: 6,
+          maximum: 12,
+        },
         end_cursor: { type: 'string', description: 'Pagination cursor' },
       },
       required: [],
@@ -120,11 +136,17 @@ export const tools = [
   },
   {
     name: 'facebook_get_group_posts',
-    description: 'Fetch recent posts from a Facebook group with pagination and time filtering',
+    description: 'Fetch recent posts from a Facebook group with pagination and time filtering. Pricing: ceil(posts_returned / 3) credits per call, minimum 1.',
     inputSchema: {
       type: 'object',
       properties: {
         link: { type: 'string', description: 'Facebook group URL' },
+        limit: {
+          type: 'number',
+          description: 'Maximum number of posts to return. Default: 3. Minimum: 3. Maximum: 9.',
+          minimum: 3,
+          maximum: 9,
+        },
         end_cursor: { type: 'string', description: 'Pagination cursor' },
         after_time: { type: 'string', description: 'ISO 8601 timestamp' },
         before_time: { type: 'string', description: 'ISO 8601 timestamp' },
@@ -181,7 +203,7 @@ export const tools = [
   },
   {
     name: 'facebook_get_post_attachments',
-    description: 'Get all media attachments (images, videos) from a Facebook post',
+    description: 'Get all media attachments (images, videos) from a Facebook post. Pricing: 5 credits per call (deeper scrape than standard post-details).',
     inputSchema: {
       type: 'object',
       properties: {
@@ -207,11 +229,16 @@ export const tools = [
   },
   {
     name: 'facebook_get_post_comments',
-    description: 'Retrieve top-level comments from a Facebook post or reel with pagination',
+    description: 'Retrieve top-level comments from a Facebook post or reel with pagination. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
         link: { type: 'string', description: 'Facebook post or reel URL' },
+        limit: {
+          type: 'number',
+          description: 'Maximum number of comments to return. Default: 10. Maximum: 30.',
+          maximum: 30,
+        },
         end_cursor: { type: 'string', description: 'Pagination cursor for next page of comments' },
         include_reply_info: { type: 'string', description: 'When "true", includes comment_feedback_id and expansion_token for fetching replies' },
       },
@@ -401,7 +428,7 @@ export const tools = [
   // ===========================================
   {
     name: 'facebook_marketplace_search',
-    description: 'Search Facebook Marketplace items with filters for location, price, category, condition, and sort order',
+    description: 'Search Facebook Marketplace items with filters for location, price, category, condition, and sort order. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -416,6 +443,7 @@ export const tools = [
         filter_radius_km: { type: 'string', description: 'Radius in km' },
         posted_today: { type: 'string', description: 'When "true", limit to items posted today' },
         exact_match: { type: 'string', description: 'When "true", exact match search' },
+        limit: { type: 'number', description: 'Maximum number of items to return. Default: 24.' },
         end_cursor: { type: 'string', description: 'Pagination cursor' },
       },
       required: [],
