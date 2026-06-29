@@ -116,7 +116,7 @@ Get Nike's Facebook page details
 
 ## 🛠️ Available Tools
 
-47 tools across Facebook and Instagram. Every tool maps 1:1 to a REST endpoint on `api.socialapis.io` — pricing notes in each tool description indicate per-call credit cost.
+46 tools across Facebook and Instagram. Every tool maps 1:1 to a REST endpoint on `api.socialapis.io` — pricing notes in each tool description indicate per-call credit cost.
 
 ### Facebook — Pages
 - `facebook_get_page_id` — Extract page ID from URL
@@ -127,14 +127,13 @@ Get Nike's Facebook page details
 
 ### Facebook — Groups
 - `facebook_get_group_id` — Extract group ID from URL
-- `facebook_get_group_metadata` — Lightweight metadata (name, id, cover image)
 - `facebook_get_group_details` — Full details (members, description, rules)
 - `facebook_get_group_posts` — Group posts, same `limit` + date filtering as page posts
-- `facebook_get_group_videos` — Group videos
 
 ### Facebook — Posts
 - `facebook_get_post_id` — Extract post ID from URL
 - `facebook_get_post_details` — Reactions, comments count, shares, media
+- `facebook_get_post_details_extended` — Extended fields: **view counts** (essential for reels / video posts), video URLs, music/audio metadata, author verification
 - `facebook_get_post_attachments` — Full media attachments (5 credits per call)
 - `facebook_get_video_details` — Video post metadata + stats
 - `facebook_get_post_comments` — Top-level comments, `limit` up to 30
