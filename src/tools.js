@@ -143,6 +143,20 @@ export const tools = [
     endpoint: '/facebook/groups/posts',
     method: 'GET',
   },
+  {
+    name: 'facebook_get_group_videos',
+    description: 'Get videos from a Facebook group with pagination. Pricing: 1 credit per call.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        link: { type: 'string', description: 'Facebook group URL' },
+        end_cursor: { type: 'string', description: 'Pagination cursor' },
+      },
+      required: ['link'],
+    },
+    endpoint: '/facebook/groups/videos',
+    method: 'GET',
+  },
 
   // ===========================================
   // FACEBOOK — Posts
