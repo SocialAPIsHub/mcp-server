@@ -4,7 +4,7 @@ import { tools } from './src/tools.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-const API_BASE_URL = process.env.API_BASE_URL || 'https://api.socialapis.io/v1';
+const API_BASE_URL = process.env.API_BASE_URL || 'https://api.socialapis.io';
 
 app.use(cors());
 app.use(express.json());
