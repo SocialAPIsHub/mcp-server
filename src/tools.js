@@ -108,20 +108,6 @@ export const tools = [
     method: 'GET',
   },
   {
-    name: 'facebook_get_group_metadata',
-    description: 'Get group metadata (name, id, url, cover image)',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        link: { type: 'string', description: 'Facebook group URL' },
-        group_id: { type: 'string', description: 'Facebook Group ID (alternative to link)' },
-      },
-      required: [],
-    },
-    endpoint: '/facebook/groups/metadata',
-    method: 'GET',
-  },
-  {
     name: 'facebook_get_group_details',
     description: 'Get detailed metadata about a Facebook group including member count, description, rules, and activity stats',
     inputSchema: {
@@ -159,14 +145,14 @@ export const tools = [
   },
   {
     name: 'facebook_get_group_videos',
-    description: 'Get videos from a Facebook group (up to 6 per request) with pagination',
+    description: 'Get videos from a Facebook group with pagination. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
-        group_id: { type: 'string', description: 'Facebook Group ID' },
+        link: { type: 'string', description: 'Facebook group URL' },
         end_cursor: { type: 'string', description: 'Pagination cursor' },
       },
-      required: [],
+      required: ['link'],
     },
     endpoint: '/facebook/groups/videos',
     method: 'GET',
@@ -199,6 +185,19 @@ export const tools = [
       required: ['link'],
     },
     endpoint: '/facebook/posts/details',
+    method: 'GET',
+  },
+  {
+    name: 'facebook_get_post_details_extended',
+    description: 'Get extended details about a Facebook post — includes view counts (essential for reels / video posts), video URLs, music/audio metadata, and author verification status. Use this when the standard post_details response is missing fields like view_count, video_hd_src, or attached_track.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        link: { type: 'string', description: 'Facebook post URL (works for reels, video posts, and regular posts)' },
+      },
+      required: ['link'],
+    },
+    endpoint: '/facebook/posts/details/extended',
     method: 'GET',
   },
   {

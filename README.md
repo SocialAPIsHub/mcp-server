@@ -10,7 +10,9 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![GitHub stars](https://img.shields.io/github/stars/SocialAPIsHub/mcp-server.svg)](https://github.com/SocialAPIsHub/mcp-server/stargazers)
 
-[Website](https://socialapis.io) • [Documentation](https://docs.socialapis.io) • [Discord](https://discord.gg/socialapis) • [npm](https://www.npmjs.com/package/@socialapis/mcp)
+[Website](https://socialapis.io) • [Documentation](https://docs.socialapis.io) • [Discord](https://discord.gg/D5bQskrwV) • [npm](https://www.npmjs.com/package/@socialapis/mcp)
+
+**Official SDKs:** [Python](https://pypi.org/project/socialapis-sdk/) • [JavaScript / TypeScript](https://www.npmjs.com/package/socialapis-sdk) • [Go](https://github.com/SocialAPIsHub/socialapis-go)
 
 </div>
 
@@ -125,14 +127,14 @@ Get Nike's Facebook page details
 
 ### Facebook — Groups
 - `facebook_get_group_id` — Extract group ID from URL
-- `facebook_get_group_metadata` — Lightweight metadata (name, id, cover image)
 - `facebook_get_group_details` — Full details (members, description, rules)
 - `facebook_get_group_posts` — Group posts, same `limit` + date filtering as page posts
-- `facebook_get_group_videos` — Group videos
+- `facebook_get_group_videos` — Group videos with pagination
 
 ### Facebook — Posts
 - `facebook_get_post_id` — Extract post ID from URL
 - `facebook_get_post_details` — Reactions, comments count, shares, media
+- `facebook_get_post_details_extended` — Extended fields: **view counts** (essential for reels / video posts), video URLs, music/audio metadata, author verification
 - `facebook_get_post_attachments` — Full media attachments (5 credits per call)
 - `facebook_get_video_details` — Video post metadata + stats
 - `facebook_get_post_comments` — Top-level comments, `limit` up to 30
@@ -348,7 +350,7 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for deta
 ## 💬 Support
 
 - 📧 **Email:** [support@socialapis.io](mailto:support@socialapis.io)
-- 💬 **Discord:** [discord.gg/socialapis](https://discord.gg/socialapis)
+- 💬 **Discord:** [discord.gg/D5bQskrwV](https://discord.gg/D5bQskrwV)
 - 🐛 **Issues:** [GitHub Issues](https://github.com/SocialAPIsHub/mcp-server/issues)
 - 📚 **Docs:** [docs.socialapis.io](https://docs.socialapis.io)
 
@@ -356,18 +358,29 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for deta
 
 ## 🗺️ Roadmap
 
-- [x] Facebook API support
+**Shipped:**
+
+- [x] Facebook API support — 31 tools (Pages, Groups, Posts, Search, Ads Library, Marketplace, Media)
+- [x] **Instagram support** — 16 tools (Profiles, Posts, Reels, Highlights, Discovery / Locations)
 - [x] MCP server implementation
 - [x] HTTP proxy server
-- [x] npm package published
-- [ ] Instagram support
+- [x] npm package published — [`@socialapis/mcp`](https://www.npmjs.com/package/@socialapis/mcp)
+- [x] **MCP Registry listing** — [registry.modelcontextprotocol.io](https://registry.modelcontextprotocol.io)
+- [x] **Python SDK** — [`socialapis-sdk`](https://pypi.org/project/socialapis-sdk/) on PyPI (51 endpoints, MIT)
+- [x] **JavaScript / TypeScript SDK** — [`socialapis-sdk`](https://www.npmjs.com/package/socialapis-sdk) on npm (Node 18+, Bun, Deno, browsers)
+- [x] **Go SDK** — [github.com/SocialAPIsHub/socialapis-go](https://github.com/SocialAPIsHub/socialapis-go) (idiomatic, zero deps)
+
+**Upcoming:**
+
 - [ ] TikTok support
+- [ ] X (Twitter) support
+- [ ] LinkedIn support
 - [ ] YouTube support
-- [ ] Twitter/X support
-- [ ] Real-time webhooks
-- [ ] Advanced analytics
-- [ ] Python SDK
+- [ ] Advanced analytics — server-side aggregation endpoints (engagement-over-time, brand comparisons) so multi-call patterns become a single tool call
+- [ ] Real-time webhooks — push notifications on new posts / engagement thresholds
 - [ ] LangChain integration
+
+Platform priorities shift based on customer demand. The fastest way to push something up the queue is to email [support@socialapis.io](mailto:support@socialapis.io) or DM [@socialapis on Telegram](https://t.me/socialapis) with the use case.
 
 ---
 
@@ -395,6 +408,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Made with ❤️ by the SocialAPIs Team**
 
-[Website](https://socialapis.io) • [Twitter](https://twitter.com/socialapis) • [Discord](https://discord.gg/socialapis)
+[Website](https://socialapis.io) • [Twitter](https://twitter.com/socialapis) • [Discord](https://discord.gg/D5bQskrwV)
+
+[Python SDK](https://pypi.org/project/socialapis-sdk/) • [JS SDK](https://www.npmjs.com/package/socialapis-sdk) • [Go SDK](https://github.com/SocialAPIsHub/socialapis-go)
 
 </div>
