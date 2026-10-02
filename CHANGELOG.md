@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-10-02
+
+### Added
+- **Tool annotations** on all 47 tools: `readOnlyHint: true`, `destructiveHint: false`, `openWorldHint: true` — every tool only reads public data, so clients can skip confirmation prompts.
+- **Human-readable titles** for every tool (e.g. "Facebook: Get Page Details").
+- **Structured output.** Every tool declares an `outputSchema` and returns `structuredContent` on success: `{ result, creditsCharged, creditsRemaining }`. `result` is the REST response unchanged; the credit fields are lifted out of its `meta` block so agents can track spend without parsing each endpoint's shape. The JSON text content is still returned for clients that ignore structured output.
+- **Server identity** in the MCP handshake: title, description, website and icon. Icon and title also added to `server.json`.
+
+### Compatibility
+- `GET /tools` keeps its previous shape (name, description, inputSchema). npm client 1.1.0 and older read it and don't return structured output, which clients require once a tool declares `outputSchema`. Client 1.2.0 requests `GET /tools?format=full`. Upgrading is optional.
+
 ## [1.1.0] - 2026-10-02
 
 ### Added

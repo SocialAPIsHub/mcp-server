@@ -7,11 +7,12 @@ import {
   ListToolsRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 import { tools } from './src/tools.js';
+import { SERVER_IDENTITY, enrichTool, buildStructuredResult } from './src/toolMeta.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 const API_BASE_URL = process.env.API_BASE_URL || 'https://api.socialapis.io';
-const SERVER_VERSION = '1.1.0';
+const SERVER_VERSION = '1.2.0';
 
 // Upstream scraping calls can take up to ~85s (api-scraping axios timeout).
 // Give the backend fetch a little more so we return the API's own error
@@ -29,11 +30,19 @@ app.use(cors({
 }));
 app.use(express.json({ limit: '1mb' }));
 
+// Legacy shape for GET /tools. npm client 1.1.0 and older build their tool
+// list from this endpoint but never return structuredContent, and MCP
+// clients reject tools that declare an outputSchema without it — so this
+// shape must not gain outputSchema. Newer clients request ?format=full.
 const publicTools = tools.map((tool) => ({
   name: tool.name,
   description: tool.description,
   inputSchema: tool.inputSchema,
 }));
+
+// Full definitions (title, annotations, outputSchema) for the hosted /mcp
+// endpoint and npm client >= 1.2.0.
+const fullTools = tools.map(enrichTool);
 
 /**
  * Call the SocialAPIs REST backend for one tool invocation.
@@ -92,13 +101,13 @@ function extractApiKey(req) {
 /** Build a fresh MCP server bound to one caller's API key. */
 function createMcpServer(apiKey) {
   const server = new Server(
-    { name: 'socialapis-mcp', version: SERVER_VERSION },
+    { ...SERVER_IDENTITY, version: SERVER_VERSION },
     { capabilities: { tools: {} } },
   );
 
   // Tool discovery is public (same data as GET /tools) so directories and
   // clients can list tools before the user has entered a key.
-  server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools: publicTools }));
+  server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools: fullTools }));
 
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const { name, arguments: args } = request.params;
@@ -116,9 +125,12 @@ function createMcpServer(apiKey) {
 
     try {
       const { ok, data } = await callBackend(name, args, apiKey);
+      // Text content stays for clients that ignore structured output.
+      // structuredContent only on success: errors carry isError and are
+      // exempt from outputSchema validation.
       return {
         content: [{ type: 'text', text: JSON.stringify(data, null, 2) }],
-        ...(ok ? {} : { isError: true }),
+        ...(ok ? { structuredContent: buildStructuredResult(data) } : { isError: true }),
       };
     } catch (error) {
       return {
@@ -143,7 +155,7 @@ app.get('/health', (req, res) => {
 
 // List available tools (used by the npm stdio client)
 app.get('/tools', (req, res) => {
-  res.json({ tools: publicTools });
+  res.json({ tools: req.query.format === 'full' ? fullTools : publicTools });
 });
 
 // Legacy proxy endpoint used by the npm stdio client (mcp-wrapper.js)
