@@ -10,3 +10,6 @@ dist
 coverage
 .vscode
 .idea
+# MCP registry publisher credentials — never bake into images
+.mcpregistry_github_token
+.mcpregistry_registry_token

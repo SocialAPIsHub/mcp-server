@@ -4,7 +4,7 @@
 
 ![SocialAPIs Logo](https://socialapis.io/logo.png)
 
-**Unified social media API for AI agents**
+**Facebook & Instagram data for AI agents — local (npx) or hosted (remote MCP)**
 
 [![npm version](https://badge.fury.io/js/%40socialapis%2Fmcp.svg)](https://www.npmjs.com/package/@socialapis/mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -19,6 +19,35 @@
 ---
 
 ## 🚀 Quick Start
+
+### Option A — Hosted (remote MCP, no install)
+
+Point any client that supports remote MCP servers (Streamable HTTP) at:
+
+```
+https://mcp.socialapis.io/mcp
+```
+
+Authenticate with your SocialAPIs API key in a header:
+
+```
+Authorization: Bearer YOUR_API_KEY
+```
+
+(`x-api-token: YOUR_API_KEY` also works.) Tool listing works without a key; tool calls need one. Example config for clients that take a URL + headers:
+
+```json
+{
+  "mcpServers": {
+    "socialapis": {
+      "url": "https://mcp.socialapis.io/mcp",
+      "headers": { "Authorization": "Bearer YOUR_API_KEY" }
+    }
+  }
+}
+```
+
+### Option B — Local (npx, stdio)
 
 ### Installation
 ```bash
@@ -104,7 +133,7 @@ Get Nike's Facebook page details
 
 ## 📋 Features
 
-- 🌐 **Unified API** - One interface for multiple platforms
+- 🌐 **One API key** - Facebook and Instagram behind a single interface
 - 🤖 **AI-First** - Built for Claude, Cursor, and AI agents
 - 📊 **Rich Data** - Posts, comments, engagement metrics
 - 🔍 **Advanced Filtering** - Time ranges, pagination
@@ -120,7 +149,7 @@ Get Nike's Facebook page details
 
 ### Facebook — Pages
 - `facebook_get_page_id` — Extract page ID from URL
-- `facebook_get_page_details` — Page info, followers, likes, category. Set `exact_followers_count=true` for the exact integer (charges 5 credits instead of 1)
+- `facebook_get_page_details` — Page info, followers, contact info, category. Set `exact_followers_count=true` for the exact integer (charges 5 credits instead of 1)
 - `facebook_get_page_posts` — Fetch posts with `after_time` / `before_time` for date filtering. `limit` 3-9, charges scale per `ceil(returned / 3)`
 - `facebook_get_page_videos` — Page videos, `limit` 6-12
 - `facebook_get_page_reels` — Reels / short videos
@@ -185,11 +214,8 @@ Get Nike's Facebook page details
 - `instagram_get_location_posts` — Posts tagged at a specific location
 - `instagram_get_nearby_locations` — Nearby location IDs (for use in location-posts)
 
-### Coming soon
-- TikTok (videos, profiles, hashtags)
-- X / Twitter (tweets, profiles, search)
-- LinkedIn (company pages, posts, employees)
-- YouTube (videos, channels, comments)
+### Not supported yet
+Only Facebook and Instagram are live today. TikTok, X / Twitter, LinkedIn and YouTube are on the roadmap with no committed dates — tools for them will appear here only once they ship.
 
 Track the platform roadmap at [socialapis.io/api-sources](https://socialapis.io/api-sources).
 

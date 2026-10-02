@@ -1,19 +1,18 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.SocialAPIsHub/social-media-api",
-  "description": "Unified social media API for AI agents. Access Facebook, Instagram, TikTok, and more.",
+  "description": "Facebook & Instagram data for AI agents: pages, posts, groups, ads, Marketplace, profiles, reels.",
   "repository": {
     "url": "https://github.com/SocialAPIsHub/mcp-server",
     "source": "github"
   },
-  "version": "1.0.1",
+  "version": "1.1.0",
   "homepage": "https://socialapis.io",
   "license": "MIT",
   "tags": [
     "social-media",
     "facebook",
     "instagram",
-    "tiktok",
     "api",
     "data-extraction",
     "analytics",
@@ -28,7 +27,7 @@
     {
       "registryType": "npm",
       "identifier": "@socialapis/mcp",
-      "version": "1.0.1",
+      "version": "1.1.0",
       "transport": {
         "type": "stdio"
       },
@@ -47,6 +46,20 @@
           "format": "string",
           "isSecret": false,
           "default": "https://mcp.socialapis.io"
+        }
+      ]
+    }
+  ],
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://mcp.socialapis.io/mcp",
+      "headers": [
+        {
+          "name": "Authorization",
+          "description": "Bearer token with your SocialAPIs API key (Authorization: Bearer <key>). Get one at https://socialapis.io/dashboard",
+          "isRequired": true,
+          "isSecret": true
         }
       ]
     }

@@ -1,8 +1,8 @@
 {
   "name": "@socialapis/mcp",
-  "version": "1.0.4",
-  "description": "MCP server and client for SocialAPIs - Access social media data in Claude, Cursor, and any MCP-compatible tool",
-  "mcpName": "io.github.SocialAPIsHub/social-media-api", 
+  "version": "1.1.0",
+  "description": "MCP server for SocialAPIs \u2014 Facebook & Instagram data in Claude, Cursor and any MCP client. Run locally via npx or use the hosted endpoint at https://mcp.socialapis.io/mcp",
+  "mcpName": "io.github.SocialAPIsHub/social-media-api",
   "type": "module",
   "bin": {
     "socialapis-mcp": "./mcp-wrapper.js"
@@ -23,7 +23,8 @@
     "cursor",
     "facebook",
     "instagram",
-    "tiktok"
+    "remote-mcp",
+    "streamable-http"
   ],
   "author": "SocialAPIs",
   "license": "MIT",
@@ -36,9 +37,9 @@
     "url": "https://github.com/SocialAPIsHub/mcp-server/issues"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^0.5.0",
-    "express": "^4.18.2",
-    "cors": "^2.8.5"
+    "@modelcontextprotocol/sdk": "^1.31.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.2"
   },
   "engines": {
     "node": ">=18.0.0"

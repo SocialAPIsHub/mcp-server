@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-10-02
+
+### Added
+- **Hosted remote MCP endpoint** at `https://mcp.socialapis.io/mcp` (Streamable HTTP, stateless, JSON responses). Clients that support remote MCP servers can connect with a URL — no local install.
+- Authentication via `Authorization: Bearer <key>` or `x-api-token: <key>`. `tools/list` works without a key so directories and clients can show the tool catalog; `tools/call` returns a clear error until a key is supplied.
+- `remotes` entry in `server.json` for the official MCP Registry.
+
+### Changed
+- Upgraded `@modelcontextprotocol/sdk` from 0.5 to 1.31. The npm stdio client (`npx @socialapis/mcp`) is unchanged for users.
+- Backend calls now time out after 90s instead of hanging indefinitely.
+- Descriptions (README, `package.json`, `server.json`) now state exactly what is live: Facebook and Instagram. Removed TikTok and "multiple platforms" claims.
+- `facebook_get_page_details` no longer mentions page likes — Facebook stopped exposing public page like counts.
+
+### Security
+- `.dockerignore` now excludes MCP registry publisher token files so they can never be baked into an image.
+
 ## [1.0.0] - 2025-01-17
 
 ### Added
@@ -31,7 +47,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Planned
-- Instagram support
 - TikTok support
 - YouTube support
 - Twitter/X support
