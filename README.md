@@ -20,6 +20,8 @@
 
 ## 🚀 Quick Start
 
+> **AI agents (Cline, Claude Code, Cursor):** follow [`llms-install.md`](llms-install.md) for step-by-step install and verification.
+
 ### Option A — Hosted (remote MCP, no install)
 
 Point any client that supports remote MCP servers (Streamable HTTP) at:
