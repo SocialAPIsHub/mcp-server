@@ -17,7 +17,7 @@ export const tools = [
   },
   {
     name: 'facebook_get_page_details',
-    description: 'Get detailed information about a Facebook page including followers, likes, contact info, and category. Pricing: 1 credit per call; 5 credits when exact_followers_count=true.',
+    description: 'Get detailed information about a Facebook page including followers, contact info, and category. Pricing: 1 credit per call; 5 credits when exact_followers_count=true.',
     inputSchema: {
       type: 'object',
       properties: {

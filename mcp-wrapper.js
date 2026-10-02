@@ -19,7 +19,7 @@ if (!API_KEY) {
 const server = new Server(
   {
     name: 'socialapis-mcp',
-    version: '1.0.0',
+    version: '1.1.0',
   },
   {
     capabilities: {
