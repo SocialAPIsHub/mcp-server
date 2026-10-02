@@ -6,6 +6,7 @@ import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
+import { SERVER_IDENTITY, buildStructuredResult } from './src/toolMeta.js';
 
 const API_KEY = process.env.SOCIALAPIS_API_KEY || process.argv[2];
 const MCP_PROXY_URL = process.env.MCP_PROXY_URL || 'https://mcp.socialapis.io';
@@ -18,8 +19,8 @@ if (!API_KEY) {
 
 const server = new Server(
   {
-    name: 'socialapis-mcp',
-    version: '1.1.0',
+    ...SERVER_IDENTITY,
+    version: '1.2.0',
   },
   {
     capabilities: {
@@ -31,7 +32,9 @@ const server = new Server(
 // Fetch tools from server
 async function getTools() {
   try {
-    const response = await fetch(`${MCP_PROXY_URL}/tools`);
+    // format=full adds titles, annotations and outputSchema. This client
+    // returns structuredContent on success, which outputSchema requires.
+    const response = await fetch(`${MCP_PROXY_URL}/tools?format=full`);
     const data = await response.json();
     return data.tools;
   } catch (error) {
@@ -75,6 +78,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             text: JSON.stringify(result.data, null, 2),
           },
         ],
+        structuredContent: buildStructuredResult(result.data),
       };
     } else {
       return {

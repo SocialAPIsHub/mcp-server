@@ -138,6 +138,8 @@ Get Nike's Facebook page details
 - 📊 **Rich Data** - Posts, comments, engagement metrics
 - 🔍 **Advanced Filtering** - Time ranges, pagination
 - 🎯 **Simple Auth** - No OAuth complexity
+- 🧩 **Structured output** - every tool declares an output schema and returns `{ result, creditsCharged, creditsRemaining }`, so agents can track credit spend directly
+- 🛡️ **Read-only annotations** - all tools are marked `readOnlyHint`, so clients can skip confirmation prompts
 - ⚡ **Fast** - Global edge network
 - 🔒 **Secure** - API keys stay local
 
