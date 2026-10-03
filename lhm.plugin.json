@@ -4,7 +4,7 @@
   "description": "Facebook & Instagram data for AI agents: pages, posts, groups, Ads Library, Marketplace, profiles and reels. 47 read-only tools with structured output. Requires a SocialAPIs API key (free tier: 200 calls/month at socialapis.io).",
   "homepage": "https://socialapis.io",
   "icon": "https://socialapis.io/logo.png",
-  "identifier": "socialapishub-mcp-server",
+  "identifier": "socialapis-mcp-server",
   "name": "SocialAPIs — Facebook & Instagram Data",
   "prompts": [],
   "resources": [],
