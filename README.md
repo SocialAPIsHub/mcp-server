@@ -12,6 +12,8 @@
 
 [Website](https://socialapis.io) • [Documentation](https://docs.socialapis.io) • [Discord](https://discord.gg/D5bQskrwV) • [npm](https://www.npmjs.com/package/@socialapis/mcp)
 
+[![Install in Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/en/install-mcp?name=socialapis&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsIkBzb2NpYWxhcGlzL21jcCJdLCJlbnYiOnsiU09DSUFMQVBJU19BUElfS0VZIjoiWU9VUl9BUElfS0VZIn19)
+
 **Official SDKs:** [Python](https://pypi.org/project/socialapis-sdk/) • [JavaScript / TypeScript](https://www.npmjs.com/package/socialapis-sdk) • [Go](https://github.com/SocialAPIsHub/socialapis-go)
 
 </div>
@@ -21,6 +23,8 @@
 ## 🚀 Quick Start
 
 > **AI agents (Cline, Claude Code, Cursor):** follow [`llms-install.md`](llms-install.md) for step-by-step install and verification.
+
+**One-click:** use the **Install in Cursor** button above — then replace `YOUR_API_KEY` in Cursor's MCP settings with your key. Also listed on [Smithery](https://smithery.ai), [cursor.directory](https://cursor.directory/plugins/socialapis-facebook-instagram-data), [mcp.so](https://mcp.so/servers/socialapis-facebook-instagram-data) and the [official MCP Registry](https://registry.modelcontextprotocol.io) (`io.github.SocialAPIsHub/social-media-api`).
 
 ### Option A — Hosted (remote MCP, no install)
 
