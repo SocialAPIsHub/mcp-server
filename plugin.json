@@ -1,0 +1,11 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "socialapis",
+  "version": "1.2.0",
+  "description": "Facebook & Instagram data for AI agents: pages, posts, groups, Ads Library, Marketplace, profiles and reels. 47 read-only tools with structured output. Requires a SocialAPIs API key in the SOCIALAPIS_API_KEY environment variable (free tier at socialapis.io).",
+  "author": { "name": "SocialAPIs", "email": "support@socialapis.io", "url": "https://socialapis.io" },
+  "homepage": "https://socialapis.io",
+  "repository": "https://github.com/SocialAPIsHub/mcp-server",
+  "license": "MIT",
+  "keywords": ["facebook", "instagram", "social-media", "ads-library", "marketplace", "mcp", "data"]
+}
