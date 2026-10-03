@@ -347,12 +347,15 @@ curl -X POST http://localhost:3001/proxy \
 
 ## 📊 Pricing
 
-| Plan | Requests/Month | Price |
-|------|----------------|-------|
+| Plan | Credits / month | Price |
+|------|-----------------|-------|
 | **Free** | 200 | $0 |
-| **Starter** | 30,000 | $49 |
-| **Pro** | 120,000 | $179 |
-| **Enterprise** | Unlimited | Custom |
+| Pro | 1,500 | $4.99 |
+| Ultra | 30,000 | $49 |
+| Mega | 120,000 | $179 |
+| Enterprise | Custom | [Contact us](https://socialapis.io/contact-us) |
+
+Most tools cost 1 credit per call; each tool description states its exact price. Current plans: [socialapis.io/pricing](https://socialapis.io/pricing).
 
 [View detailed pricing →](https://socialapis.io/pricing)
 
