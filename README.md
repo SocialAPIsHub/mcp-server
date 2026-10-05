@@ -403,7 +403,7 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for deta
 - [x] HTTP proxy server
 - [x] npm package published — [`@socialapis/mcp`](https://www.npmjs.com/package/@socialapis/mcp)
 - [x] **MCP Registry listing** — [registry.modelcontextprotocol.io](https://registry.modelcontextprotocol.io)
-- [x] **Python SDK** — [`socialapis-sdk`](https://pypi.org/project/socialapis-sdk/) on PyPI (51 endpoints, MIT)
+- [x] **Python SDK** — [`socialapis-sdk`](https://pypi.org/project/socialapis-sdk/) on PyPI (50 endpoints, MIT)
 - [x] **JavaScript / TypeScript SDK** — [`socialapis-sdk`](https://www.npmjs.com/package/socialapis-sdk) on npm (Node 18+, Bun, Deno, browsers)
 - [x] **Go SDK** — [github.com/SocialAPIsHub/socialapis-go](https://github.com/SocialAPIsHub/socialapis-go) (idiomatic, zero deps)
 
