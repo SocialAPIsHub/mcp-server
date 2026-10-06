@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1] - 2026-10-06
+
+### Changed
+- **Clearer tool descriptions** for all 47 tools. Each one now says what it returns, when to use it instead of a similar tool, and where its IDs come from. For example, `facebook_ads_keywords` finds advertisers for a keyword, while `facebook_ads_search` returns the ads; post details vs. extended details; general Marketplace search vs. the vehicle and rental searches. Every description now states its price.
+- **Clearer parameter descriptions** for 33 parameters: Marketplace location and price filters, search queries, and IDs that come from another tool.
+
+No tools were added, removed or renamed, and no input schemas changed. Existing configs and auto-approve lists keep working.
+
 ## [1.2.0] - 2026-10-02
 
 ### Added

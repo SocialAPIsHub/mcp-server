@@ -4,7 +4,7 @@ export const tools = [
   // ===========================================
   {
     name: 'facebook_get_page_id',
-    description: 'Get Facebook page ID from a page URL',
+    description: 'Resolve a Facebook page URL to its numeric page ID. Use it when another tool needs a page or profile ID; use facebook_get_page_details for the page\'s data. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -17,7 +17,7 @@ export const tools = [
   },
   {
     name: 'facebook_get_page_details',
-    description: 'Get detailed information about a Facebook page including followers, contact info, and category. Pricing: 1 credit per call; 5 credits when exact_followers_count=true.',
+    description: 'Get a Facebook page\'s profile: name, category, follower and like counts, bio, contact info (email, phone, website, address), rating and the ad_page_id used by the Ads Library tools. Use it when you have the page URL; to find a page by name, use facebook_search_pages first. Pricing: 1 credit per call; 5 credits when exact_followers_count=true.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -34,7 +34,7 @@ export const tools = [
   },
   {
     name: 'facebook_get_page_posts',
-    description: 'Get recent posts from a Facebook page with optional pagination and time filtering. Pricing: ceil(posts_returned / 3) credits per call, minimum 1.',
+    description: 'List a Facebook page\'s recent posts, newest first, with text, media, reactions, comment and share counts. Returns 3-9 posts per call plus an end_cursor for the next page; filter by date with after_time / before_time. For reels or videos only, use facebook_get_page_reels or facebook_get_page_videos. Pricing: ceil(posts_returned / 3) credits per call, minimum 1.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -57,7 +57,7 @@ export const tools = [
   },
   {
     name: 'facebook_get_page_videos',
-    description: 'Get videos from a Facebook page with pagination. Pricing: 1 credit per call.',
+    description: 'List videos uploaded to a Facebook page, with video_id, title, duration, view count and thumbnail. Provide the page URL (link) or its numeric profile_id. Returns an end_cursor for the next page. For short-form reels, use facebook_get_page_reels. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -78,7 +78,7 @@ export const tools = [
   },
   {
     name: 'facebook_get_page_reels',
-    description: 'Get reels/short videos from a Facebook page',
+    description: 'List a Facebook page\'s reels (short-form videos). Returns an end_cursor for the next page. For long-form videos, use facebook_get_page_videos. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -96,7 +96,7 @@ export const tools = [
   // ===========================================
   {
     name: 'facebook_get_group_id',
-    description: 'Get Facebook group ID from a group URL',
+    description: 'Resolve a Facebook group URL to its numeric group ID. Use facebook_get_group_details for the group\'s data. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -109,7 +109,7 @@ export const tools = [
   },
   {
     name: 'facebook_get_group_details',
-    description: 'Get detailed metadata about a Facebook group including member count, description, rules, and activity stats',
+    description: 'Get a public Facebook group\'s profile: name, description, member count, privacy, rules and activity stats. Use facebook_get_group_posts for its posts. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -122,7 +122,7 @@ export const tools = [
   },
   {
     name: 'facebook_get_group_posts',
-    description: 'Fetch recent posts from a Facebook group with pagination and time filtering. Pricing: ceil(posts_returned / 3) credits per call, minimum 1.',
+    description: 'List recent posts from a public Facebook group, with text, media, author, reactions and comment counts. Returns 3-9 posts per call plus an end_cursor for the next page; filter by date with after_time / before_time. Pricing: ceil(posts_returned / 3) credits per call, minimum 1.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -136,7 +136,7 @@ export const tools = [
         end_cursor: { type: 'string', description: 'Pagination cursor' },
         after_time: { type: 'string', description: 'ISO 8601 timestamp' },
         before_time: { type: 'string', description: 'ISO 8601 timestamp' },
-        timezone: { type: 'string', description: 'Timezone' },
+        timezone: { type: 'string', description: 'IANA timezone for returned timestamps, e.g. UTC or America/New_York. Default: UTC.' },
       },
       required: ['link'],
     },
@@ -145,7 +145,7 @@ export const tools = [
   },
   {
     name: 'facebook_get_group_videos',
-    description: 'Get videos from a Facebook group with pagination. Pricing: 1 credit per call.',
+    description: 'List videos posted in a public Facebook group, with video_id, title, duration, view count and thumbnail. Returns an end_cursor for the next page. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -163,7 +163,7 @@ export const tools = [
   // ===========================================
   {
     name: 'facebook_get_post_id',
-    description: 'Extract Facebook post ID from a post URL',
+    description: 'Extract the numeric post ID from a Facebook post URL. Use it to get the post_id that facebook_get_post_attachments needs. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -176,7 +176,7 @@ export const tools = [
   },
   {
     name: 'facebook_get_post_details',
-    description: 'Get detailed data about a Facebook post including reactions, comments, shares, and media',
+    description: 'Get a Facebook post\'s text, author, timestamp, media, and reaction, comment and share counts. Start here for any post. If you need view counts, video download URLs or audio metadata (common for reels and videos), use facebook_get_post_details_extended instead. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -189,7 +189,7 @@ export const tools = [
   },
   {
     name: 'facebook_get_post_details_extended',
-    description: 'Get extended details about a Facebook post — includes view counts (essential for reels / video posts), video URLs, music/audio metadata, and author verification status. Use this when the standard post_details response is missing fields like view_count, video_hd_src, or attached_track.',
+    description: 'Get everything facebook_get_post_details returns plus view counts, HD/SD video URLs, music/audio metadata and author verification status. Use it for reels and video posts, or when the standard details lack view_count, video_hd_src or attached_track. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -202,11 +202,11 @@ export const tools = [
   },
   {
     name: 'facebook_get_post_attachments',
-    description: 'Get all media attachments (images, videos) from a Facebook post. Pricing: 5 credits per call (deeper scrape than standard post-details).',
+    description: 'List every media attachment (images and videos, with URLs and dimensions) on a Facebook post, including all items in multi-photo posts. Needs the numeric post_id from facebook_get_post_id. For the post\'s text and engagement, use facebook_get_post_details. Pricing: 5 credits per call (deeper scrape than standard post details).',
     inputSchema: {
       type: 'object',
       properties: {
-        post_id: { type: 'string', description: 'Facebook post ID' },
+        post_id: { type: 'string', description: 'Numeric Facebook post ID, from facebook_get_post_id' },
       },
       required: ['post_id'],
     },
@@ -215,11 +215,11 @@ export const tools = [
   },
   {
     name: 'facebook_get_video_details',
-    description: 'Get video metadata, stats, and context for a Facebook video post',
+    description: 'Get a Facebook video post\'s metadata: title, message text and hashtags, owner, reactions and view count. Needs the numeric video_id (the number in a facebook.com/.../videos/<id> URL, or from facebook_get_page_videos). Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
-        video_id: { type: 'string', description: 'Facebook video ID' },
+        video_id: { type: 'string', description: 'Numeric Facebook video ID, e.g. the number in a facebook.com/.../videos/<id> URL' },
       },
       required: ['video_id'],
     },
@@ -228,7 +228,7 @@ export const tools = [
   },
   {
     name: 'facebook_get_post_comments',
-    description: 'Retrieve top-level comments from a Facebook post or reel with pagination. Pricing: 1 credit per call.',
+    description: 'List top-level comments on a Facebook post or reel, with author, text, timestamp and reaction count. Returns up to 30 per call plus an end_cursor for the next page. Set include_reply_info=true to get the comment_feedback_id and expansion_token that facebook_get_comment_replies needs. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -248,7 +248,7 @@ export const tools = [
   },
   {
     name: 'facebook_get_comment_replies',
-    description: 'Fetch replies to a specific comment on a Facebook post',
+    description: 'List replies to one Facebook comment. Needs comment_feedback_id and expansion_token, which facebook_get_post_comments returns when called with include_reply_info=true. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -266,11 +266,11 @@ export const tools = [
   // ===========================================
   {
     name: 'facebook_search_pages',
-    description: 'Search for Facebook pages by keyword with optional location filtering',
+    description: 'Find Facebook pages by keyword (brand, business or topic name), optionally near a location. Returns page names, URLs, categories and follower counts, 3 per call, plus an end_cursor. Use it when you don\'t have the page URL; then call facebook_get_page_details with a result\'s URL. For locations, get a location_uid from facebook_search_locations. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
-        query: { type: 'string', description: 'Search query' },
+        query: { type: 'string', description: 'Keyword to search for, e.g. a brand or business name' },
         location_uid: { type: 'string', description: 'Location UID for filtering (from search/locations endpoint)' },
         end_cursor: { type: 'string', description: 'Pagination cursor' },
       },
@@ -281,11 +281,11 @@ export const tools = [
   },
   {
     name: 'facebook_search_people',
-    description: 'Search for Facebook people/profiles by keyword with optional location filtering',
+    description: 'Find public Facebook profiles by name or keyword, optionally near a location (location_uid from facebook_search_locations). Returns names, profile URLs and pictures, plus work, education and location where public, and an end_cursor. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
-        query: { type: 'string', description: 'Search query' },
+        query: { type: 'string', description: 'Name or keyword to search for' },
         location_uid: { type: 'string', description: 'Location UID for filtering' },
         end_cursor: { type: 'string', description: 'Pagination cursor' },
       },
@@ -296,7 +296,7 @@ export const tools = [
   },
   {
     name: 'facebook_search_locations',
-    description: 'Search for Facebook locations by keyword. Returns UIDs for geo-filtering other search endpoints.',
+    description: 'Look up Facebook places by name (city, region, venue) and get their location_uid. The location_uid is only used to filter facebook_search_pages, facebook_search_people and facebook_search_posts; it is not a Marketplace location (use facebook_marketplace_city_coordinates for that). Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -309,11 +309,11 @@ export const tools = [
   },
   {
     name: 'facebook_search_posts',
-    description: 'Search for Facebook posts by keyword with optional location and time filters',
+    description: 'Search public Facebook posts by keyword, optionally filtered by location (location_uid from facebook_search_locations) and date range. Returns posts with text, author and engagement, plus an end_cursor. To list one page\'s posts, use facebook_get_page_posts instead. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
-        query: { type: 'string', description: 'Search query' },
+        query: { type: 'string', description: 'Keyword or phrase to search post text for' },
         location_uid: { type: 'string', description: 'Location UID for filtering' },
         start_time: { type: 'string', description: 'Filter posts after this date (YYYY-MM-DD)' },
         end_time: { type: 'string', description: 'Filter posts before this date (YYYY-MM-DD)' },
@@ -327,11 +327,11 @@ export const tools = [
   },
   {
     name: 'facebook_search_videos',
-    description: 'Search for Facebook videos by keyword with optional recency and live filters',
+    description: 'Search public Facebook videos by keyword, optionally most recent first or live videos only. Returns video titles, URLs and view counts, plus an end_cursor. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
-        query: { type: 'string', description: 'Search query' },
+        query: { type: 'string', description: 'Keyword or phrase to search videos for' },
         most_recent: { type: 'string', description: 'When "true", shows most recent videos first' },
         videos_live: { type: 'string', description: 'When "true", filters for live videos only' },
         fields: { type: 'string', description: 'Comma-separated list of response fields to include' },
@@ -348,7 +348,7 @@ export const tools = [
   // ===========================================
   {
     name: 'facebook_ads_search',
-    description: 'Search ads in the Meta Ad Library by keyword or page ID with country, status, and date filters',
+    description: 'Search ads in the Meta Ad Library. Pass a keyword (query) to find ads about a topic, or ad_page_id to list one advertiser\'s ads; filter by country, active status and date range, sort by impressions or recency. Returns ads with creative, body text, dates, platforms and snapshot URL, plus an end_cursor. Get an advertiser\'s ad_page_id from facebook_ads_keywords or facebook_get_page_details. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -368,11 +368,11 @@ export const tools = [
   },
   {
     name: 'facebook_ads_page_details',
-    description: 'Get detailed info about a specific Facebook page from the Ads Library',
+    description: 'Get an advertiser\'s Ads Library profile: page name, verification status, category, location and total ad count. Needs the page ID (ad_page_id from facebook_get_page_details or page_id from facebook_ads_keywords). To list the ads themselves, use facebook_ads_search with ad_page_id. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
-        page_id: { type: 'string', description: 'Facebook Page ID' },
+        page_id: { type: 'string', description: 'Advertiser page ID: ad_page_id from facebook_get_page_details, or page_id from facebook_ads_keywords' },
       },
       required: ['page_id'],
     },
@@ -381,11 +381,11 @@ export const tools = [
   },
   {
     name: 'facebook_ads_archive_details',
-    description: 'Get detailed info about a specific archived ad including creative, spend, and impressions',
+    description: 'Get one Ad Library ad in full: creative, body text, CTA, platforms, countries, date range, and spend and impression estimates where Meta publishes them. Needs the ad_archive_id from a facebook_ads_search result. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
-        ad_archive_id: { type: 'string', description: 'Ad Archive ID' },
+        ad_archive_id: { type: 'string', description: 'Ad Library archive ID of the ad (ad_archive_id from a facebook_ads_search result)' },
         page_id: { type: 'string', description: 'Facebook Page ID' },
         country: { type: 'string', description: 'ISO country code or "ALL"' },
         is_ad_non_political: { type: 'string', description: 'Filter non-political ads' },
@@ -398,11 +398,11 @@ export const tools = [
   },
   {
     name: 'facebook_ads_keywords',
-    description: 'Search for ads by keyword with optional country filter',
+    description: 'Find advertisers running ads that match a keyword: returns Facebook pages with their page_id and ad count. Use it to discover who advertises on a topic, then pass a page_id to facebook_ads_search (as ad_page_id) or facebook_ads_page_details. To get the ads for a keyword directly, use facebook_ads_search. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
-        query: { type: 'string', description: 'Search keyword' },
+        query: { type: 'string', description: 'Keyword to find advertisers for, e.g. running shoes' },
         country: { type: 'string', description: 'ISO country code or "ALL"' },
       },
       required: ['query'],
@@ -412,7 +412,7 @@ export const tools = [
   },
   {
     name: 'facebook_ads_countries',
-    description: 'Get list of supported country codes for Meta Ads Library filtering',
+    description: 'List the country codes the Ads Library tools accept in their country parameter. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -427,19 +427,19 @@ export const tools = [
   // ===========================================
   {
     name: 'facebook_marketplace_search',
-    description: 'Search Facebook Marketplace items with filters for location, price, category, condition, and sort order. Pricing: 1 credit per call.',
+    description: 'Search general Facebook Marketplace listings (items for sale) by keyword or category near a location, with price, condition, radius and sort filters. Returns listings with their listing_id, plus an end_cursor. For cars and other vehicles use facebook_marketplace_vehicles; for homes and rooms to rent use facebook_marketplace_rentals. Get coordinates from facebook_marketplace_city_coordinates. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
-        query: { type: 'string', description: 'Search term' },
+        query: { type: 'string', description: 'Keyword to search listings for, e.g. iphone 15' },
         category_url: { type: 'string', description: 'Category URL slug' },
         commerce_search_sort_by: { type: 'string', description: 'Sort: BEST_MATCH, CREATION_TIME_DESCEND, PRICE_ASCEND, etc.' },
         commerce_search_and_rp_condition: { type: 'string', description: 'Condition: new, used_like_new, used_good, used_fair' },
-        filter_location_latitude: { type: 'string', description: 'GPS latitude' },
-        filter_location_longitude: { type: 'string', description: 'GPS longitude' },
-        filter_price_lower_bound: { type: 'string', description: 'Minimum price' },
-        filter_price_upper_bound: { type: 'string', description: 'Maximum price' },
-        filter_radius_km: { type: 'string', description: 'Radius in km' },
+        filter_location_latitude: { type: 'string', description: 'Latitude of the search center, e.g. 30.2672 (from facebook_marketplace_city_coordinates)' },
+        filter_location_longitude: { type: 'string', description: 'Longitude of the search center, e.g. -97.7431 (from facebook_marketplace_city_coordinates)' },
+        filter_price_lower_bound: { type: 'string', description: 'Minimum price in the local currency, whole number, e.g. 100' },
+        filter_price_upper_bound: { type: 'string', description: 'Maximum price in the local currency, whole number, e.g. 2000' },
+        filter_radius_km: { type: 'string', description: 'Search radius around the center in kilometres, e.g. 40' },
         posted_today: { type: 'string', description: 'When "true", limit to items posted today' },
         exact_match: { type: 'string', description: 'When "true", exact match search' },
         limit: { type: 'number', description: 'Maximum number of items to return. Default: 24.' },
@@ -452,11 +452,11 @@ export const tools = [
   },
   {
     name: 'facebook_marketplace_listing',
-    description: 'Get detailed info about a single Marketplace listing',
+    description: 'Get one Marketplace listing in full: title, price, description, condition, all photos, location and seller. Needs the listing_id from a Marketplace search result. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
-        listing_id: { type: 'string', description: 'Marketplace Listing ID' },
+        listing_id: { type: 'string', description: 'Marketplace listing ID, from a Marketplace search result' },
       },
       required: ['listing_id'],
     },
@@ -465,11 +465,11 @@ export const tools = [
   },
   {
     name: 'facebook_marketplace_seller',
-    description: 'Get seller profile, ratings, reviews, and badges',
+    description: 'Get a Marketplace seller\'s profile: name, join date, rating, review count and badges. Needs the seller_id from facebook_marketplace_listing. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
-        seller_id: { type: 'string', description: 'Seller ID' },
+        seller_id: { type: 'string', description: 'Seller ID, from the seller field of facebook_marketplace_listing' },
       },
       required: ['seller_id'],
     },
@@ -478,7 +478,7 @@ export const tools = [
   },
   {
     name: 'facebook_marketplace_categories',
-    description: 'Get all Marketplace categories with SEO URLs and category IDs',
+    description: 'List Marketplace categories with their IDs and category_url values. Use a category_url to filter facebook_marketplace_search. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {},
@@ -489,11 +489,11 @@ export const tools = [
   },
   {
     name: 'facebook_marketplace_city_coordinates',
-    description: 'Get GPS coordinates for a city to use as Marketplace location filters',
+    description: 'Convert a city name to the latitude and longitude that the Marketplace search tools expect in filter_location_latitude / filter_location_longitude. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
-        city: { type: 'string', description: 'City name' },
+        city: { type: 'string', description: 'City name, e.g. Austin' },
         country: { type: 'string', description: 'Country name or code' },
         exactly_one: { type: 'string', description: 'When "true", return exactly one result' },
       },
@@ -504,16 +504,16 @@ export const tools = [
   },
   {
     name: 'facebook_marketplace_vehicles',
-    description: 'Search Marketplace vehicle listings with filters for location, price, mileage, year',
+    description: 'Search Facebook Marketplace vehicle listings (cars, trucks, motorcycles) near a location, with price, radius and seller-type filters. Returns listings with title, price, mileage, year and listing_id, plus an end_cursor. For non-vehicle items, use facebook_marketplace_search. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
         sort_by: { type: 'string', description: 'Sort: CREATION_TIME_DESCEND, PRICE_ASCEND, VEHICLE_MILEAGE_ASCEND, etc.' },
-        filter_location_latitude: { type: 'string', description: 'GPS latitude' },
-        filter_location_longitude: { type: 'string', description: 'GPS longitude' },
-        filter_price_lower_bound: { type: 'string', description: 'Minimum price' },
-        filter_price_upper_bound: { type: 'string', description: 'Maximum price' },
-        filter_radius_km: { type: 'string', description: 'Radius in km' },
+        filter_location_latitude: { type: 'string', description: 'Latitude of the search center, e.g. 30.2672 (from facebook_marketplace_city_coordinates)' },
+        filter_location_longitude: { type: 'string', description: 'Longitude of the search center, e.g. -97.7431 (from facebook_marketplace_city_coordinates)' },
+        filter_price_lower_bound: { type: 'string', description: 'Minimum price in the local currency, whole number, e.g. 100' },
+        filter_price_upper_bound: { type: 'string', description: 'Maximum price in the local currency, whole number, e.g. 2000' },
+        filter_radius_km: { type: 'string', description: 'Search radius around the center in kilometres, e.g. 40' },
         is_c2c_listing_only: { type: 'string', description: 'Individual sellers only' },
         end_cursor: { type: 'string', description: 'Pagination cursor' },
       },
@@ -524,20 +524,20 @@ export const tools = [
   },
   {
     name: 'facebook_marketplace_rentals',
-    description: 'Search Marketplace rental property listings with filters for bedrooms, bathrooms, location, price',
+    description: 'Search Facebook Marketplace rental listings (apartments, houses, rooms) near a location, with price, bedroom, bathroom and radius filters. Returns rental listings with their listing_id, plus an end_cursor. For items for sale, use facebook_marketplace_search. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
         sort_by: { type: 'string', description: 'Sort: CREATION_TIME_DESCEND, PRICE_ASCEND, BEST_MATCH' },
-        filter_location_latitude: { type: 'string', description: 'GPS latitude' },
-        filter_location_longitude: { type: 'string', description: 'GPS longitude' },
-        filter_price_lower_bound: { type: 'string', description: 'Minimum price' },
-        filter_price_upper_bound: { type: 'string', description: 'Maximum price' },
-        filter_radius_km: { type: 'string', description: 'Radius in km' },
-        filter_bedrooms_min: { type: 'string', description: 'Min bedrooms' },
-        filter_bedrooms_max: { type: 'string', description: 'Max bedrooms' },
-        filter_bathrooms_min: { type: 'string', description: 'Min bathrooms' },
-        filter_bathrooms_max: { type: 'string', description: 'Max bathrooms' },
+        filter_location_latitude: { type: 'string', description: 'Latitude of the search center, e.g. 30.2672 (from facebook_marketplace_city_coordinates)' },
+        filter_location_longitude: { type: 'string', description: 'Longitude of the search center, e.g. -97.7431 (from facebook_marketplace_city_coordinates)' },
+        filter_price_lower_bound: { type: 'string', description: 'Minimum price in the local currency, whole number, e.g. 100' },
+        filter_price_upper_bound: { type: 'string', description: 'Maximum price in the local currency, whole number, e.g. 2000' },
+        filter_radius_km: { type: 'string', description: 'Search radius around the center in kilometres, e.g. 40' },
+        filter_bedrooms_min: { type: 'string', description: 'Minimum number of bedrooms, e.g. 2' },
+        filter_bedrooms_max: { type: 'string', description: 'Maximum number of bedrooms' },
+        filter_bathrooms_min: { type: 'string', description: 'Minimum number of bathrooms, e.g. 1' },
+        filter_bathrooms_max: { type: 'string', description: 'Maximum number of bathrooms' },
         end_cursor: { type: 'string', description: 'Pagination cursor' },
       },
       required: [],
@@ -551,7 +551,7 @@ export const tools = [
   // ===========================================
   {
     name: 'facebook_download_media',
-    description: 'Download images, videos, and audio from Facebook URLs',
+    description: 'Resolve a Facebook media URL (image, video or audio, e.g. from a post or reel) to direct downloadable file URLs. Returns URLs, not file bytes. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -568,7 +568,7 @@ export const tools = [
   // ===========================================
   {
     name: 'instagram_get_user_id',
-    description: 'Get the unique ID of any Instagram profile from a link or username',
+    description: 'Resolve an Instagram username or profile URL to its numeric user ID. Needed by instagram_get_profile_reels and instagram_get_profile_highlights. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -582,7 +582,7 @@ export const tools = [
   },
   {
     name: 'instagram_get_profile_details',
-    description: 'Get user profile information by username including bio, followers, posts count, verification, and related profiles',
+    description: 'Get an Instagram profile by username: bio, follower and post counts, verification status and related profiles. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -596,7 +596,7 @@ export const tools = [
   },
   {
     name: 'instagram_get_profile_posts',
-    description: 'Get posts from a user profile with pagination. Provide username (recommended for more results) or user_id.',
+    description: 'List an Instagram profile\'s posts (photos, videos, carousels) with captions, like and comment counts and media URLs. Pass username (returns more results) or user_id. Returns an end_cursor for the next page. For reels only, use instagram_get_profile_reels. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -611,7 +611,7 @@ export const tools = [
   },
   {
     name: 'instagram_get_profile_reels',
-    description: 'Get reels from a user profile with pagination. Returns video details, play counts, and audio metadata.',
+    description: 'List an Instagram profile\'s reels with play counts, captions, video URLs and audio metadata. Needs the numeric user_id from instagram_get_user_id. Returns an end_cursor for the next page. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -625,7 +625,7 @@ export const tools = [
   },
   {
     name: 'instagram_get_profile_highlights',
-    description: 'Get all highlights from a user profile including cover images, titles, and permalink URLs',
+    description: 'List an Instagram profile\'s story highlights with titles, cover images and highlight IDs. Needs the numeric user_id from instagram_get_user_id. Use instagram_get_highlight_details to get the stories in one highlight. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -638,7 +638,7 @@ export const tools = [
   },
   {
     name: 'instagram_get_highlight_details',
-    description: 'Get details of a specific highlight by ID including all stories within the highlight',
+    description: 'Get the stories inside one Instagram highlight. Needs a highlight_id from instagram_get_profile_highlights. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -655,7 +655,7 @@ export const tools = [
   // ===========================================
   {
     name: 'instagram_get_post_id',
-    description: 'Extract the post shortcode/ID from any Instagram post URL',
+    description: 'Extract the shortcode from an Instagram post or reel URL. instagram_get_post_details needs the shortcode. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -668,7 +668,7 @@ export const tools = [
   },
   {
     name: 'instagram_get_post_details',
-    description: 'Get full details of a specific Instagram post including media, engagement, caption, and owner info',
+    description: 'Get one Instagram post or reel in full: caption, media URLs, engagement counts, timestamp and owner. Needs the shortcode (the part after /p/ or /reel/ in the URL, or from instagram_get_post_id). Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -685,7 +685,7 @@ export const tools = [
   // ===========================================
   {
     name: 'instagram_get_reels_feed',
-    description: 'Get Instagram Reels feed with recommended, trending, or same-author chained clips',
+    description: 'Get Instagram\'s recommended and trending reels. Pass clips_media_id from a previous result to continue the feed or get similar reels by the same author. Not tied to a user; for one profile\'s reels use instagram_get_profile_reels. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -698,7 +698,7 @@ export const tools = [
   },
   {
     name: 'instagram_get_reels_by_audio',
-    description: 'Get Instagram Reels associated with a specific audio/music ID. Find all reels using a particular sound.',
+    description: 'List Instagram reels that use a given sound. Needs the audio_id (music/audio cluster ID) found in reel results\' audio metadata. Pass max_id from the previous response for the next page. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -716,7 +716,7 @@ export const tools = [
   // ===========================================
   {
     name: 'instagram_popular_search',
-    description: 'Search Instagram by keyword and get popular results including users, hashtags, and places',
+    description: 'Search Instagram by keyword and get the top matching users, hashtags and places. Use it to find a username, or a place\'s location_id for instagram_get_location_posts. Returns an end_cursor for more. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -730,7 +730,7 @@ export const tools = [
   },
   {
     name: 'instagram_get_location_posts',
-    description: 'Get Instagram posts from a specific location. Retrieve top/ranked or most recent posts tagged at a place.',
+    description: 'List Instagram posts tagged at a location: top posts (tab=ranked) or most recent (tab=recent). Needs a location_id, e.g. from a place in instagram_popular_search. Returns an end_cursor for the next page. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -745,7 +745,7 @@ export const tools = [
   },
   {
     name: 'instagram_get_nearby_locations',
-    description: 'Get nearby places/locations for a specific Instagram location including name, category, coordinates, and post count',
+    description: 'List Instagram places near a given location, with name, category, coordinates and post count. Needs a location_id, e.g. from a place in instagram_popular_search. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {

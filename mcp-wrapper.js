@@ -20,7 +20,7 @@ if (!API_KEY) {
 const server = new Server(
   {
     ...SERVER_IDENTITY,
-    version: '1.2.0',
+    version: '1.2.1',
   },
   {
     capabilities: {
