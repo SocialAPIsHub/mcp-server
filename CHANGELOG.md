@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2026-10-06
+
+### Changed
+- **47 tools grouped into 12.** Each tool covers one resource (`facebook_page`, `facebook_post`, `facebook_ads`, `instagram_profile`, …) and takes an `action` argument (`details`, `posts`, `search`, …). Every action from 1.x is still there, with the same parameters, endpoints and prices. Fewer tools fit under client tool limits (Cursor caps the total across servers) and are easier for agents to choose between.
+- A missing `action` or required parameter now returns a clear error before any credit is spent.
+- `/health` reports `tools` (12) and `actions` (47).
+
+### Compatibility
+- The 47 1.x tool names still work when called directly (hosted `/mcp`, `/proxy` and the npm client), so existing prompts and scripts keep running. They are no longer listed.
+- npm clients 1.2.x pick up the grouped tools automatically. 1.1.0 and older keep the old per-endpoint list from `GET /tools`.
+- **Breaking** for configs that auto-approve or allow-list tools by name: add the new tool names.
+
 ## [1.2.1] - 2026-10-06
 
 ### Changed

@@ -4,7 +4,7 @@ This file tells an AI agent (Cline, Claude Code, Cursor, etc.) exactly how to in
 
 ## What this server does
 
-Gives the agent 47 read-only tools for public Facebook and Instagram data: pages, posts, comments, groups, the Ads Library, Marketplace, profiles, reels and locations. Every tool calls the SocialAPIs REST API and costs credits (1 credit per call for most tools; each tool description states its price).
+Gives the agent 12 read-only tools (47 actions) for public Facebook and Instagram data: pages, posts, comments, groups, the Ads Library, Marketplace, profiles, reels and locations. Every tool calls the SocialAPIs REST API and costs credits (1 credit per call for most tools; each tool description states its price).
 
 ## Prerequisites
 
@@ -57,8 +57,8 @@ For clients that support remote MCP servers over Streamable HTTP:
 
 ## Verify the install
 
-1. Confirm the server shows 47 tools (names start with `facebook_` or `instagram_`).
-2. Call `facebook_get_page_id` with `{"link": "https://www.facebook.com/nike"}`.
+1. Confirm the server shows 12 tools (names start with `facebook_` or `instagram_`).
+2. Call `facebook_page` with `{"action": "id", "link": "https://www.facebook.com/nike"}`.
 3. Expected: a JSON result containing a `facebook_id` field and a `meta` block with `creditsCharged` and `creditsRemaining`. This call costs 1 credit.
 
 ## Troubleshooting

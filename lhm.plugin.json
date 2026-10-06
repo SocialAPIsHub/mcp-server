@@ -1,7 +1,7 @@
 {
   "author": "SocialAPIs",
   "cloudEndpoint": "https://mcp.socialapis.io/mcp",
-  "description": "Facebook & Instagram data for AI agents: pages, posts, groups, Ads Library, Marketplace, profiles and reels. 47 read-only tools with structured output. Requires a SocialAPIs API key (free tier: 200 calls/month at socialapis.io).",
+  "description": "Facebook & Instagram data for AI agents: pages, posts, groups, Ads Library, Marketplace, profiles and reels. 12 read-only tools (47 actions) with structured output. Requires a SocialAPIs API key (free tier: 200 calls/month at socialapis.io).",
   "homepage": "https://socialapis.io",
   "icon": "https://socialapis.io/logo.png",
   "identifier": "socialapis-mcp-server",
@@ -21,419 +21,140 @@
   ],
   "tools": [
     {
-      "name": "facebook_get_page_id",
-      "title": "Facebook: Get Page ID",
-      "description": "Resolve a Facebook page URL to its numeric page ID. Use it when another tool needs a page or profile ID; use facebook_get_page_details for the page's data. Pricing: 1 credit per call.",
+      "name": "facebook_page",
+      "title": "Facebook: Page",
+      "description": "Facebook pages: profile details, page ID, posts, videos and reels.\n\nActions:\n- action=details: Get a Facebook page's profile: name, category, follower and like counts, bio, contact info (email, phone, website, address), rating and the ad_page_id used by the Ads Library tools. Use it when you have the page URL; to find a page by name, use facebook_search (action=pages) first. Pricing: 1 credit per call; 5 credits when exact_followers_count=true. Requires: link.\n- action=id: Resolve a Facebook page URL to its numeric page ID. Use it when another tool needs a page or profile ID; use action=details for the page's data. Pricing: 1 credit per call. Requires: link.\n- action=posts: List a Facebook page's recent posts, newest first, with text, media, reactions, comment and share counts. Returns 3-9 posts per call plus an end_cursor for the next page; filter by date with after_time / before_time. For reels or videos only, use action=reels or action=videos. Pricing: ceil(posts_returned / 3) credits per call, minimum 1. Requires: link.\n- action=videos: List videos uploaded to a Facebook page, with video_id, title, duration, view count and thumbnail. Provide the page URL (link) or its numeric profile_id. Returns an end_cursor for the next page. For short-form reels, use action=reels. Pricing: 1 credit per call.\n- action=reels: List a Facebook page's reels (short-form videos). Returns an end_cursor for the next page. For long-form videos, use action=videos. Pricing: 1 credit per call. Requires: link.",
       "inputSchema": {
         "type": "object",
         "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "details",
+              "id",
+              "posts",
+              "videos",
+              "reels"
+            ],
+            "description": "Which operation to run. See the tool description for what each action returns and which parameters it needs."
+          },
           "link": {
             "type": "string",
-            "description": "Facebook page URL (e.g., https://facebook.com/nike)"
-          }
-        },
-        "required": [
-          "link"
-        ]
-      },
-      "outputSchema": {
-        "type": "object",
-        "properties": {
-          "result": {
-            "description": "JSON response from the SocialAPIs REST endpoint, unchanged. Object or array depending on the endpoint; most include a `meta` block (statusCode, duration, creditsCharged, creditsRemaining)."
-          },
-          "creditsCharged": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits charged for this call, or null if the endpoint did not report it."
-          },
-          "creditsRemaining": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits left on the API key after this call, or null if not reported."
-          }
-        },
-        "required": [
-          "result"
-        ]
-      },
-      "annotations": {
-        "title": "Facebook: Get Page ID",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "openWorldHint": true
-      }
-    },
-    {
-      "name": "facebook_get_page_details",
-      "title": "Facebook: Get Page Details",
-      "description": "Get a Facebook page's profile: name, category, follower and like counts, bio, contact info (email, phone, website, address), rating and the ad_page_id used by the Ads Library tools. Use it when you have the page URL; to find a page by name, use facebook_search_pages first. Pricing: 1 credit per call; 5 credits when exact_followers_count=true.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "link": {
-            "type": "string",
-            "description": "Facebook page URL"
+            "description": "For details, posts, videos, reels: Facebook page URL. For id: Facebook page URL (e.g., https://facebook.com/nike)."
           },
           "exact_followers_count": {
             "type": "boolean",
-            "description": "When true, performs a deeper scrape to return the exact follower count (e.g. 38,493,217 instead of \"38M\"). Charges 5 credits when true, 1 credit otherwise. Default: false."
-          }
-        },
-        "required": [
-          "link"
-        ]
-      },
-      "outputSchema": {
-        "type": "object",
-        "properties": {
-          "result": {
-            "description": "JSON response from the SocialAPIs REST endpoint, unchanged. Object or array depending on the endpoint; most include a `meta` block (statusCode, duration, creditsCharged, creditsRemaining)."
-          },
-          "creditsCharged": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits charged for this call, or null if the endpoint did not report it."
-          },
-          "creditsRemaining": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits left on the API key after this call, or null if not reported."
-          }
-        },
-        "required": [
-          "result"
-        ]
-      },
-      "annotations": {
-        "title": "Facebook: Get Page Details",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "openWorldHint": true
-      }
-    },
-    {
-      "name": "facebook_get_page_posts",
-      "title": "Facebook: Get Page Posts",
-      "description": "List a Facebook page's recent posts, newest first, with text, media, reactions, comment and share counts. Returns 3-9 posts per call plus an end_cursor for the next page; filter by date with after_time / before_time. For reels or videos only, use facebook_get_page_reels or facebook_get_page_videos. Pricing: ceil(posts_returned / 3) credits per call, minimum 1.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "link": {
-            "type": "string",
-            "description": "Facebook page URL"
+            "description": "For details: When true, performs a deeper scrape to return the exact follower count (e.g. 38,493,217 instead of \"38M\"). Charges 5 credits when true, 1 credit otherwise. Default: false."
           },
           "limit": {
             "type": "number",
-            "description": "Maximum number of posts to return. Default: 3. Minimum: 3. Maximum: 9.",
             "minimum": 3,
-            "maximum": 9
+            "maximum": 12,
+            "description": "For posts: Maximum number of posts to return. Default: 3. Minimum: 3. Maximum: 9. For videos: Maximum number of videos to return. Default: 6. Minimum: 6. Maximum: 12."
           },
           "end_cursor": {
             "type": "string",
-            "description": "Pagination cursor for next page of results"
+            "description": "For posts: Pagination cursor for next page of results. For videos, reels: Pagination cursor."
           },
           "after_time": {
             "type": "string",
-            "description": "ISO 8601 timestamp - only return posts after this time"
+            "description": "For posts: ISO 8601 timestamp - only return posts after this time."
           },
           "before_time": {
             "type": "string",
-            "description": "ISO 8601 timestamp - only return posts before this time"
+            "description": "For posts: ISO 8601 timestamp - only return posts before this time."
           },
           "timezone": {
             "type": "string",
-            "description": "Timezone for timestamps (e.g., UTC, America/New_York)"
-          }
-        },
-        "required": [
-          "link"
-        ]
-      },
-      "outputSchema": {
-        "type": "object",
-        "properties": {
-          "result": {
-            "description": "JSON response from the SocialAPIs REST endpoint, unchanged. Object or array depending on the endpoint; most include a `meta` block (statusCode, duration, creditsCharged, creditsRemaining)."
-          },
-          "creditsCharged": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits charged for this call, or null if the endpoint did not report it."
-          },
-          "creditsRemaining": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits left on the API key after this call, or null if not reported."
-          }
-        },
-        "required": [
-          "result"
-        ]
-      },
-      "annotations": {
-        "title": "Facebook: Get Page Posts",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "openWorldHint": true
-      }
-    },
-    {
-      "name": "facebook_get_page_videos",
-      "title": "Facebook: Get Page Videos",
-      "description": "List videos uploaded to a Facebook page, with video_id, title, duration, view count and thumbnail. Provide the page URL (link) or its numeric profile_id. Returns an end_cursor for the next page. For short-form reels, use facebook_get_page_reels. Pricing: 1 credit per call.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "link": {
-            "type": "string",
-            "description": "Facebook page URL"
+            "description": "For posts: Timezone for timestamps (e.g., UTC, America/New_York)."
           },
           "profile_id": {
             "type": "string",
-            "description": "Facebook profile ID (alternative to link)"
+            "description": "For videos: Facebook profile ID (alternative to link)."
+          }
+        },
+        "required": [
+          "action"
+        ]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "description": "JSON response from the SocialAPIs REST endpoint, unchanged. Object or array depending on the endpoint; most include a `meta` block (statusCode, duration, creditsCharged, creditsRemaining)."
+          },
+          "creditsCharged": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Credits charged for this call, or null if the endpoint did not report it."
+          },
+          "creditsRemaining": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Credits left on the API key after this call, or null if not reported."
+          }
+        },
+        "required": [
+          "result"
+        ]
+      },
+      "annotations": {
+        "title": "Facebook: Page",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "facebook_group",
+      "title": "Facebook: Group",
+      "description": "Public Facebook groups: details, group ID, posts and videos.\n\nActions:\n- action=details: Get a public Facebook group's profile: name, description, member count, privacy, rules and activity stats. Use action=posts for its posts. Pricing: 1 credit per call. Requires: link.\n- action=id: Resolve a Facebook group URL to its numeric group ID. Use action=details for the group's data. Pricing: 1 credit per call. Requires: link.\n- action=posts: List recent posts from a public Facebook group, with text, media, author, reactions and comment counts. Returns 3-9 posts per call plus an end_cursor for the next page; filter by date with after_time / before_time. Pricing: ceil(posts_returned / 3) credits per call, minimum 1. Requires: link.\n- action=videos: List videos posted in a public Facebook group, with video_id, title, duration, view count and thumbnail. Returns an end_cursor for the next page. Pricing: 1 credit per call. Requires: link.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "details",
+              "id",
+              "posts",
+              "videos"
+            ],
+            "description": "Which operation to run. See the tool description for what each action returns and which parameters it needs."
+          },
+          "link": {
+            "type": "string",
+            "description": "For details, id, posts, videos: Facebook group URL."
           },
           "limit": {
             "type": "number",
-            "description": "Maximum number of videos to return. Default: 6. Minimum: 6. Maximum: 12.",
-            "minimum": 6,
-            "maximum": 12
-          },
-          "end_cursor": {
-            "type": "string",
-            "description": "Pagination cursor"
-          }
-        },
-        "required": []
-      },
-      "outputSchema": {
-        "type": "object",
-        "properties": {
-          "result": {
-            "description": "JSON response from the SocialAPIs REST endpoint, unchanged. Object or array depending on the endpoint; most include a `meta` block (statusCode, duration, creditsCharged, creditsRemaining)."
-          },
-          "creditsCharged": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits charged for this call, or null if the endpoint did not report it."
-          },
-          "creditsRemaining": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits left on the API key after this call, or null if not reported."
-          }
-        },
-        "required": [
-          "result"
-        ]
-      },
-      "annotations": {
-        "title": "Facebook: Get Page Videos",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "openWorldHint": true
-      }
-    },
-    {
-      "name": "facebook_get_page_reels",
-      "title": "Facebook: Get Page Reels",
-      "description": "List a Facebook page's reels (short-form videos). Returns an end_cursor for the next page. For long-form videos, use facebook_get_page_videos. Pricing: 1 credit per call.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "link": {
-            "type": "string",
-            "description": "Facebook page URL"
-          },
-          "end_cursor": {
-            "type": "string",
-            "description": "Pagination cursor"
-          }
-        },
-        "required": [
-          "link"
-        ]
-      },
-      "outputSchema": {
-        "type": "object",
-        "properties": {
-          "result": {
-            "description": "JSON response from the SocialAPIs REST endpoint, unchanged. Object or array depending on the endpoint; most include a `meta` block (statusCode, duration, creditsCharged, creditsRemaining)."
-          },
-          "creditsCharged": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits charged for this call, or null if the endpoint did not report it."
-          },
-          "creditsRemaining": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits left on the API key after this call, or null if not reported."
-          }
-        },
-        "required": [
-          "result"
-        ]
-      },
-      "annotations": {
-        "title": "Facebook: Get Page Reels",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "openWorldHint": true
-      }
-    },
-    {
-      "name": "facebook_get_group_id",
-      "title": "Facebook: Get Group ID",
-      "description": "Resolve a Facebook group URL to its numeric group ID. Use facebook_get_group_details for the group's data. Pricing: 1 credit per call.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "link": {
-            "type": "string",
-            "description": "Facebook group URL"
-          }
-        },
-        "required": [
-          "link"
-        ]
-      },
-      "outputSchema": {
-        "type": "object",
-        "properties": {
-          "result": {
-            "description": "JSON response from the SocialAPIs REST endpoint, unchanged. Object or array depending on the endpoint; most include a `meta` block (statusCode, duration, creditsCharged, creditsRemaining)."
-          },
-          "creditsCharged": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits charged for this call, or null if the endpoint did not report it."
-          },
-          "creditsRemaining": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits left on the API key after this call, or null if not reported."
-          }
-        },
-        "required": [
-          "result"
-        ]
-      },
-      "annotations": {
-        "title": "Facebook: Get Group ID",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "openWorldHint": true
-      }
-    },
-    {
-      "name": "facebook_get_group_details",
-      "title": "Facebook: Get Group Details",
-      "description": "Get a public Facebook group's profile: name, description, member count, privacy, rules and activity stats. Use facebook_get_group_posts for its posts. Pricing: 1 credit per call.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "link": {
-            "type": "string",
-            "description": "Facebook group URL"
-          }
-        },
-        "required": [
-          "link"
-        ]
-      },
-      "outputSchema": {
-        "type": "object",
-        "properties": {
-          "result": {
-            "description": "JSON response from the SocialAPIs REST endpoint, unchanged. Object or array depending on the endpoint; most include a `meta` block (statusCode, duration, creditsCharged, creditsRemaining)."
-          },
-          "creditsCharged": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits charged for this call, or null if the endpoint did not report it."
-          },
-          "creditsRemaining": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits left on the API key after this call, or null if not reported."
-          }
-        },
-        "required": [
-          "result"
-        ]
-      },
-      "annotations": {
-        "title": "Facebook: Get Group Details",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "openWorldHint": true
-      }
-    },
-    {
-      "name": "facebook_get_group_posts",
-      "title": "Facebook: Get Group Posts",
-      "description": "List recent posts from a public Facebook group, with text, media, author, reactions and comment counts. Returns 3-9 posts per call plus an end_cursor for the next page; filter by date with after_time / before_time. Pricing: ceil(posts_returned / 3) credits per call, minimum 1.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "link": {
-            "type": "string",
-            "description": "Facebook group URL"
-          },
-          "limit": {
-            "type": "number",
-            "description": "Maximum number of posts to return. Default: 3. Minimum: 3. Maximum: 9.",
             "minimum": 3,
-            "maximum": 9
+            "maximum": 9,
+            "description": "For posts: Maximum number of posts to return. Default: 3. Minimum: 3. Maximum: 9."
           },
           "end_cursor": {
             "type": "string",
-            "description": "Pagination cursor"
+            "description": "For posts, videos: Pagination cursor."
           },
           "after_time": {
             "type": "string",
-            "description": "ISO 8601 timestamp"
+            "description": "For posts: ISO 8601 timestamp."
           },
           "before_time": {
             "type": "string",
-            "description": "ISO 8601 timestamp"
+            "description": "For posts: ISO 8601 timestamp."
           },
           "timezone": {
             "type": "string",
-            "description": "IANA timezone for returned timestamps, e.g. UTC or America/New_York. Default: UTC."
+            "description": "For posts: IANA timezone for returned timestamps, e.g. UTC or America/New_York. Default: UTC."
           }
         },
         "required": [
-          "link"
+          "action"
         ]
       },
       "outputSchema": {
@@ -462,384 +183,68 @@
         ]
       },
       "annotations": {
-        "title": "Facebook: Get Group Posts",
+        "title": "Facebook: Group",
         "readOnlyHint": true,
         "destructiveHint": false,
         "openWorldHint": true
       }
     },
     {
-      "name": "facebook_get_group_videos",
-      "title": "Facebook: Get Group Videos",
-      "description": "List videos posted in a public Facebook group, with video_id, title, duration, view count and thumbnail. Returns an end_cursor for the next page. Pricing: 1 credit per call.",
+      "name": "facebook_post",
+      "title": "Facebook: Post",
+      "description": "Facebook posts, videos and comments: post details, attachments, comments and replies.\n\nActions:\n- action=details: Get a Facebook post's text, author, timestamp, media, and reaction, comment and share counts. Start here for any post. If you need view counts, video download URLs or audio metadata (common for reels and videos), use action=details_extended instead. Pricing: 1 credit per call. Requires: link.\n- action=details_extended: Get everything action=details returns plus view counts, HD/SD video URLs, music/audio metadata and author verification status. Use it for reels and video posts, or when the standard details lack view_count, video_hd_src or attached_track. Pricing: 1 credit per call. Requires: link.\n- action=id: Extract the numeric post ID from a Facebook post URL. Use it to get the post_id that action=attachments needs. Pricing: 1 credit per call. Requires: link.\n- action=attachments: List every media attachment (images and videos, with URLs and dimensions) on a Facebook post, including all items in multi-photo posts. Needs the numeric post_id from action=id. For the post's text and engagement, use action=details. Pricing: 5 credits per call (deeper scrape than standard post details). Requires: post_id.\n- action=video: Get a Facebook video post's metadata: title, message text and hashtags, owner, reactions and view count. Needs the numeric video_id (the number in a facebook.com/.../videos/<id> URL, or from facebook_page (action=videos)). Pricing: 1 credit per call. Requires: video_id.\n- action=comments: List top-level comments on a Facebook post or reel, with author, text, timestamp and reaction count. Returns up to 30 per call plus an end_cursor for the next page. Set include_reply_info=true to get the comment_feedback_id and expansion_token that action=comment_replies needs. Pricing: 1 credit per call. Requires: link.\n- action=comment_replies: List replies to one Facebook comment. Needs comment_feedback_id and expansion_token, which action=comments returns when called with include_reply_info=true. Pricing: 1 credit per call. Requires: comment_feedback_id, expansion_token.",
       "inputSchema": {
         "type": "object",
         "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "details",
+              "details_extended",
+              "id",
+              "attachments",
+              "video",
+              "comments",
+              "comment_replies"
+            ],
+            "description": "Which operation to run. See the tool description for what each action returns and which parameters it needs."
+          },
           "link": {
             "type": "string",
-            "description": "Facebook group URL"
+            "description": "For details, id: Facebook post URL. For details_extended: Facebook post URL (works for reels, video posts, and regular posts). For comments: Facebook post or reel URL."
           },
-          "end_cursor": {
-            "type": "string",
-            "description": "Pagination cursor"
-          }
-        },
-        "required": [
-          "link"
-        ]
-      },
-      "outputSchema": {
-        "type": "object",
-        "properties": {
-          "result": {
-            "description": "JSON response from the SocialAPIs REST endpoint, unchanged. Object or array depending on the endpoint; most include a `meta` block (statusCode, duration, creditsCharged, creditsRemaining)."
-          },
-          "creditsCharged": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits charged for this call, or null if the endpoint did not report it."
-          },
-          "creditsRemaining": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits left on the API key after this call, or null if not reported."
-          }
-        },
-        "required": [
-          "result"
-        ]
-      },
-      "annotations": {
-        "title": "Facebook: Get Group Videos",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "openWorldHint": true
-      }
-    },
-    {
-      "name": "facebook_get_post_id",
-      "title": "Facebook: Get Post ID",
-      "description": "Extract the numeric post ID from a Facebook post URL. Use it to get the post_id that facebook_get_post_attachments needs. Pricing: 1 credit per call.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "link": {
-            "type": "string",
-            "description": "Facebook post URL"
-          }
-        },
-        "required": [
-          "link"
-        ]
-      },
-      "outputSchema": {
-        "type": "object",
-        "properties": {
-          "result": {
-            "description": "JSON response from the SocialAPIs REST endpoint, unchanged. Object or array depending on the endpoint; most include a `meta` block (statusCode, duration, creditsCharged, creditsRemaining)."
-          },
-          "creditsCharged": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits charged for this call, or null if the endpoint did not report it."
-          },
-          "creditsRemaining": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits left on the API key after this call, or null if not reported."
-          }
-        },
-        "required": [
-          "result"
-        ]
-      },
-      "annotations": {
-        "title": "Facebook: Get Post ID",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "openWorldHint": true
-      }
-    },
-    {
-      "name": "facebook_get_post_details",
-      "title": "Facebook: Get Post Details",
-      "description": "Get a Facebook post's text, author, timestamp, media, and reaction, comment and share counts. Start here for any post. If you need view counts, video download URLs or audio metadata (common for reels and videos), use facebook_get_post_details_extended instead. Pricing: 1 credit per call.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "link": {
-            "type": "string",
-            "description": "Facebook post URL"
-          }
-        },
-        "required": [
-          "link"
-        ]
-      },
-      "outputSchema": {
-        "type": "object",
-        "properties": {
-          "result": {
-            "description": "JSON response from the SocialAPIs REST endpoint, unchanged. Object or array depending on the endpoint; most include a `meta` block (statusCode, duration, creditsCharged, creditsRemaining)."
-          },
-          "creditsCharged": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits charged for this call, or null if the endpoint did not report it."
-          },
-          "creditsRemaining": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits left on the API key after this call, or null if not reported."
-          }
-        },
-        "required": [
-          "result"
-        ]
-      },
-      "annotations": {
-        "title": "Facebook: Get Post Details",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "openWorldHint": true
-      }
-    },
-    {
-      "name": "facebook_get_post_details_extended",
-      "title": "Facebook: Get Post Details Extended",
-      "description": "Get everything facebook_get_post_details returns plus view counts, HD/SD video URLs, music/audio metadata and author verification status. Use it for reels and video posts, or when the standard details lack view_count, video_hd_src or attached_track. Pricing: 1 credit per call.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "link": {
-            "type": "string",
-            "description": "Facebook post URL (works for reels, video posts, and regular posts)"
-          }
-        },
-        "required": [
-          "link"
-        ]
-      },
-      "outputSchema": {
-        "type": "object",
-        "properties": {
-          "result": {
-            "description": "JSON response from the SocialAPIs REST endpoint, unchanged. Object or array depending on the endpoint; most include a `meta` block (statusCode, duration, creditsCharged, creditsRemaining)."
-          },
-          "creditsCharged": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits charged for this call, or null if the endpoint did not report it."
-          },
-          "creditsRemaining": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits left on the API key after this call, or null if not reported."
-          }
-        },
-        "required": [
-          "result"
-        ]
-      },
-      "annotations": {
-        "title": "Facebook: Get Post Details Extended",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "openWorldHint": true
-      }
-    },
-    {
-      "name": "facebook_get_post_attachments",
-      "title": "Facebook: Get Post Attachments",
-      "description": "List every media attachment (images and videos, with URLs and dimensions) on a Facebook post, including all items in multi-photo posts. Needs the numeric post_id from facebook_get_post_id. For the post's text and engagement, use facebook_get_post_details. Pricing: 5 credits per call (deeper scrape than standard post details).",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
           "post_id": {
             "type": "string",
-            "description": "Numeric Facebook post ID, from facebook_get_post_id"
-          }
-        },
-        "required": [
-          "post_id"
-        ]
-      },
-      "outputSchema": {
-        "type": "object",
-        "properties": {
-          "result": {
-            "description": "JSON response from the SocialAPIs REST endpoint, unchanged. Object or array depending on the endpoint; most include a `meta` block (statusCode, duration, creditsCharged, creditsRemaining)."
+            "description": "For attachments: Numeric Facebook post ID, from action=id."
           },
-          "creditsCharged": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits charged for this call, or null if the endpoint did not report it."
-          },
-          "creditsRemaining": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits left on the API key after this call, or null if not reported."
-          }
-        },
-        "required": [
-          "result"
-        ]
-      },
-      "annotations": {
-        "title": "Facebook: Get Post Attachments",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "openWorldHint": true
-      }
-    },
-    {
-      "name": "facebook_get_video_details",
-      "title": "Facebook: Get Video Details",
-      "description": "Get a Facebook video post's metadata: title, message text and hashtags, owner, reactions and view count. Needs the numeric video_id (the number in a facebook.com/.../videos/<id> URL, or from facebook_get_page_videos). Pricing: 1 credit per call.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
           "video_id": {
             "type": "string",
-            "description": "Numeric Facebook video ID, e.g. the number in a facebook.com/.../videos/<id> URL"
-          }
-        },
-        "required": [
-          "video_id"
-        ]
-      },
-      "outputSchema": {
-        "type": "object",
-        "properties": {
-          "result": {
-            "description": "JSON response from the SocialAPIs REST endpoint, unchanged. Object or array depending on the endpoint; most include a `meta` block (statusCode, duration, creditsCharged, creditsRemaining)."
-          },
-          "creditsCharged": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits charged for this call, or null if the endpoint did not report it."
-          },
-          "creditsRemaining": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits left on the API key after this call, or null if not reported."
-          }
-        },
-        "required": [
-          "result"
-        ]
-      },
-      "annotations": {
-        "title": "Facebook: Get Video Details",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "openWorldHint": true
-      }
-    },
-    {
-      "name": "facebook_get_post_comments",
-      "title": "Facebook: Get Post Comments",
-      "description": "List top-level comments on a Facebook post or reel, with author, text, timestamp and reaction count. Returns up to 30 per call plus an end_cursor for the next page. Set include_reply_info=true to get the comment_feedback_id and expansion_token that facebook_get_comment_replies needs. Pricing: 1 credit per call.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "link": {
-            "type": "string",
-            "description": "Facebook post or reel URL"
+            "description": "For video: Numeric Facebook video ID, e.g. the number in a facebook.com/.../videos/<id> URL."
           },
           "limit": {
             "type": "number",
-            "description": "Maximum number of comments to return. Default: 10. Maximum: 30.",
-            "maximum": 30
+            "maximum": 30,
+            "description": "For comments: Maximum number of comments to return. Default: 10. Maximum: 30."
           },
           "end_cursor": {
             "type": "string",
-            "description": "Pagination cursor for next page of comments"
+            "description": "For comments: Pagination cursor for next page of comments."
           },
           "include_reply_info": {
             "type": "string",
-            "description": "When \"true\", includes comment_feedback_id and expansion_token for fetching replies"
-          }
-        },
-        "required": [
-          "link"
-        ]
-      },
-      "outputSchema": {
-        "type": "object",
-        "properties": {
-          "result": {
-            "description": "JSON response from the SocialAPIs REST endpoint, unchanged. Object or array depending on the endpoint; most include a `meta` block (statusCode, duration, creditsCharged, creditsRemaining)."
+            "description": "For comments: When \"true\", includes comment_feedback_id and expansion_token for fetching replies."
           },
-          "creditsCharged": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits charged for this call, or null if the endpoint did not report it."
-          },
-          "creditsRemaining": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits left on the API key after this call, or null if not reported."
-          }
-        },
-        "required": [
-          "result"
-        ]
-      },
-      "annotations": {
-        "title": "Facebook: Get Post Comments",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "openWorldHint": true
-      }
-    },
-    {
-      "name": "facebook_get_comment_replies",
-      "title": "Facebook: Get Comment Replies",
-      "description": "List replies to one Facebook comment. Needs comment_feedback_id and expansion_token, which facebook_get_post_comments returns when called with include_reply_info=true. Pricing: 1 credit per call.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
           "comment_feedback_id": {
             "type": "string",
-            "description": "Feedback ID from the comments endpoint with include_reply_info=true"
+            "description": "For comment_replies: Feedback ID from the comments endpoint with include_reply_info=true."
           },
           "expansion_token": {
             "type": "string",
-            "description": "Expansion token from the comments endpoint with include_reply_info=true"
+            "description": "For comment_replies: Expansion token from the comments endpoint with include_reply_info=true."
           }
         },
         "required": [
-          "comment_feedback_id",
-          "expansion_token"
+          "action"
         ]
       },
       "outputSchema": {
@@ -868,270 +273,69 @@
         ]
       },
       "annotations": {
-        "title": "Facebook: Get Comment Replies",
+        "title": "Facebook: Post",
         "readOnlyHint": true,
         "destructiveHint": false,
         "openWorldHint": true
       }
     },
     {
-      "name": "facebook_search_pages",
-      "title": "Facebook: Search Pages",
-      "description": "Find Facebook pages by keyword (brand, business or topic name), optionally near a location. Returns page names, URLs, categories and follower counts, 3 per call, plus an end_cursor. Use it when you don't have the page URL; then call facebook_get_page_details with a result's URL. For locations, get a location_uid from facebook_search_locations. Pricing: 1 credit per call.",
+      "name": "facebook_search",
+      "title": "Facebook: Search",
+      "description": "Search Facebook by keyword: pages, people, posts, videos and locations.\n\nActions:\n- action=pages: Find Facebook pages by keyword (brand, business or topic name), optionally near a location. Returns page names, URLs, categories and follower counts, 3 per call, plus an end_cursor. Use it when you don't have the page URL; then call facebook_page (action=details) with a result's URL. For locations, get a location_uid from action=locations. Pricing: 1 credit per call. Requires: query.\n- action=people: Find public Facebook profiles by name or keyword, optionally near a location (location_uid from action=locations). Returns names, profile URLs and pictures, plus work, education and location where public, and an end_cursor. Pricing: 1 credit per call. Requires: query.\n- action=posts: Search public Facebook posts by keyword, optionally filtered by location (location_uid from action=locations) and date range. Returns posts with text, author and engagement, plus an end_cursor. To list one page's posts, use facebook_page (action=posts) instead. Pricing: 1 credit per call. Requires: query.\n- action=videos: Search public Facebook videos by keyword, optionally most recent first or live videos only. Returns video titles, URLs and view counts, plus an end_cursor. Pricing: 1 credit per call. Requires: query.\n- action=locations: Look up Facebook places by name (city, region, venue) and get their location_uid. The location_uid is only used to filter action=pages, action=people and action=posts; it is not a Marketplace location (use facebook_marketplace (action=city_coordinates) for that). Pricing: 1 credit per call. Requires: query.",
       "inputSchema": {
         "type": "object",
         "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "pages",
+              "people",
+              "posts",
+              "videos",
+              "locations"
+            ],
+            "description": "Which operation to run. See the tool description for what each action returns and which parameters it needs."
+          },
           "query": {
             "type": "string",
-            "description": "Keyword to search for, e.g. a brand or business name"
+            "description": "For pages: Keyword to search for, e.g. a brand or business name. For people: Name or keyword to search for. For posts: Keyword or phrase to search post text for. For videos: Keyword or phrase to search videos for. For locations: Search query (city, place, landmark)."
           },
           "location_uid": {
             "type": "string",
-            "description": "Location UID for filtering (from search/locations endpoint)"
+            "description": "For pages: Location UID for filtering (from search/locations endpoint). For people, posts: Location UID for filtering."
           },
           "end_cursor": {
             "type": "string",
-            "description": "Pagination cursor"
-          }
-        },
-        "required": [
-          "query"
-        ]
-      },
-      "outputSchema": {
-        "type": "object",
-        "properties": {
-          "result": {
-            "description": "JSON response from the SocialAPIs REST endpoint, unchanged. Object or array depending on the endpoint; most include a `meta` block (statusCode, duration, creditsCharged, creditsRemaining)."
-          },
-          "creditsCharged": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits charged for this call, or null if the endpoint did not report it."
-          },
-          "creditsRemaining": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits left on the API key after this call, or null if not reported."
-          }
-        },
-        "required": [
-          "result"
-        ]
-      },
-      "annotations": {
-        "title": "Facebook: Search Pages",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "openWorldHint": true
-      }
-    },
-    {
-      "name": "facebook_search_people",
-      "title": "Facebook: Search People",
-      "description": "Find public Facebook profiles by name or keyword, optionally near a location (location_uid from facebook_search_locations). Returns names, profile URLs and pictures, plus work, education and location where public, and an end_cursor. Pricing: 1 credit per call.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "query": {
-            "type": "string",
-            "description": "Name or keyword to search for"
-          },
-          "location_uid": {
-            "type": "string",
-            "description": "Location UID for filtering"
-          },
-          "end_cursor": {
-            "type": "string",
-            "description": "Pagination cursor"
-          }
-        },
-        "required": [
-          "query"
-        ]
-      },
-      "outputSchema": {
-        "type": "object",
-        "properties": {
-          "result": {
-            "description": "JSON response from the SocialAPIs REST endpoint, unchanged. Object or array depending on the endpoint; most include a `meta` block (statusCode, duration, creditsCharged, creditsRemaining)."
-          },
-          "creditsCharged": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits charged for this call, or null if the endpoint did not report it."
-          },
-          "creditsRemaining": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits left on the API key after this call, or null if not reported."
-          }
-        },
-        "required": [
-          "result"
-        ]
-      },
-      "annotations": {
-        "title": "Facebook: Search People",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "openWorldHint": true
-      }
-    },
-    {
-      "name": "facebook_search_locations",
-      "title": "Facebook: Search Locations",
-      "description": "Look up Facebook places by name (city, region, venue) and get their location_uid. The location_uid is only used to filter facebook_search_pages, facebook_search_people and facebook_search_posts; it is not a Marketplace location (use facebook_marketplace_city_coordinates for that). Pricing: 1 credit per call.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "query": {
-            "type": "string",
-            "description": "Search query (city, place, landmark)"
-          }
-        },
-        "required": [
-          "query"
-        ]
-      },
-      "outputSchema": {
-        "type": "object",
-        "properties": {
-          "result": {
-            "description": "JSON response from the SocialAPIs REST endpoint, unchanged. Object or array depending on the endpoint; most include a `meta` block (statusCode, duration, creditsCharged, creditsRemaining)."
-          },
-          "creditsCharged": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits charged for this call, or null if the endpoint did not report it."
-          },
-          "creditsRemaining": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits left on the API key after this call, or null if not reported."
-          }
-        },
-        "required": [
-          "result"
-        ]
-      },
-      "annotations": {
-        "title": "Facebook: Search Locations",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "openWorldHint": true
-      }
-    },
-    {
-      "name": "facebook_search_posts",
-      "title": "Facebook: Search Posts",
-      "description": "Search public Facebook posts by keyword, optionally filtered by location (location_uid from facebook_search_locations) and date range. Returns posts with text, author and engagement, plus an end_cursor. To list one page's posts, use facebook_get_page_posts instead. Pricing: 1 credit per call.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "query": {
-            "type": "string",
-            "description": "Keyword or phrase to search post text for"
-          },
-          "location_uid": {
-            "type": "string",
-            "description": "Location UID for filtering"
+            "description": "For pages, people, posts, videos: Pagination cursor."
           },
           "start_time": {
             "type": "string",
-            "description": "Filter posts after this date (YYYY-MM-DD)"
+            "description": "For posts: Filter posts after this date (YYYY-MM-DD)."
           },
           "end_time": {
             "type": "string",
-            "description": "Filter posts before this date (YYYY-MM-DD)"
+            "description": "For posts: Filter posts before this date (YYYY-MM-DD)."
           },
           "recent_posts": {
             "type": "string",
-            "description": "When \"true\", shows only recent posts"
-          },
-          "end_cursor": {
-            "type": "string",
-            "description": "Pagination cursor"
-          }
-        },
-        "required": [
-          "query"
-        ]
-      },
-      "outputSchema": {
-        "type": "object",
-        "properties": {
-          "result": {
-            "description": "JSON response from the SocialAPIs REST endpoint, unchanged. Object or array depending on the endpoint; most include a `meta` block (statusCode, duration, creditsCharged, creditsRemaining)."
-          },
-          "creditsCharged": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits charged for this call, or null if the endpoint did not report it."
-          },
-          "creditsRemaining": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits left on the API key after this call, or null if not reported."
-          }
-        },
-        "required": [
-          "result"
-        ]
-      },
-      "annotations": {
-        "title": "Facebook: Search Posts",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "openWorldHint": true
-      }
-    },
-    {
-      "name": "facebook_search_videos",
-      "title": "Facebook: Search Videos",
-      "description": "Search public Facebook videos by keyword, optionally most recent first or live videos only. Returns video titles, URLs and view counts, plus an end_cursor. Pricing: 1 credit per call.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "query": {
-            "type": "string",
-            "description": "Keyword or phrase to search videos for"
+            "description": "For posts: When \"true\", shows only recent posts."
           },
           "most_recent": {
             "type": "string",
-            "description": "When \"true\", shows most recent videos first"
+            "description": "For videos: When \"true\", shows most recent videos first."
           },
           "videos_live": {
             "type": "string",
-            "description": "When \"true\", filters for live videos only"
+            "description": "For videos: When \"true\", filters for live videos only."
           },
           "fields": {
             "type": "string",
-            "description": "Comma-separated list of response fields to include"
-          },
-          "end_cursor": {
-            "type": "string",
-            "description": "Pagination cursor"
+            "description": "For videos: Comma-separated list of response fields to include."
           }
         },
         "required": [
-          "query"
+          "action"
         ]
       },
       "outputSchema": {
@@ -1160,164 +364,81 @@
         ]
       },
       "annotations": {
-        "title": "Facebook: Search Videos",
+        "title": "Facebook: Search",
         "readOnlyHint": true,
         "destructiveHint": false,
         "openWorldHint": true
       }
     },
     {
-      "name": "facebook_ads_search",
-      "title": "Facebook: Ads Search",
-      "description": "Search ads in the Meta Ad Library. Pass a keyword (query) to find ads about a topic, or ad_page_id to list one advertiser's ads; filter by country, active status and date range, sort by impressions or recency. Returns ads with creative, body text, dates, platforms and snapshot URL, plus an end_cursor. Get an advertiser's ad_page_id from facebook_ads_keywords or facebook_get_page_details. Pricing: 1 credit per call.",
+      "name": "facebook_ads",
+      "title": "Facebook: Ads",
+      "description": "Meta Ads Library: search ads, find advertisers by keyword, advertiser page details, single ad details and supported countries.\n\nActions:\n- action=search: Search ads in the Meta Ad Library. Pass a keyword (query) to find ads about a topic, or ad_page_id to list one advertiser's ads; filter by country, active status and date range, sort by impressions or recency. Returns ads with creative, body text, dates, platforms and snapshot URL, plus an end_cursor. Get an advertiser's ad_page_id from action=keywords or facebook_page (action=details). Pricing: 1 credit per call.\n- action=keywords: Find advertisers running ads that match a keyword: returns Facebook pages with their page_id and ad count. Use it to discover who advertises on a topic, then pass a page_id to action=search (as ad_page_id) or action=page_details. To get the ads for a keyword directly, use action=search. Pricing: 1 credit per call. Requires: query.\n- action=page_details: Get an advertiser's Ads Library profile: page name, verification status, category, location and total ad count. Needs the page ID (ad_page_id from facebook_page (action=details) or page_id from action=keywords). To list the ads themselves, use action=search with ad_page_id. Pricing: 1 credit per call. Requires: page_id.\n- action=archive_details: Get one Ad Library ad in full: creative, body text, CTA, platforms, countries, date range, and spend and impression estimates where Meta publishes them. Needs the ad_archive_id from a action=search result. Pricing: 1 credit per call. Requires: ad_archive_id.\n- action=countries: List the country codes the Ads Library tools accept in their country parameter. Pricing: 1 credit per call.",
       "inputSchema": {
         "type": "object",
         "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "search",
+              "keywords",
+              "page_details",
+              "archive_details",
+              "countries"
+            ],
+            "description": "Which operation to run. See the tool description for what each action returns and which parameters it needs."
+          },
           "query": {
             "type": "string",
-            "description": "Search keyword for ads"
+            "description": "For search: Search keyword for ads. For keywords: Keyword to find advertisers for, e.g. running shoes."
           },
           "ad_page_id": {
             "type": "string",
-            "description": "Facebook AD Page ID (alternative to query)"
+            "description": "For search: Facebook AD Page ID (alternative to query)."
           },
           "country": {
             "type": "string",
-            "description": "ISO country code or \"ALL\""
+            "description": "For search, keywords, archive_details: ISO country code or \"ALL\"."
           },
           "activeStatus": {
             "type": "string",
-            "description": "Filter: ALL, Active, or Inactive"
+            "description": "For search: Filter: ALL, Active, or Inactive."
           },
           "after_time": {
             "type": "string",
-            "description": "Filter ads after this date (YYYY-MM-DD)"
+            "description": "For search: Filter ads after this date (YYYY-MM-DD)."
           },
           "before_time": {
             "type": "string",
-            "description": "Filter ads before this date (YYYY-MM-DD)"
+            "description": "For search: Filter ads before this date (YYYY-MM-DD)."
           },
           "sort_data": {
             "type": "string",
-            "description": "Sort by \"impressions\" or \"recent\""
+            "description": "For search: Sort by \"impressions\" or \"recent\"."
           },
           "end_cursor": {
             "type": "string",
-            "description": "Pagination cursor"
-          }
-        },
-        "required": []
-      },
-      "outputSchema": {
-        "type": "object",
-        "properties": {
-          "result": {
-            "description": "JSON response from the SocialAPIs REST endpoint, unchanged. Object or array depending on the endpoint; most include a `meta` block (statusCode, duration, creditsCharged, creditsRemaining)."
+            "description": "For search: Pagination cursor."
           },
-          "creditsCharged": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits charged for this call, or null if the endpoint did not report it."
-          },
-          "creditsRemaining": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits left on the API key after this call, or null if not reported."
-          }
-        },
-        "required": [
-          "result"
-        ]
-      },
-      "annotations": {
-        "title": "Facebook: Ads Search",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "openWorldHint": true
-      }
-    },
-    {
-      "name": "facebook_ads_page_details",
-      "title": "Facebook: Ads Page Details",
-      "description": "Get an advertiser's Ads Library profile: page name, verification status, category, location and total ad count. Needs the page ID (ad_page_id from facebook_get_page_details or page_id from facebook_ads_keywords). To list the ads themselves, use facebook_ads_search with ad_page_id. Pricing: 1 credit per call.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
           "page_id": {
             "type": "string",
-            "description": "Advertiser page ID: ad_page_id from facebook_get_page_details, or page_id from facebook_ads_keywords"
-          }
-        },
-        "required": [
-          "page_id"
-        ]
-      },
-      "outputSchema": {
-        "type": "object",
-        "properties": {
-          "result": {
-            "description": "JSON response from the SocialAPIs REST endpoint, unchanged. Object or array depending on the endpoint; most include a `meta` block (statusCode, duration, creditsCharged, creditsRemaining)."
+            "description": "For page_details: Advertiser page ID: ad_page_id from facebook_page (action=details), or page_id from action=keywords. For archive_details: Facebook Page ID."
           },
-          "creditsCharged": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits charged for this call, or null if the endpoint did not report it."
-          },
-          "creditsRemaining": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits left on the API key after this call, or null if not reported."
-          }
-        },
-        "required": [
-          "result"
-        ]
-      },
-      "annotations": {
-        "title": "Facebook: Ads Page Details",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "openWorldHint": true
-      }
-    },
-    {
-      "name": "facebook_ads_archive_details",
-      "title": "Facebook: Ads Archive Details",
-      "description": "Get one Ad Library ad in full: creative, body text, CTA, platforms, countries, date range, and spend and impression estimates where Meta publishes them. Needs the ad_archive_id from a facebook_ads_search result. Pricing: 1 credit per call.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
           "ad_archive_id": {
             "type": "string",
-            "description": "Ad Library archive ID of the ad (ad_archive_id from a facebook_ads_search result)"
-          },
-          "page_id": {
-            "type": "string",
-            "description": "Facebook Page ID"
-          },
-          "country": {
-            "type": "string",
-            "description": "ISO country code or \"ALL\""
+            "description": "For archive_details: Ad Library archive ID of the ad (ad_archive_id from a action=search result)."
           },
           "is_ad_non_political": {
             "type": "string",
-            "description": "Filter non-political ads"
+            "description": "For archive_details: Filter non-political ads."
           },
           "is_ad_not_aaa_eligible": {
             "type": "string",
-            "description": "Filter AAA eligibility"
+            "description": "For archive_details: Filter AAA eligibility."
           }
         },
         "required": [
-          "ad_archive_id"
+          "action"
         ]
       },
       "outputSchema": {
@@ -1346,519 +467,132 @@
         ]
       },
       "annotations": {
-        "title": "Facebook: Ads Archive Details",
+        "title": "Facebook: Ads",
         "readOnlyHint": true,
         "destructiveHint": false,
         "openWorldHint": true
       }
     },
     {
-      "name": "facebook_ads_keywords",
-      "title": "Facebook: Ads Keywords",
-      "description": "Find advertisers running ads that match a keyword: returns Facebook pages with their page_id and ad count. Use it to discover who advertises on a topic, then pass a page_id to facebook_ads_search (as ad_page_id) or facebook_ads_page_details. To get the ads for a keyword directly, use facebook_ads_search. Pricing: 1 credit per call.",
+      "name": "facebook_marketplace",
+      "title": "Facebook: Marketplace",
+      "description": "Facebook Marketplace: search listings, vehicles and rentals, listing and seller details, categories and city coordinates.\n\nActions:\n- action=search: Search general Facebook Marketplace listings (items for sale) by keyword or category near a location, with price, condition, radius and sort filters. Returns listings with their listing_id, plus an end_cursor. For cars and other vehicles use action=vehicles; for homes and rooms to rent use action=rentals. Get coordinates from action=city_coordinates. Pricing: 1 credit per call.\n- action=vehicles: Search Facebook Marketplace vehicle listings (cars, trucks, motorcycles) near a location, with price, radius and seller-type filters. Returns listings with title, price, mileage, year and listing_id, plus an end_cursor. For non-vehicle items, use action=search. Pricing: 1 credit per call.\n- action=rentals: Search Facebook Marketplace rental listings (apartments, houses, rooms) near a location, with price, bedroom, bathroom and radius filters. Returns rental listings with their listing_id, plus an end_cursor. For items for sale, use action=search. Pricing: 1 credit per call.\n- action=listing: Get one Marketplace listing in full: title, price, description, condition, all photos, location and seller. Needs the listing_id from a Marketplace search result. Pricing: 1 credit per call. Requires: listing_id.\n- action=seller: Get a Marketplace seller's profile: name, join date, rating, review count and badges. Needs the seller_id from action=listing. Pricing: 1 credit per call. Requires: seller_id.\n- action=categories: List Marketplace categories with their IDs and category_url values. Use a category_url to filter action=search. Pricing: 1 credit per call.\n- action=city_coordinates: Convert a city name to the latitude and longitude that the Marketplace search tools expect in filter_location_latitude / filter_location_longitude. Pricing: 1 credit per call. Requires: city.",
       "inputSchema": {
         "type": "object",
         "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "search",
+              "vehicles",
+              "rentals",
+              "listing",
+              "seller",
+              "categories",
+              "city_coordinates"
+            ],
+            "description": "Which operation to run. See the tool description for what each action returns and which parameters it needs."
+          },
           "query": {
             "type": "string",
-            "description": "Keyword to find advertisers for, e.g. running shoes"
-          },
-          "country": {
-            "type": "string",
-            "description": "ISO country code or \"ALL\""
-          }
-        },
-        "required": [
-          "query"
-        ]
-      },
-      "outputSchema": {
-        "type": "object",
-        "properties": {
-          "result": {
-            "description": "JSON response from the SocialAPIs REST endpoint, unchanged. Object or array depending on the endpoint; most include a `meta` block (statusCode, duration, creditsCharged, creditsRemaining)."
-          },
-          "creditsCharged": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits charged for this call, or null if the endpoint did not report it."
-          },
-          "creditsRemaining": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits left on the API key after this call, or null if not reported."
-          }
-        },
-        "required": [
-          "result"
-        ]
-      },
-      "annotations": {
-        "title": "Facebook: Ads Keywords",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "openWorldHint": true
-      }
-    },
-    {
-      "name": "facebook_ads_countries",
-      "title": "Facebook: Ads Countries",
-      "description": "List the country codes the Ads Library tools accept in their country parameter. Pricing: 1 credit per call.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {},
-        "required": []
-      },
-      "outputSchema": {
-        "type": "object",
-        "properties": {
-          "result": {
-            "description": "JSON response from the SocialAPIs REST endpoint, unchanged. Object or array depending on the endpoint; most include a `meta` block (statusCode, duration, creditsCharged, creditsRemaining)."
-          },
-          "creditsCharged": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits charged for this call, or null if the endpoint did not report it."
-          },
-          "creditsRemaining": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits left on the API key after this call, or null if not reported."
-          }
-        },
-        "required": [
-          "result"
-        ]
-      },
-      "annotations": {
-        "title": "Facebook: Ads Countries",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "openWorldHint": true
-      }
-    },
-    {
-      "name": "facebook_marketplace_search",
-      "title": "Facebook: Marketplace Search",
-      "description": "Search general Facebook Marketplace listings (items for sale) by keyword or category near a location, with price, condition, radius and sort filters. Returns listings with their listing_id, plus an end_cursor. For cars and other vehicles use facebook_marketplace_vehicles; for homes and rooms to rent use facebook_marketplace_rentals. Get coordinates from facebook_marketplace_city_coordinates. Pricing: 1 credit per call.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "query": {
-            "type": "string",
-            "description": "Keyword to search listings for, e.g. iphone 15"
+            "description": "For search: Keyword to search listings for, e.g. iphone 15."
           },
           "category_url": {
             "type": "string",
-            "description": "Category URL slug"
+            "description": "For search: Category URL slug."
           },
           "commerce_search_sort_by": {
             "type": "string",
-            "description": "Sort: BEST_MATCH, CREATION_TIME_DESCEND, PRICE_ASCEND, etc."
+            "description": "For search: Sort: BEST_MATCH, CREATION_TIME_DESCEND, PRICE_ASCEND, etc."
           },
           "commerce_search_and_rp_condition": {
             "type": "string",
-            "description": "Condition: new, used_like_new, used_good, used_fair"
+            "description": "For search: Condition: new, used_like_new, used_good, used_fair."
           },
           "filter_location_latitude": {
             "type": "string",
-            "description": "Latitude of the search center, e.g. 30.2672 (from facebook_marketplace_city_coordinates)"
+            "description": "For search, vehicles, rentals: Latitude of the search center, e.g. 30.2672 (from action=city_coordinates)."
           },
           "filter_location_longitude": {
             "type": "string",
-            "description": "Longitude of the search center, e.g. -97.7431 (from facebook_marketplace_city_coordinates)"
+            "description": "For search, vehicles, rentals: Longitude of the search center, e.g. -97.7431 (from action=city_coordinates)."
           },
           "filter_price_lower_bound": {
             "type": "string",
-            "description": "Minimum price in the local currency, whole number, e.g. 100"
+            "description": "For search, vehicles, rentals: Minimum price in the local currency, whole number, e.g. 100."
           },
           "filter_price_upper_bound": {
             "type": "string",
-            "description": "Maximum price in the local currency, whole number, e.g. 2000"
+            "description": "For search, vehicles, rentals: Maximum price in the local currency, whole number, e.g. 2000."
           },
           "filter_radius_km": {
             "type": "string",
-            "description": "Search radius around the center in kilometres, e.g. 40"
+            "description": "For search, vehicles, rentals: Search radius around the center in kilometres, e.g. 40."
           },
           "posted_today": {
             "type": "string",
-            "description": "When \"true\", limit to items posted today"
+            "description": "For search: When \"true\", limit to items posted today."
           },
           "exact_match": {
             "type": "string",
-            "description": "When \"true\", exact match search"
+            "description": "For search: When \"true\", exact match search."
           },
           "limit": {
             "type": "number",
-            "description": "Maximum number of items to return. Default: 24."
+            "description": "For search: Maximum number of items to return. Default: 24."
           },
           "end_cursor": {
             "type": "string",
-            "description": "Pagination cursor"
-          }
-        },
-        "required": []
-      },
-      "outputSchema": {
-        "type": "object",
-        "properties": {
-          "result": {
-            "description": "JSON response from the SocialAPIs REST endpoint, unchanged. Object or array depending on the endpoint; most include a `meta` block (statusCode, duration, creditsCharged, creditsRemaining)."
+            "description": "For search, vehicles, rentals: Pagination cursor."
           },
-          "creditsCharged": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits charged for this call, or null if the endpoint did not report it."
-          },
-          "creditsRemaining": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits left on the API key after this call, or null if not reported."
-          }
-        },
-        "required": [
-          "result"
-        ]
-      },
-      "annotations": {
-        "title": "Facebook: Marketplace Search",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "openWorldHint": true
-      }
-    },
-    {
-      "name": "facebook_marketplace_listing",
-      "title": "Facebook: Marketplace Listing",
-      "description": "Get one Marketplace listing in full: title, price, description, condition, all photos, location and seller. Needs the listing_id from a Marketplace search result. Pricing: 1 credit per call.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "listing_id": {
-            "type": "string",
-            "description": "Marketplace listing ID, from a Marketplace search result"
-          }
-        },
-        "required": [
-          "listing_id"
-        ]
-      },
-      "outputSchema": {
-        "type": "object",
-        "properties": {
-          "result": {
-            "description": "JSON response from the SocialAPIs REST endpoint, unchanged. Object or array depending on the endpoint; most include a `meta` block (statusCode, duration, creditsCharged, creditsRemaining)."
-          },
-          "creditsCharged": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits charged for this call, or null if the endpoint did not report it."
-          },
-          "creditsRemaining": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits left on the API key after this call, or null if not reported."
-          }
-        },
-        "required": [
-          "result"
-        ]
-      },
-      "annotations": {
-        "title": "Facebook: Marketplace Listing",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "openWorldHint": true
-      }
-    },
-    {
-      "name": "facebook_marketplace_seller",
-      "title": "Facebook: Marketplace Seller",
-      "description": "Get a Marketplace seller's profile: name, join date, rating, review count and badges. Needs the seller_id from facebook_marketplace_listing. Pricing: 1 credit per call.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "seller_id": {
-            "type": "string",
-            "description": "Seller ID, from the seller field of facebook_marketplace_listing"
-          }
-        },
-        "required": [
-          "seller_id"
-        ]
-      },
-      "outputSchema": {
-        "type": "object",
-        "properties": {
-          "result": {
-            "description": "JSON response from the SocialAPIs REST endpoint, unchanged. Object or array depending on the endpoint; most include a `meta` block (statusCode, duration, creditsCharged, creditsRemaining)."
-          },
-          "creditsCharged": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits charged for this call, or null if the endpoint did not report it."
-          },
-          "creditsRemaining": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits left on the API key after this call, or null if not reported."
-          }
-        },
-        "required": [
-          "result"
-        ]
-      },
-      "annotations": {
-        "title": "Facebook: Marketplace Seller",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "openWorldHint": true
-      }
-    },
-    {
-      "name": "facebook_marketplace_categories",
-      "title": "Facebook: Marketplace Categories",
-      "description": "List Marketplace categories with their IDs and category_url values. Use a category_url to filter facebook_marketplace_search. Pricing: 1 credit per call.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {},
-        "required": []
-      },
-      "outputSchema": {
-        "type": "object",
-        "properties": {
-          "result": {
-            "description": "JSON response from the SocialAPIs REST endpoint, unchanged. Object or array depending on the endpoint; most include a `meta` block (statusCode, duration, creditsCharged, creditsRemaining)."
-          },
-          "creditsCharged": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits charged for this call, or null if the endpoint did not report it."
-          },
-          "creditsRemaining": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits left on the API key after this call, or null if not reported."
-          }
-        },
-        "required": [
-          "result"
-        ]
-      },
-      "annotations": {
-        "title": "Facebook: Marketplace Categories",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "openWorldHint": true
-      }
-    },
-    {
-      "name": "facebook_marketplace_city_coordinates",
-      "title": "Facebook: Marketplace City Coordinates",
-      "description": "Convert a city name to the latitude and longitude that the Marketplace search tools expect in filter_location_latitude / filter_location_longitude. Pricing: 1 credit per call.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "city": {
-            "type": "string",
-            "description": "City name, e.g. Austin"
-          },
-          "country": {
-            "type": "string",
-            "description": "Country name or code"
-          },
-          "exactly_one": {
-            "type": "string",
-            "description": "When \"true\", return exactly one result"
-          }
-        },
-        "required": [
-          "city"
-        ]
-      },
-      "outputSchema": {
-        "type": "object",
-        "properties": {
-          "result": {
-            "description": "JSON response from the SocialAPIs REST endpoint, unchanged. Object or array depending on the endpoint; most include a `meta` block (statusCode, duration, creditsCharged, creditsRemaining)."
-          },
-          "creditsCharged": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits charged for this call, or null if the endpoint did not report it."
-          },
-          "creditsRemaining": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits left on the API key after this call, or null if not reported."
-          }
-        },
-        "required": [
-          "result"
-        ]
-      },
-      "annotations": {
-        "title": "Facebook: Marketplace City Coordinates",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "openWorldHint": true
-      }
-    },
-    {
-      "name": "facebook_marketplace_vehicles",
-      "title": "Facebook: Marketplace Vehicles",
-      "description": "Search Facebook Marketplace vehicle listings (cars, trucks, motorcycles) near a location, with price, radius and seller-type filters. Returns listings with title, price, mileage, year and listing_id, plus an end_cursor. For non-vehicle items, use facebook_marketplace_search. Pricing: 1 credit per call.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
           "sort_by": {
             "type": "string",
-            "description": "Sort: CREATION_TIME_DESCEND, PRICE_ASCEND, VEHICLE_MILEAGE_ASCEND, etc."
-          },
-          "filter_location_latitude": {
-            "type": "string",
-            "description": "Latitude of the search center, e.g. 30.2672 (from facebook_marketplace_city_coordinates)"
-          },
-          "filter_location_longitude": {
-            "type": "string",
-            "description": "Longitude of the search center, e.g. -97.7431 (from facebook_marketplace_city_coordinates)"
-          },
-          "filter_price_lower_bound": {
-            "type": "string",
-            "description": "Minimum price in the local currency, whole number, e.g. 100"
-          },
-          "filter_price_upper_bound": {
-            "type": "string",
-            "description": "Maximum price in the local currency, whole number, e.g. 2000"
-          },
-          "filter_radius_km": {
-            "type": "string",
-            "description": "Search radius around the center in kilometres, e.g. 40"
+            "description": "For vehicles: Sort: CREATION_TIME_DESCEND, PRICE_ASCEND, VEHICLE_MILEAGE_ASCEND, etc. For rentals: Sort: CREATION_TIME_DESCEND, PRICE_ASCEND, BEST_MATCH."
           },
           "is_c2c_listing_only": {
             "type": "string",
-            "description": "Individual sellers only"
-          },
-          "end_cursor": {
-            "type": "string",
-            "description": "Pagination cursor"
-          }
-        },
-        "required": []
-      },
-      "outputSchema": {
-        "type": "object",
-        "properties": {
-          "result": {
-            "description": "JSON response from the SocialAPIs REST endpoint, unchanged. Object or array depending on the endpoint; most include a `meta` block (statusCode, duration, creditsCharged, creditsRemaining)."
-          },
-          "creditsCharged": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits charged for this call, or null if the endpoint did not report it."
-          },
-          "creditsRemaining": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits left on the API key after this call, or null if not reported."
-          }
-        },
-        "required": [
-          "result"
-        ]
-      },
-      "annotations": {
-        "title": "Facebook: Marketplace Vehicles",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "openWorldHint": true
-      }
-    },
-    {
-      "name": "facebook_marketplace_rentals",
-      "title": "Facebook: Marketplace Rentals",
-      "description": "Search Facebook Marketplace rental listings (apartments, houses, rooms) near a location, with price, bedroom, bathroom and radius filters. Returns rental listings with their listing_id, plus an end_cursor. For items for sale, use facebook_marketplace_search. Pricing: 1 credit per call.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "sort_by": {
-            "type": "string",
-            "description": "Sort: CREATION_TIME_DESCEND, PRICE_ASCEND, BEST_MATCH"
-          },
-          "filter_location_latitude": {
-            "type": "string",
-            "description": "Latitude of the search center, e.g. 30.2672 (from facebook_marketplace_city_coordinates)"
-          },
-          "filter_location_longitude": {
-            "type": "string",
-            "description": "Longitude of the search center, e.g. -97.7431 (from facebook_marketplace_city_coordinates)"
-          },
-          "filter_price_lower_bound": {
-            "type": "string",
-            "description": "Minimum price in the local currency, whole number, e.g. 100"
-          },
-          "filter_price_upper_bound": {
-            "type": "string",
-            "description": "Maximum price in the local currency, whole number, e.g. 2000"
-          },
-          "filter_radius_km": {
-            "type": "string",
-            "description": "Search radius around the center in kilometres, e.g. 40"
+            "description": "For vehicles: Individual sellers only."
           },
           "filter_bedrooms_min": {
             "type": "string",
-            "description": "Minimum number of bedrooms, e.g. 2"
+            "description": "For rentals: Minimum number of bedrooms, e.g. 2."
           },
           "filter_bedrooms_max": {
             "type": "string",
-            "description": "Maximum number of bedrooms"
+            "description": "For rentals: Maximum number of bedrooms."
           },
           "filter_bathrooms_min": {
             "type": "string",
-            "description": "Minimum number of bathrooms, e.g. 1"
+            "description": "For rentals: Minimum number of bathrooms, e.g. 1."
           },
           "filter_bathrooms_max": {
             "type": "string",
-            "description": "Maximum number of bathrooms"
+            "description": "For rentals: Maximum number of bathrooms."
           },
-          "end_cursor": {
+          "listing_id": {
             "type": "string",
-            "description": "Pagination cursor"
+            "description": "For listing: Marketplace listing ID, from a Marketplace search result."
+          },
+          "seller_id": {
+            "type": "string",
+            "description": "For seller: Seller ID, from the seller field of action=listing."
+          },
+          "city": {
+            "type": "string",
+            "description": "For city_coordinates: City name, e.g. Austin."
+          },
+          "country": {
+            "type": "string",
+            "description": "For city_coordinates: Country name or code."
+          },
+          "exactly_one": {
+            "type": "string",
+            "description": "For city_coordinates: When \"true\", return exactly one result."
           }
         },
-        "required": []
+        "required": [
+          "action"
+        ]
       },
       "outputSchema": {
         "type": "object",
@@ -1886,16 +620,16 @@
         ]
       },
       "annotations": {
-        "title": "Facebook: Marketplace Rentals",
+        "title": "Facebook: Marketplace",
         "readOnlyHint": true,
         "destructiveHint": false,
         "openWorldHint": true
       }
     },
     {
-      "name": "facebook_download_media",
-      "title": "Facebook: Download Media",
-      "description": "Resolve a Facebook media URL (image, video or audio, e.g. from a post or reel) to direct downloadable file URLs. Returns URLs, not file bytes. Pricing: 1 credit per call.",
+      "name": "facebook_media_download",
+      "title": "Facebook: Media Download",
+      "description": "Resolve a Facebook media URL (image, video or audio, e.g. from a post or reel) to direct downloadable file URLs. Returns URLs, not file bytes. Pricing: 1 credit per call. Requires: url.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -1934,282 +668,54 @@
         ]
       },
       "annotations": {
-        "title": "Facebook: Download Media",
+        "title": "Facebook: Media Download",
         "readOnlyHint": true,
         "destructiveHint": false,
         "openWorldHint": true
       }
     },
     {
-      "name": "instagram_get_user_id",
-      "title": "Instagram: Get User ID",
-      "description": "Resolve an Instagram username or profile URL to its numeric user ID. Needed by instagram_get_profile_reels and instagram_get_profile_highlights. Pricing: 1 credit per call.",
+      "name": "instagram_profile",
+      "title": "Instagram: Profile",
+      "description": "Instagram profiles: details, user ID, posts, reels, highlights and highlight stories.\n\nActions:\n- action=details: Get an Instagram profile by username: bio, follower and post counts, verification status and related profiles. Pricing: 1 credit per call. Requires: username.\n- action=id: Resolve an Instagram username or profile URL to its numeric user ID. Needed by action=reels and action=highlights. Pricing: 1 credit per call.\n- action=posts: List an Instagram profile's posts (photos, videos, carousels) with captions, like and comment counts and media URLs. Pass username (returns more results) or user_id. Returns an end_cursor for the next page. For reels only, use action=reels. Pricing: 1 credit per call.\n- action=reels: List an Instagram profile's reels with play counts, captions, video URLs and audio metadata. Needs the numeric user_id from action=id. Returns an end_cursor for the next page. Pricing: 1 credit per call. Requires: user_id.\n- action=highlights: List an Instagram profile's story highlights with titles, cover images and highlight IDs. Needs the numeric user_id from action=id. Use action=highlight_details to get the stories in one highlight. Pricing: 1 credit per call. Requires: user_id.\n- action=highlight_details: Get the stories inside one Instagram highlight. Needs a highlight_id from action=highlights. Pricing: 1 credit per call. Requires: highlight_id.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "link": {
+          "action": {
             "type": "string",
-            "description": "Instagram profile URL"
+            "enum": [
+              "details",
+              "id",
+              "posts",
+              "reels",
+              "highlights",
+              "highlight_details"
+            ],
+            "description": "Which operation to run. See the tool description for what each action returns and which parameters it needs."
           },
           "username": {
             "type": "string",
-            "description": "Instagram username"
-          }
-        },
-        "required": []
-      },
-      "outputSchema": {
-        "type": "object",
-        "properties": {
-          "result": {
-            "description": "JSON response from the SocialAPIs REST endpoint, unchanged. Object or array depending on the endpoint; most include a `meta` block (statusCode, duration, creditsCharged, creditsRemaining)."
-          },
-          "creditsCharged": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits charged for this call, or null if the endpoint did not report it."
-          },
-          "creditsRemaining": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits left on the API key after this call, or null if not reported."
-          }
-        },
-        "required": [
-          "result"
-        ]
-      },
-      "annotations": {
-        "title": "Instagram: Get User ID",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "openWorldHint": true
-      }
-    },
-    {
-      "name": "instagram_get_profile_details",
-      "title": "Instagram: Get Profile Details",
-      "description": "Get an Instagram profile by username: bio, follower and post counts, verification status and related profiles. Pricing: 1 credit per call.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "username": {
-            "type": "string",
-            "description": "Instagram username"
+            "description": "For details, id: Instagram username. For posts: Instagram username (recommended — returns more results)."
           },
           "link": {
             "type": "string",
-            "description": "Instagram profile URL (alternative to username)"
-          }
-        },
-        "required": [
-          "username"
-        ]
-      },
-      "outputSchema": {
-        "type": "object",
-        "properties": {
-          "result": {
-            "description": "JSON response from the SocialAPIs REST endpoint, unchanged. Object or array depending on the endpoint; most include a `meta` block (statusCode, duration, creditsCharged, creditsRemaining)."
-          },
-          "creditsCharged": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits charged for this call, or null if the endpoint did not report it."
-          },
-          "creditsRemaining": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits left on the API key after this call, or null if not reported."
-          }
-        },
-        "required": [
-          "result"
-        ]
-      },
-      "annotations": {
-        "title": "Instagram: Get Profile Details",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "openWorldHint": true
-      }
-    },
-    {
-      "name": "instagram_get_profile_posts",
-      "title": "Instagram: Get Profile Posts",
-      "description": "List an Instagram profile's posts (photos, videos, carousels) with captions, like and comment counts and media URLs. Pass username (returns more results) or user_id. Returns an end_cursor for the next page. For reels only, use instagram_get_profile_reels. Pricing: 1 credit per call.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "username": {
-            "type": "string",
-            "description": "Instagram username (recommended — returns more results)"
+            "description": "For details: Instagram profile URL (alternative to username). For id: Instagram profile URL."
           },
           "user_id": {
             "type": "string",
-            "description": "Instagram user ID (alternative)"
+            "description": "For posts: Instagram user ID (alternative). For reels, highlights: Instagram user ID."
           },
           "end_cursor": {
             "type": "string",
-            "description": "Pagination cursor for next page"
-          }
-        },
-        "required": []
-      },
-      "outputSchema": {
-        "type": "object",
-        "properties": {
-          "result": {
-            "description": "JSON response from the SocialAPIs REST endpoint, unchanged. Object or array depending on the endpoint; most include a `meta` block (statusCode, duration, creditsCharged, creditsRemaining)."
+            "description": "For posts, reels: Pagination cursor for next page."
           },
-          "creditsCharged": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits charged for this call, or null if the endpoint did not report it."
-          },
-          "creditsRemaining": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits left on the API key after this call, or null if not reported."
-          }
-        },
-        "required": [
-          "result"
-        ]
-      },
-      "annotations": {
-        "title": "Instagram: Get Profile Posts",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "openWorldHint": true
-      }
-    },
-    {
-      "name": "instagram_get_profile_reels",
-      "title": "Instagram: Get Profile Reels",
-      "description": "List an Instagram profile's reels with play counts, captions, video URLs and audio metadata. Needs the numeric user_id from instagram_get_user_id. Returns an end_cursor for the next page. Pricing: 1 credit per call.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "user_id": {
-            "type": "string",
-            "description": "Instagram user ID"
-          },
-          "end_cursor": {
-            "type": "string",
-            "description": "Pagination cursor for next page"
-          }
-        },
-        "required": [
-          "user_id"
-        ]
-      },
-      "outputSchema": {
-        "type": "object",
-        "properties": {
-          "result": {
-            "description": "JSON response from the SocialAPIs REST endpoint, unchanged. Object or array depending on the endpoint; most include a `meta` block (statusCode, duration, creditsCharged, creditsRemaining)."
-          },
-          "creditsCharged": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits charged for this call, or null if the endpoint did not report it."
-          },
-          "creditsRemaining": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits left on the API key after this call, or null if not reported."
-          }
-        },
-        "required": [
-          "result"
-        ]
-      },
-      "annotations": {
-        "title": "Instagram: Get Profile Reels",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "openWorldHint": true
-      }
-    },
-    {
-      "name": "instagram_get_profile_highlights",
-      "title": "Instagram: Get Profile Highlights",
-      "description": "List an Instagram profile's story highlights with titles, cover images and highlight IDs. Needs the numeric user_id from instagram_get_user_id. Use instagram_get_highlight_details to get the stories in one highlight. Pricing: 1 credit per call.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "user_id": {
-            "type": "string",
-            "description": "Instagram user ID"
-          }
-        },
-        "required": [
-          "user_id"
-        ]
-      },
-      "outputSchema": {
-        "type": "object",
-        "properties": {
-          "result": {
-            "description": "JSON response from the SocialAPIs REST endpoint, unchanged. Object or array depending on the endpoint; most include a `meta` block (statusCode, duration, creditsCharged, creditsRemaining)."
-          },
-          "creditsCharged": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits charged for this call, or null if the endpoint did not report it."
-          },
-          "creditsRemaining": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits left on the API key after this call, or null if not reported."
-          }
-        },
-        "required": [
-          "result"
-        ]
-      },
-      "annotations": {
-        "title": "Instagram: Get Profile Highlights",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "openWorldHint": true
-      }
-    },
-    {
-      "name": "instagram_get_highlight_details",
-      "title": "Instagram: Get Highlight Details",
-      "description": "Get the stories inside one Instagram highlight. Needs a highlight_id from instagram_get_profile_highlights. Pricing: 1 credit per call.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
           "highlight_id": {
             "type": "string",
-            "description": "Highlight ID (from profile highlights endpoint)"
+            "description": "For highlight_details: Highlight ID (from profile highlights endpoint)."
           }
         },
         "required": [
-          "highlight_id"
+          "action"
         ]
       },
       "outputSchema": {
@@ -2238,74 +744,38 @@
         ]
       },
       "annotations": {
-        "title": "Instagram: Get Highlight Details",
+        "title": "Instagram: Profile",
         "readOnlyHint": true,
         "destructiveHint": false,
         "openWorldHint": true
       }
     },
     {
-      "name": "instagram_get_post_id",
-      "title": "Instagram: Get Post ID",
-      "description": "Extract the shortcode from an Instagram post or reel URL. instagram_get_post_details needs the shortcode. Pricing: 1 credit per call.",
+      "name": "instagram_post",
+      "title": "Instagram: Post",
+      "description": "Instagram posts: full post details, or the shortcode from a post URL.\n\nActions:\n- action=details: Get one Instagram post or reel in full: caption, media URLs, engagement counts, timestamp and owner. Needs the shortcode (the part after /p/ or /reel/ in the URL, or from action=id). Pricing: 1 credit per call. Requires: shortcode.\n- action=id: Extract the shortcode from an Instagram post or reel URL. action=details needs the shortcode. Pricing: 1 credit per call. Requires: link.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "link": {
+          "action": {
             "type": "string",
-            "description": "Instagram post URL"
-          }
-        },
-        "required": [
-          "link"
-        ]
-      },
-      "outputSchema": {
-        "type": "object",
-        "properties": {
-          "result": {
-            "description": "JSON response from the SocialAPIs REST endpoint, unchanged. Object or array depending on the endpoint; most include a `meta` block (statusCode, duration, creditsCharged, creditsRemaining)."
-          },
-          "creditsCharged": {
-            "type": [
-              "integer",
-              "null"
+            "enum": [
+              "details",
+              "id"
             ],
-            "description": "Credits charged for this call, or null if the endpoint did not report it."
+            "description": "Which operation to run. See the tool description for what each action returns and which parameters it needs."
           },
-          "creditsRemaining": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits left on the API key after this call, or null if not reported."
-          }
-        },
-        "required": [
-          "result"
-        ]
-      },
-      "annotations": {
-        "title": "Instagram: Get Post ID",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "openWorldHint": true
-      }
-    },
-    {
-      "name": "instagram_get_post_details",
-      "title": "Instagram: Get Post Details",
-      "description": "Get one Instagram post or reel in full: caption, media URLs, engagement counts, timestamp and owner. Needs the shortcode (the part after /p/ or /reel/ in the URL, or from instagram_get_post_id). Pricing: 1 credit per call.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
           "shortcode": {
             "type": "string",
-            "description": "Instagram post shortcode (e.g., DMF-GjGO0-q)"
+            "description": "For details: Instagram post shortcode (e.g., DMF-GjGO0-q)."
+          },
+          "link": {
+            "type": "string",
+            "description": "For id: Instagram post URL."
           }
         },
         "required": [
-          "shortcode"
+          "action"
         ]
       },
       "outputSchema": {
@@ -2334,76 +804,42 @@
         ]
       },
       "annotations": {
-        "title": "Instagram: Get Post Details",
+        "title": "Instagram: Post",
         "readOnlyHint": true,
         "destructiveHint": false,
         "openWorldHint": true
       }
     },
     {
-      "name": "instagram_get_reels_feed",
-      "title": "Instagram: Get Reels Feed",
-      "description": "Get Instagram's recommended and trending reels. Pass clips_media_id from a previous result to continue the feed or get similar reels by the same author. Not tied to a user; for one profile's reels use instagram_get_profile_reels. Pricing: 1 credit per call.",
+      "name": "instagram_reels",
+      "title": "Instagram: Reels",
+      "description": "Instagram Reels: the trending feed, or reels that use a given audio track.\n\nActions:\n- action=feed: Get Instagram's recommended and trending reels. Pass clips_media_id from a previous result to continue the feed or get similar reels by the same author. Not tied to a user; for one profile's reels use instagram_profile (action=reels). Pricing: 1 credit per call.\n- action=by_audio: List Instagram reels that use a given sound. Needs the audio_id (music/audio cluster ID) found in reel results' audio metadata. Pass max_id from the previous response for the next page. Pricing: 1 credit per call. Requires: audio_id.",
       "inputSchema": {
         "type": "object",
         "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "feed",
+              "by_audio"
+            ],
+            "description": "Which operation to run. See the tool description for what each action returns and which parameters it needs."
+          },
           "clips_media_id": {
             "type": "string",
-            "description": "Clip media ID for chaining/pagination (from previous response)"
-          }
-        },
-        "required": []
-      },
-      "outputSchema": {
-        "type": "object",
-        "properties": {
-          "result": {
-            "description": "JSON response from the SocialAPIs REST endpoint, unchanged. Object or array depending on the endpoint; most include a `meta` block (statusCode, duration, creditsCharged, creditsRemaining)."
+            "description": "For feed: Clip media ID for chaining/pagination (from previous response)."
           },
-          "creditsCharged": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits charged for this call, or null if the endpoint did not report it."
-          },
-          "creditsRemaining": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits left on the API key after this call, or null if not reported."
-          }
-        },
-        "required": [
-          "result"
-        ]
-      },
-      "annotations": {
-        "title": "Instagram: Get Reels Feed",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "openWorldHint": true
-      }
-    },
-    {
-      "name": "instagram_get_reels_by_audio",
-      "title": "Instagram: Get Reels by Audio",
-      "description": "List Instagram reels that use a given sound. Needs the audio_id (music/audio cluster ID) found in reel results' audio metadata. Pass max_id from the previous response for the next page. Pricing: 1 credit per call.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
           "audio_id": {
             "type": "string",
-            "description": "Audio cluster ID (music ID)"
+            "description": "For by_audio: Audio cluster ID (music ID)."
           },
           "max_id": {
             "type": "string",
-            "description": "Pagination cursor for next page"
+            "description": "For by_audio: Pagination cursor for next page."
           }
         },
         "required": [
-          "audio_id"
+          "action"
         ]
       },
       "outputSchema": {
@@ -2432,16 +868,16 @@
         ]
       },
       "annotations": {
-        "title": "Instagram: Get Reels by Audio",
+        "title": "Instagram: Reels",
         "readOnlyHint": true,
         "destructiveHint": false,
         "openWorldHint": true
       }
     },
     {
-      "name": "instagram_popular_search",
-      "title": "Instagram: Popular Search",
-      "description": "Search Instagram by keyword and get the top matching users, hashtags and places. Use it to find a username, or a place's location_id for instagram_get_location_posts. Returns an end_cursor for more. Pricing: 1 credit per call.",
+      "name": "instagram_search",
+      "title": "Instagram: Search",
+      "description": "Search Instagram by keyword and get the top matching users, hashtags and places. Use it to find a username, or a place's location_id for instagram_location (action=posts). Returns an end_cursor for more. Pricing: 1 credit per call. Requires: keyword.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -2484,34 +920,42 @@
         ]
       },
       "annotations": {
-        "title": "Instagram: Popular Search",
+        "title": "Instagram: Search",
         "readOnlyHint": true,
         "destructiveHint": false,
         "openWorldHint": true
       }
     },
     {
-      "name": "instagram_get_location_posts",
-      "title": "Instagram: Get Location Posts",
-      "description": "List Instagram posts tagged at a location: top posts (tab=ranked) or most recent (tab=recent). Needs a location_id, e.g. from a place in instagram_popular_search. Returns an end_cursor for the next page. Pricing: 1 credit per call.",
+      "name": "instagram_location",
+      "title": "Instagram: Location",
+      "description": "Instagram locations: posts tagged at a place, and nearby places.\n\nActions:\n- action=posts: List Instagram posts tagged at a location: top posts (tab=ranked) or most recent (tab=recent). Needs a location_id, e.g. from a place in instagram_search (action=search). Returns an end_cursor for the next page. Pricing: 1 credit per call. Requires: location_id.\n- action=nearby: List Instagram places near a given location, with name, category, coordinates and post count. Needs a location_id, e.g. from a place in instagram_search (action=search). Pricing: 1 credit per call. Requires: location_id.",
       "inputSchema": {
         "type": "object",
         "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "posts",
+              "nearby"
+            ],
+            "description": "Which operation to run. See the tool description for what each action returns and which parameters it needs."
+          },
           "location_id": {
             "type": "string",
-            "description": "Instagram location ID"
+            "description": "For posts, nearby: Instagram location ID."
           },
           "tab": {
             "type": "string",
-            "description": "Filter: \"recent\" or \"ranked\""
+            "description": "For posts: Filter: \"recent\" or \"ranked\"."
           },
           "end_cursor": {
             "type": "string",
-            "description": "Pagination cursor for next page"
+            "description": "For posts: Pagination cursor for next page."
           }
         },
         "required": [
-          "location_id"
+          "action"
         ]
       },
       "outputSchema": {
@@ -2540,61 +984,13 @@
         ]
       },
       "annotations": {
-        "title": "Instagram: Get Location Posts",
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "openWorldHint": true
-      }
-    },
-    {
-      "name": "instagram_get_nearby_locations",
-      "title": "Instagram: Get Nearby Locations",
-      "description": "List Instagram places near a given location, with name, category, coordinates and post count. Needs a location_id, e.g. from a place in instagram_popular_search. Pricing: 1 credit per call.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "location_id": {
-            "type": "string",
-            "description": "Instagram location ID"
-          }
-        },
-        "required": [
-          "location_id"
-        ]
-      },
-      "outputSchema": {
-        "type": "object",
-        "properties": {
-          "result": {
-            "description": "JSON response from the SocialAPIs REST endpoint, unchanged. Object or array depending on the endpoint; most include a `meta` block (statusCode, duration, creditsCharged, creditsRemaining)."
-          },
-          "creditsCharged": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits charged for this call, or null if the endpoint did not report it."
-          },
-          "creditsRemaining": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Credits left on the API key after this call, or null if not reported."
-          }
-        },
-        "required": [
-          "result"
-        ]
-      },
-      "annotations": {
-        "title": "Instagram: Get Nearby Locations",
+        "title": "Instagram: Location",
         "readOnlyHint": true,
         "destructiveHint": false,
         "openWorldHint": true
       }
     }
   ],
-  "version": "1.2.1",
+  "version": "2.0.0",
   "authorUrl": "https://github.com/SocialAPIsHub"
 }
