@@ -6,7 +6,7 @@
     "url": "https://github.com/SocialAPIsHub/mcp-server",
     "source": "github"
   },
-  "version": "1.2.0",
+  "version": "1.2.1",
   "homepage": "https://socialapis.io",
   "license": "MIT",
   "tags": [
@@ -27,7 +27,7 @@
     {
       "registryType": "npm",
       "identifier": "@socialapis/mcp",
-      "version": "1.2.0",
+      "version": "1.2.1",
       "transport": {
         "type": "stdio"
       },
