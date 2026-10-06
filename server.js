@@ -7,12 +7,13 @@ import {
   ListToolsRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 import { tools } from './src/tools.js';
+import { groupedTools, resolveCall } from './src/groups.js';
 import { SERVER_IDENTITY, enrichTool, buildStructuredResult } from './src/toolMeta.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 const API_BASE_URL = process.env.API_BASE_URL || 'https://api.socialapis.io';
-const SERVER_VERSION = '1.2.1';
+const SERVER_VERSION = '2.0.0';
 
 // Upstream scraping calls can take up to ~85s (api-scraping axios timeout).
 // Give the backend fetch a little more so we return the API's own error
@@ -41,25 +42,24 @@ const publicTools = tools.map((tool) => ({
 }));
 
 // Full definitions (title, annotations, outputSchema) for the hosted /mcp
-// endpoint and npm client >= 1.2.0.
-const fullTools = tools.map(enrichTool);
+// endpoint and npm client >= 1.2.0: the 12 grouped tools (src/groups.js).
+// The 47 per-endpoint names above stay callable through resolveCall.
+const fullTools = groupedTools.map(enrichTool);
 
 /**
  * Call the SocialAPIs REST backend for one tool invocation.
  * Shared by the legacy /proxy route (used by the npm stdio client) and the
- * hosted /mcp endpoint, so both paths hit the API identically.
+ * hosted /mcp endpoint, so both paths hit the API identically. Accepts a
+ * grouped tool name with an `action` argument, or one of the 47 legacy names.
  *
  * @returns {{ status: number, ok: boolean, data: any }}
  */
-async function callBackend(toolName, args, apiKey) {
-  const toolDef = tools.find((t) => t.name === toolName);
-  if (!toolDef) {
-    return {
-      status: 404,
-      ok: false,
-      data: { error: `Tool not found: ${toolName}`, available_tools: tools.map((t) => t.name) },
-    };
+async function callBackend(toolName, rawArgs, apiKey) {
+  const resolved = resolveCall(toolName, rawArgs);
+  if (resolved.error) {
+    return { status: 400, ok: false, data: { error: resolved.error } };
   }
+  const { tool: toolDef, args } = resolved;
 
   const url = new URL(toolDef.endpoint, API_BASE_URL);
   if (toolDef.method === 'GET' && args) {
@@ -149,7 +149,8 @@ app.get('/health', (req, res) => {
     status: 'ok',
     service: 'socialapis-mcp-server',
     version: SERVER_VERSION,
-    tools: tools.length,
+    tools: fullTools.length,
+    actions: tools.length,
   });
 });
 
