@@ -13,7 +13,7 @@ import { SERVER_IDENTITY, enrichTool, buildStructuredResult } from './src/toolMe
 const app = express();
 const PORT = process.env.PORT || 3001;
 const API_BASE_URL = process.env.API_BASE_URL || 'https://api.socialapis.io';
-const SERVER_VERSION = '2.0.0';
+const SERVER_VERSION = '2.0.1';
 
 // Upstream scraping calls can take up to ~85s (api-scraping axios timeout).
 // Give the backend fetch a little more so we return the API's own error

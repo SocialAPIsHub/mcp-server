@@ -23,7 +23,7 @@
     {
       "name": "facebook_page",
       "title": "Facebook: Page",
-      "description": "Facebook pages: profile details, page ID, posts, videos and reels.\n\nActions:\n- action=details: Get a Facebook page's profile: name, category, follower and like counts, bio, contact info (email, phone, website, address), rating and the ad_page_id used by the Ads Library tools. Use it when you have the page URL; to find a page by name, use facebook_search (action=pages) first. Pricing: 1 credit per call; 5 credits when exact_followers_count=true. Requires: link.\n- action=id: Resolve a Facebook page URL to its numeric page ID. Use it when another tool needs a page or profile ID; use action=details for the page's data. Pricing: 1 credit per call. Requires: link.\n- action=posts: List a Facebook page's recent posts, newest first, with text, media, reactions, comment and share counts. Returns 3-9 posts per call plus an end_cursor for the next page; filter by date with after_time / before_time. For reels or videos only, use action=reels or action=videos. Pricing: ceil(posts_returned / 3) credits per call, minimum 1. Requires: link.\n- action=videos: List videos uploaded to a Facebook page, with video_id, title, duration, view count and thumbnail. Provide the page URL (link) or its numeric profile_id. Returns an end_cursor for the next page. For short-form reels, use action=reels. Pricing: 1 credit per call.\n- action=reels: List a Facebook page's reels (short-form videos). Returns an end_cursor for the next page. For long-form videos, use action=videos. Pricing: 1 credit per call. Requires: link.",
+      "description": "Facebook pages: profile details, page ID, posts, videos and reels.\n\nActions:\n- action=details: Get a Facebook page's profile: name, category, follower and like counts, bio, contact info (email, phone, website, address), rating and the ad_page_id used by the Ads Library tools. Use it when you have the page URL; to find a page by name, use facebook_search (action=pages) first. Pricing: 1 credit per call; 5 credits when exact_followers_count=true. Inputs: link (required), exact_followers_count (optional).\n- action=id: Resolve a Facebook page URL to its numeric page ID. Use it when another tool needs a page or profile ID; use action=details for the page's data. Pricing: 1 credit per call. Inputs: link (required).\n- action=posts: List a Facebook page's recent posts, newest first, with text, media, reactions, comment and share counts. Returns 3-9 posts per call plus an end_cursor for the next page; filter by date with after_time / before_time. For reels or videos only, use action=reels or action=videos. Pricing: ceil(posts_returned / 3) credits per call, minimum 1. Inputs: link (required), limit (optional), end_cursor (optional), after_time (optional), before_time (optional), timezone (optional).\n- action=videos: List videos uploaded to a Facebook page, with video_id, title, duration, view count and thumbnail. Provide the page URL (link) or its numeric profile_id. Returns an end_cursor for the next page. For short-form reels, use action=reels. Pricing: 1 credit per call. Inputs: link (optional), profile_id (optional), limit (optional), end_cursor (optional).\n- action=reels: List a Facebook page's reels (short-form videos). Returns an end_cursor for the next page. For long-form videos, use action=videos. Pricing: 1 credit per call. Inputs: link (required), end_cursor (optional).",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -40,37 +40,37 @@
           },
           "link": {
             "type": "string",
-            "description": "For details, posts, videos, reels: Facebook page URL. For id: Facebook page URL (e.g., https://facebook.com/nike)."
+            "description": "details, posts, reels (required): Facebook page URL. id (required): Facebook page URL (e.g., https://facebook.com/nike). videos (optional): Facebook page URL."
           },
           "exact_followers_count": {
             "type": "boolean",
-            "description": "For details: When true, performs a deeper scrape to return the exact follower count (e.g. 38,493,217 instead of \"38M\"). Charges 5 credits when true, 1 credit otherwise. Default: false."
+            "description": "details (optional): When true, performs a deeper scrape to return the exact follower count (e.g. 38,493,217 instead of \"38M\"). Charges 5 credits when true, 1 credit otherwise. Default: false."
           },
           "limit": {
             "type": "number",
             "minimum": 3,
             "maximum": 12,
-            "description": "For posts: Maximum number of posts to return. Default: 3. Minimum: 3. Maximum: 9. For videos: Maximum number of videos to return. Default: 6. Minimum: 6. Maximum: 12."
+            "description": "posts (optional): Maximum number of posts to return. Default: 3. Minimum: 3. Maximum: 9. videos (optional): Maximum number of videos to return. Default: 6. Minimum: 6. Maximum: 12."
           },
           "end_cursor": {
             "type": "string",
-            "description": "For posts: Pagination cursor for next page of results. For videos, reels: Pagination cursor."
+            "description": "posts (optional): Pagination cursor for next page of results. videos, reels (optional): Pagination cursor."
           },
           "after_time": {
             "type": "string",
-            "description": "For posts: ISO 8601 timestamp - only return posts after this time."
+            "description": "posts (optional): ISO 8601 timestamp - only return posts after this time."
           },
           "before_time": {
             "type": "string",
-            "description": "For posts: ISO 8601 timestamp - only return posts before this time."
+            "description": "posts (optional): ISO 8601 timestamp - only return posts before this time."
           },
           "timezone": {
             "type": "string",
-            "description": "For posts: Timezone for timestamps (e.g., UTC, America/New_York)."
+            "description": "posts (optional): Timezone for timestamps (e.g., UTC, America/New_York)."
           },
           "profile_id": {
             "type": "string",
-            "description": "For videos: Facebook profile ID (alternative to link)."
+            "description": "videos (optional): Facebook profile ID (alternative to link)."
           }
         },
         "required": [
@@ -112,7 +112,7 @@
     {
       "name": "facebook_group",
       "title": "Facebook: Group",
-      "description": "Public Facebook groups: details, group ID, posts and videos.\n\nActions:\n- action=details: Get a public Facebook group's profile: name, description, member count, privacy, rules and activity stats. Use action=posts for its posts. Pricing: 1 credit per call. Requires: link.\n- action=id: Resolve a Facebook group URL to its numeric group ID. Use action=details for the group's data. Pricing: 1 credit per call. Requires: link.\n- action=posts: List recent posts from a public Facebook group, with text, media, author, reactions and comment counts. Returns 3-9 posts per call plus an end_cursor for the next page; filter by date with after_time / before_time. Pricing: ceil(posts_returned / 3) credits per call, minimum 1. Requires: link.\n- action=videos: List videos posted in a public Facebook group, with video_id, title, duration, view count and thumbnail. Returns an end_cursor for the next page. Pricing: 1 credit per call. Requires: link.",
+      "description": "Public Facebook groups: details, group ID, posts and videos.\n\nActions:\n- action=details: Get a public Facebook group's profile: name, description, member count, privacy, rules and activity stats. Use action=posts for its posts. Pricing: 1 credit per call. Inputs: link (required).\n- action=id: Resolve a Facebook group URL to its numeric group ID. Use action=details for the group's data. Pricing: 1 credit per call. Inputs: link (required).\n- action=posts: List recent posts from a public Facebook group, with text, media, author, reactions and comment counts. Returns 3-9 posts per call plus an end_cursor for the next page; filter by date with after_time / before_time. Pricing: ceil(posts_returned / 3) credits per call, minimum 1. Inputs: link (required), limit (optional), end_cursor (optional), after_time (optional), before_time (optional), timezone (optional).\n- action=videos: List videos posted in a public Facebook group, with video_id, title, duration, view count and thumbnail. Returns an end_cursor for the next page. Pricing: 1 credit per call. Inputs: link (required), end_cursor (optional).",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -128,29 +128,29 @@
           },
           "link": {
             "type": "string",
-            "description": "For details, id, posts, videos: Facebook group URL."
+            "description": "details, id, posts, videos (required): Facebook group URL."
           },
           "limit": {
             "type": "number",
             "minimum": 3,
             "maximum": 9,
-            "description": "For posts: Maximum number of posts to return. Default: 3. Minimum: 3. Maximum: 9."
+            "description": "posts (optional): Maximum number of posts to return. Default: 3. Minimum: 3. Maximum: 9."
           },
           "end_cursor": {
             "type": "string",
-            "description": "For posts, videos: Pagination cursor."
+            "description": "posts, videos (optional): Pagination cursor."
           },
           "after_time": {
             "type": "string",
-            "description": "For posts: ISO 8601 timestamp."
+            "description": "posts (optional): ISO 8601 timestamp."
           },
           "before_time": {
             "type": "string",
-            "description": "For posts: ISO 8601 timestamp."
+            "description": "posts (optional): ISO 8601 timestamp."
           },
           "timezone": {
             "type": "string",
-            "description": "For posts: IANA timezone for returned timestamps, e.g. UTC or America/New_York. Default: UTC."
+            "description": "posts (optional): IANA timezone for returned timestamps, e.g. UTC or America/New_York. Default: UTC."
           }
         },
         "required": [
@@ -192,7 +192,7 @@
     {
       "name": "facebook_post",
       "title": "Facebook: Post",
-      "description": "Facebook posts, videos and comments: post details, attachments, comments and replies.\n\nActions:\n- action=details: Get a Facebook post's text, author, timestamp, media, and reaction, comment and share counts. Start here for any post. If you need view counts, video download URLs or audio metadata (common for reels and videos), use action=details_extended instead. Pricing: 1 credit per call. Requires: link.\n- action=details_extended: Get everything action=details returns plus view counts, HD/SD video URLs, music/audio metadata and author verification status. Use it for reels and video posts, or when the standard details lack view_count, video_hd_src or attached_track. Pricing: 1 credit per call. Requires: link.\n- action=id: Extract the numeric post ID from a Facebook post URL. Use it to get the post_id that action=attachments needs. Pricing: 1 credit per call. Requires: link.\n- action=attachments: List every media attachment (images and videos, with URLs and dimensions) on a Facebook post, including all items in multi-photo posts. Needs the numeric post_id from action=id. For the post's text and engagement, use action=details. Pricing: 5 credits per call (deeper scrape than standard post details). Requires: post_id.\n- action=video: Get a Facebook video post's metadata: title, message text and hashtags, owner, reactions and view count. Needs the numeric video_id (the number in a facebook.com/.../videos/<id> URL, or from facebook_page (action=videos)). Pricing: 1 credit per call. Requires: video_id.\n- action=comments: List top-level comments on a Facebook post or reel, with author, text, timestamp and reaction count. Returns up to 30 per call plus an end_cursor for the next page. Set include_reply_info=true to get the comment_feedback_id and expansion_token that action=comment_replies needs. Pricing: 1 credit per call. Requires: link.\n- action=comment_replies: List replies to one Facebook comment. Needs comment_feedback_id and expansion_token, which action=comments returns when called with include_reply_info=true. Pricing: 1 credit per call. Requires: comment_feedback_id, expansion_token.",
+      "description": "Facebook posts, videos and comments: post details, attachments, comments and replies.\n\nActions:\n- action=details: Get a Facebook post's text, author, timestamp, media, and reaction, comment and share counts. Start here for any post. If you need view counts, video download URLs or audio metadata (common for reels and videos), use action=details_extended instead. Pricing: 1 credit per call. Inputs: link (required).\n- action=details_extended: Get everything action=details returns plus view counts, HD/SD video URLs, music/audio metadata and author verification status. Use it for reels and video posts, or when the standard details lack view_count, video_hd_src or attached_track. Pricing: 1 credit per call. Inputs: link (required).\n- action=id: Extract the numeric post ID from a Facebook post URL. Use it to get the post_id that action=attachments needs. Pricing: 1 credit per call. Inputs: link (required).\n- action=attachments: List every media attachment (images and videos, with URLs and dimensions) on a Facebook post, including all items in multi-photo posts. Needs the numeric post_id from action=id. For the post's text and engagement, use action=details. Pricing: 5 credits per call (deeper scrape than standard post details). Inputs: post_id (required).\n- action=video: Get a Facebook video post's metadata: title, message text and hashtags, owner, reactions and view count. Needs the numeric video_id (the number in a facebook.com/.../videos/<id> URL, or from facebook_page (action=videos)). Pricing: 1 credit per call. Inputs: video_id (required).\n- action=comments: List top-level comments on a Facebook post or reel, with author, text, timestamp and reaction count. Returns up to 30 per call plus an end_cursor for the next page. Set include_reply_info=true to get the comment_feedback_id and expansion_token that action=comment_replies needs. Pricing: 1 credit per call. Inputs: link (required), limit (optional), end_cursor (optional), include_reply_info (optional).\n- action=comment_replies: List replies to one Facebook comment. Needs comment_feedback_id and expansion_token, which action=comments returns when called with include_reply_info=true. Pricing: 1 credit per call. Inputs: comment_feedback_id (required), expansion_token (required).",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -211,36 +211,36 @@
           },
           "link": {
             "type": "string",
-            "description": "For details, id: Facebook post URL. For details_extended: Facebook post URL (works for reels, video posts, and regular posts). For comments: Facebook post or reel URL."
+            "description": "details, id (required): Facebook post URL. details_extended (required): Facebook post URL (works for reels, video posts, and regular posts). comments (required): Facebook post or reel URL."
           },
           "post_id": {
             "type": "string",
-            "description": "For attachments: Numeric Facebook post ID, from action=id."
+            "description": "attachments (required): Numeric Facebook post ID, from action=id."
           },
           "video_id": {
             "type": "string",
-            "description": "For video: Numeric Facebook video ID, e.g. the number in a facebook.com/.../videos/<id> URL."
+            "description": "video (required): Numeric Facebook video ID, e.g. the number in a facebook.com/.../videos/<id> URL."
           },
           "limit": {
             "type": "number",
             "maximum": 30,
-            "description": "For comments: Maximum number of comments to return. Default: 10. Maximum: 30."
+            "description": "comments (optional): Maximum number of comments to return. Default: 10. Maximum: 30."
           },
           "end_cursor": {
             "type": "string",
-            "description": "For comments: Pagination cursor for next page of comments."
+            "description": "comments (optional): Pagination cursor for next page of comments."
           },
           "include_reply_info": {
             "type": "string",
-            "description": "For comments: When \"true\", includes comment_feedback_id and expansion_token for fetching replies."
+            "description": "comments (optional): When \"true\", includes comment_feedback_id and expansion_token for fetching replies."
           },
           "comment_feedback_id": {
             "type": "string",
-            "description": "For comment_replies: Feedback ID from the comments endpoint with include_reply_info=true."
+            "description": "comment_replies (required): Feedback ID from the comments endpoint with include_reply_info=true."
           },
           "expansion_token": {
             "type": "string",
-            "description": "For comment_replies: Expansion token from the comments endpoint with include_reply_info=true."
+            "description": "comment_replies (required): Expansion token from the comments endpoint with include_reply_info=true."
           }
         },
         "required": [
@@ -282,7 +282,7 @@
     {
       "name": "facebook_search",
       "title": "Facebook: Search",
-      "description": "Search Facebook by keyword: pages, people, posts, videos and locations.\n\nActions:\n- action=pages: Find Facebook pages by keyword (brand, business or topic name), optionally near a location. Returns page names, URLs, categories and follower counts, 3 per call, plus an end_cursor. Use it when you don't have the page URL; then call facebook_page (action=details) with a result's URL. For locations, get a location_uid from action=locations. Pricing: 1 credit per call. Requires: query.\n- action=people: Find public Facebook profiles by name or keyword, optionally near a location (location_uid from action=locations). Returns names, profile URLs and pictures, plus work, education and location where public, and an end_cursor. Pricing: 1 credit per call. Requires: query.\n- action=posts: Search public Facebook posts by keyword, optionally filtered by location (location_uid from action=locations) and date range. Returns posts with text, author and engagement, plus an end_cursor. To list one page's posts, use facebook_page (action=posts) instead. Pricing: 1 credit per call. Requires: query.\n- action=videos: Search public Facebook videos by keyword, optionally most recent first or live videos only. Returns video titles, URLs and view counts, plus an end_cursor. Pricing: 1 credit per call. Requires: query.\n- action=locations: Look up Facebook places by name (city, region, venue) and get their location_uid. The location_uid is only used to filter action=pages, action=people and action=posts; it is not a Marketplace location (use facebook_marketplace (action=city_coordinates) for that). Pricing: 1 credit per call. Requires: query.",
+      "description": "Search Facebook by keyword: pages, people, posts, videos and locations.\n\nActions:\n- action=pages: Find Facebook pages by keyword (brand, business or topic name), optionally near a location. Returns page names, URLs, categories and follower counts, 3 per call, plus an end_cursor. Use it when you don't have the page URL; then call facebook_page (action=details) with a result's URL. For locations, get a location_uid from action=locations. Pricing: 1 credit per call. Inputs: query (required), location_uid (optional), end_cursor (optional).\n- action=people: Find public Facebook profiles by name or keyword, optionally near a location (location_uid from action=locations). Returns names, profile URLs and pictures, plus work, education and location where public, and an end_cursor. Pricing: 1 credit per call. Inputs: query (required), location_uid (optional), end_cursor (optional).\n- action=posts: Search public Facebook posts by keyword, optionally filtered by location (location_uid from action=locations) and date range. Returns posts with text, author and engagement, plus an end_cursor. To list one page's posts, use facebook_page (action=posts) instead. Pricing: 1 credit per call. Inputs: query (required), location_uid (optional), start_time (optional), end_time (optional), recent_posts (optional), end_cursor (optional).\n- action=videos: Search public Facebook videos by keyword, optionally most recent first or live videos only. Returns video titles, URLs and view counts, plus an end_cursor. Pricing: 1 credit per call. Inputs: query (required), most_recent (optional), videos_live (optional), fields (optional), end_cursor (optional).\n- action=locations: Look up Facebook places by name (city, region, venue) and get their location_uid. The location_uid is only used to filter action=pages, action=people and action=posts; it is not a Marketplace location (use facebook_marketplace (action=city_coordinates) for that). Pricing: 1 credit per call. Inputs: query (required).",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -299,39 +299,39 @@
           },
           "query": {
             "type": "string",
-            "description": "For pages: Keyword to search for, e.g. a brand or business name. For people: Name or keyword to search for. For posts: Keyword or phrase to search post text for. For videos: Keyword or phrase to search videos for. For locations: Search query (city, place, landmark)."
+            "description": "pages (required): Keyword to search for, e.g. a brand or business name. people (required): Name or keyword to search for. posts (required): Keyword or phrase to search post text for. videos (required): Keyword or phrase to search videos for. locations (required): Search query (city, place, landmark)."
           },
           "location_uid": {
             "type": "string",
-            "description": "For pages: Location UID for filtering (from search/locations endpoint). For people, posts: Location UID for filtering."
+            "description": "pages (optional): Location UID for filtering (from search/locations endpoint). people, posts (optional): Location UID for filtering."
           },
           "end_cursor": {
             "type": "string",
-            "description": "For pages, people, posts, videos: Pagination cursor."
+            "description": "pages, people, posts, videos (optional): Pagination cursor."
           },
           "start_time": {
             "type": "string",
-            "description": "For posts: Filter posts after this date (YYYY-MM-DD)."
+            "description": "posts (optional): Filter posts after this date (YYYY-MM-DD)."
           },
           "end_time": {
             "type": "string",
-            "description": "For posts: Filter posts before this date (YYYY-MM-DD)."
+            "description": "posts (optional): Filter posts before this date (YYYY-MM-DD)."
           },
           "recent_posts": {
             "type": "string",
-            "description": "For posts: When \"true\", shows only recent posts."
+            "description": "posts (optional): When \"true\", shows only recent posts."
           },
           "most_recent": {
             "type": "string",
-            "description": "For videos: When \"true\", shows most recent videos first."
+            "description": "videos (optional): When \"true\", shows most recent videos first."
           },
           "videos_live": {
             "type": "string",
-            "description": "For videos: When \"true\", filters for live videos only."
+            "description": "videos (optional): When \"true\", filters for live videos only."
           },
           "fields": {
             "type": "string",
-            "description": "For videos: Comma-separated list of response fields to include."
+            "description": "videos (optional): Comma-separated list of response fields to include."
           }
         },
         "required": [
@@ -373,7 +373,7 @@
     {
       "name": "facebook_ads",
       "title": "Facebook: Ads",
-      "description": "Meta Ads Library: search ads, find advertisers by keyword, advertiser page details, single ad details and supported countries.\n\nActions:\n- action=search: Search ads in the Meta Ad Library. Pass a keyword (query) to find ads about a topic, or ad_page_id to list one advertiser's ads; filter by country, active status and date range, sort by impressions or recency. Returns ads with creative, body text, dates, platforms and snapshot URL, plus an end_cursor. Get an advertiser's ad_page_id from action=keywords or facebook_page (action=details). Pricing: 1 credit per call.\n- action=keywords: Find advertisers running ads that match a keyword: returns Facebook pages with their page_id and ad count. Use it to discover who advertises on a topic, then pass a page_id to action=search (as ad_page_id) or action=page_details. To get the ads for a keyword directly, use action=search. Pricing: 1 credit per call. Requires: query.\n- action=page_details: Get an advertiser's Ads Library profile: page name, verification status, category, location and total ad count. Needs the page ID (ad_page_id from facebook_page (action=details) or page_id from action=keywords). To list the ads themselves, use action=search with ad_page_id. Pricing: 1 credit per call. Requires: page_id.\n- action=archive_details: Get one Ad Library ad in full: creative, body text, CTA, platforms, countries, date range, and spend and impression estimates where Meta publishes them. Needs the ad_archive_id from a action=search result. Pricing: 1 credit per call. Requires: ad_archive_id.\n- action=countries: List the country codes the Ads Library tools accept in their country parameter. Pricing: 1 credit per call.",
+      "description": "Meta Ads Library: search ads, find advertisers by keyword, advertiser page details, single ad details and supported countries.\n\nActions:\n- action=search: Search ads in the Meta Ad Library. Pass a keyword (query) to find ads about a topic, or ad_page_id to list one advertiser's ads; filter by country, active status and date range, sort by impressions or recency. Returns ads with creative, body text, dates, platforms and snapshot URL, plus an end_cursor. Get an advertiser's ad_page_id from action=keywords or facebook_page (action=details). Pricing: 1 credit per call. Inputs: query (optional), ad_page_id (optional), country (optional), activeStatus (optional), after_time (optional), before_time (optional), sort_data (optional), end_cursor (optional).\n- action=keywords: Find advertisers running ads that match a keyword: returns Facebook pages with their page_id and ad count. Use it to discover who advertises on a topic, then pass a page_id to action=search (as ad_page_id) or action=page_details. To get the ads for a keyword directly, use action=search. Pricing: 1 credit per call. Inputs: query (required), country (optional).\n- action=page_details: Get an advertiser's Ads Library profile: page name, verification status, category, location and total ad count. Needs the page ID (ad_page_id from facebook_page (action=details) or page_id from action=keywords). To list the ads themselves, use action=search with ad_page_id. Pricing: 1 credit per call. Inputs: page_id (required).\n- action=archive_details: Get one Ad Library ad in full: creative, body text, CTA, platforms, countries, date range, and spend and impression estimates where Meta publishes them. Needs the ad_archive_id from a action=search result. Pricing: 1 credit per call. Inputs: ad_archive_id (required), page_id (optional), country (optional), is_ad_non_political (optional), is_ad_not_aaa_eligible (optional).\n- action=countries: List the country codes the Ads Library tools accept in their country parameter. Pricing: 1 credit per call. Inputs: none.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -390,51 +390,51 @@
           },
           "query": {
             "type": "string",
-            "description": "For search: Search keyword for ads. For keywords: Keyword to find advertisers for, e.g. running shoes."
+            "description": "search (optional): Search keyword for ads. keywords (required): Keyword to find advertisers for, e.g. running shoes."
           },
           "ad_page_id": {
             "type": "string",
-            "description": "For search: Facebook AD Page ID (alternative to query)."
+            "description": "search (optional): Facebook AD Page ID (alternative to query)."
           },
           "country": {
             "type": "string",
-            "description": "For search, keywords, archive_details: ISO country code or \"ALL\"."
+            "description": "search, keywords, archive_details (optional): ISO country code or \"ALL\"."
           },
           "activeStatus": {
             "type": "string",
-            "description": "For search: Filter: ALL, Active, or Inactive."
+            "description": "search (optional): Filter: ALL, Active, or Inactive."
           },
           "after_time": {
             "type": "string",
-            "description": "For search: Filter ads after this date (YYYY-MM-DD)."
+            "description": "search (optional): Filter ads after this date (YYYY-MM-DD)."
           },
           "before_time": {
             "type": "string",
-            "description": "For search: Filter ads before this date (YYYY-MM-DD)."
+            "description": "search (optional): Filter ads before this date (YYYY-MM-DD)."
           },
           "sort_data": {
             "type": "string",
-            "description": "For search: Sort by \"impressions\" or \"recent\"."
+            "description": "search (optional): Sort by \"impressions\" or \"recent\"."
           },
           "end_cursor": {
             "type": "string",
-            "description": "For search: Pagination cursor."
+            "description": "search (optional): Pagination cursor."
           },
           "page_id": {
             "type": "string",
-            "description": "For page_details: Advertiser page ID: ad_page_id from facebook_page (action=details), or page_id from action=keywords. For archive_details: Facebook Page ID."
+            "description": "page_details (required): Advertiser page ID: ad_page_id from facebook_page (action=details), or page_id from action=keywords. archive_details (optional): Facebook Page ID."
           },
           "ad_archive_id": {
             "type": "string",
-            "description": "For archive_details: Ad Library archive ID of the ad (ad_archive_id from a action=search result)."
+            "description": "archive_details (required): Ad Library archive ID of the ad (ad_archive_id from a action=search result)."
           },
           "is_ad_non_political": {
             "type": "string",
-            "description": "For archive_details: Filter non-political ads."
+            "description": "archive_details (optional): Filter non-political ads."
           },
           "is_ad_not_aaa_eligible": {
             "type": "string",
-            "description": "For archive_details: Filter AAA eligibility."
+            "description": "archive_details (optional): Filter AAA eligibility."
           }
         },
         "required": [
@@ -476,7 +476,7 @@
     {
       "name": "facebook_marketplace",
       "title": "Facebook: Marketplace",
-      "description": "Facebook Marketplace: search listings, vehicles and rentals, listing and seller details, categories and city coordinates.\n\nActions:\n- action=search: Search general Facebook Marketplace listings (items for sale) by keyword or category near a location, with price, condition, radius and sort filters. Returns listings with their listing_id, plus an end_cursor. For cars and other vehicles use action=vehicles; for homes and rooms to rent use action=rentals. Get coordinates from action=city_coordinates. Pricing: 1 credit per call.\n- action=vehicles: Search Facebook Marketplace vehicle listings (cars, trucks, motorcycles) near a location, with price, radius and seller-type filters. Returns listings with title, price, mileage, year and listing_id, plus an end_cursor. For non-vehicle items, use action=search. Pricing: 1 credit per call.\n- action=rentals: Search Facebook Marketplace rental listings (apartments, houses, rooms) near a location, with price, bedroom, bathroom and radius filters. Returns rental listings with their listing_id, plus an end_cursor. For items for sale, use action=search. Pricing: 1 credit per call.\n- action=listing: Get one Marketplace listing in full: title, price, description, condition, all photos, location and seller. Needs the listing_id from a Marketplace search result. Pricing: 1 credit per call. Requires: listing_id.\n- action=seller: Get a Marketplace seller's profile: name, join date, rating, review count and badges. Needs the seller_id from action=listing. Pricing: 1 credit per call. Requires: seller_id.\n- action=categories: List Marketplace categories with their IDs and category_url values. Use a category_url to filter action=search. Pricing: 1 credit per call.\n- action=city_coordinates: Convert a city name to the latitude and longitude that the Marketplace search tools expect in filter_location_latitude / filter_location_longitude. Pricing: 1 credit per call. Requires: city.",
+      "description": "Facebook Marketplace: search listings, vehicles and rentals, listing and seller details, categories and city coordinates.\n\nActions:\n- action=search: Search general Facebook Marketplace listings (items for sale) by keyword or category near a location, with price, condition, radius and sort filters. Returns listings with their listing_id, plus an end_cursor. For cars and other vehicles use action=vehicles; for homes and rooms to rent use action=rentals. Get coordinates from action=city_coordinates. Pricing: 1 credit per call. Inputs: query (optional), category_url (optional), commerce_search_sort_by (optional), commerce_search_and_rp_condition (optional), filter_location_latitude (optional), filter_location_longitude (optional), filter_price_lower_bound (optional), filter_price_upper_bound (optional), filter_radius_km (optional), posted_today (optional), exact_match (optional), limit (optional), end_cursor (optional).\n- action=vehicles: Search Facebook Marketplace vehicle listings (cars, trucks, motorcycles) near a location, with price, radius and seller-type filters. Returns listings with title, price, mileage, year and listing_id, plus an end_cursor. For non-vehicle items, use action=search. Pricing: 1 credit per call. Inputs: sort_by (optional), filter_location_latitude (optional), filter_location_longitude (optional), filter_price_lower_bound (optional), filter_price_upper_bound (optional), filter_radius_km (optional), is_c2c_listing_only (optional), end_cursor (optional).\n- action=rentals: Search Facebook Marketplace rental listings (apartments, houses, rooms) near a location, with price, bedroom, bathroom and radius filters. Returns rental listings with their listing_id, plus an end_cursor. For items for sale, use action=search. Pricing: 1 credit per call. Inputs: sort_by (optional), filter_location_latitude (optional), filter_location_longitude (optional), filter_price_lower_bound (optional), filter_price_upper_bound (optional), filter_radius_km (optional), filter_bedrooms_min (optional), filter_bedrooms_max (optional), filter_bathrooms_min (optional), filter_bathrooms_max (optional), end_cursor (optional).\n- action=listing: Get one Marketplace listing in full: title, price, description, condition, all photos, location and seller. Needs the listing_id from a Marketplace search result. Pricing: 1 credit per call. Inputs: listing_id (required).\n- action=seller: Get a Marketplace seller's profile: name, join date, rating, review count and badges. Needs the seller_id from action=listing. Pricing: 1 credit per call. Inputs: seller_id (required).\n- action=categories: List Marketplace categories with their IDs and category_url values. Use a category_url to filter action=search. Pricing: 1 credit per call. Inputs: none.\n- action=city_coordinates: Convert a city name to the latitude and longitude that the Marketplace search tools expect in filter_location_latitude / filter_location_longitude. Pricing: 1 credit per call. Inputs: city (required), country (optional), exactly_one (optional).",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -495,99 +495,99 @@
           },
           "query": {
             "type": "string",
-            "description": "For search: Keyword to search listings for, e.g. iphone 15."
+            "description": "search (optional): Keyword to search listings for, e.g. iphone 15."
           },
           "category_url": {
             "type": "string",
-            "description": "For search: Category URL slug."
+            "description": "search (optional): Category URL slug."
           },
           "commerce_search_sort_by": {
             "type": "string",
-            "description": "For search: Sort: BEST_MATCH, CREATION_TIME_DESCEND, PRICE_ASCEND, etc."
+            "description": "search (optional): Sort: BEST_MATCH, CREATION_TIME_DESCEND, PRICE_ASCEND, etc."
           },
           "commerce_search_and_rp_condition": {
             "type": "string",
-            "description": "For search: Condition: new, used_like_new, used_good, used_fair."
+            "description": "search (optional): Condition: new, used_like_new, used_good, used_fair."
           },
           "filter_location_latitude": {
             "type": "string",
-            "description": "For search, vehicles, rentals: Latitude of the search center, e.g. 30.2672 (from action=city_coordinates)."
+            "description": "search, vehicles, rentals (optional): Latitude of the search center, e.g. 30.2672 (from action=city_coordinates)."
           },
           "filter_location_longitude": {
             "type": "string",
-            "description": "For search, vehicles, rentals: Longitude of the search center, e.g. -97.7431 (from action=city_coordinates)."
+            "description": "search, vehicles, rentals (optional): Longitude of the search center, e.g. -97.7431 (from action=city_coordinates)."
           },
           "filter_price_lower_bound": {
             "type": "string",
-            "description": "For search, vehicles, rentals: Minimum price in the local currency, whole number, e.g. 100."
+            "description": "search, vehicles, rentals (optional): Minimum price in the local currency, whole number, e.g. 100."
           },
           "filter_price_upper_bound": {
             "type": "string",
-            "description": "For search, vehicles, rentals: Maximum price in the local currency, whole number, e.g. 2000."
+            "description": "search, vehicles, rentals (optional): Maximum price in the local currency, whole number, e.g. 2000."
           },
           "filter_radius_km": {
             "type": "string",
-            "description": "For search, vehicles, rentals: Search radius around the center in kilometres, e.g. 40."
+            "description": "search, vehicles, rentals (optional): Search radius around the center in kilometres, e.g. 40."
           },
           "posted_today": {
             "type": "string",
-            "description": "For search: When \"true\", limit to items posted today."
+            "description": "search (optional): When \"true\", limit to items posted today."
           },
           "exact_match": {
             "type": "string",
-            "description": "For search: When \"true\", exact match search."
+            "description": "search (optional): When \"true\", exact match search."
           },
           "limit": {
             "type": "number",
-            "description": "For search: Maximum number of items to return. Default: 24."
+            "description": "search (optional): Maximum number of items to return. Default: 24."
           },
           "end_cursor": {
             "type": "string",
-            "description": "For search, vehicles, rentals: Pagination cursor."
+            "description": "search, vehicles, rentals (optional): Pagination cursor."
           },
           "sort_by": {
             "type": "string",
-            "description": "For vehicles: Sort: CREATION_TIME_DESCEND, PRICE_ASCEND, VEHICLE_MILEAGE_ASCEND, etc. For rentals: Sort: CREATION_TIME_DESCEND, PRICE_ASCEND, BEST_MATCH."
+            "description": "vehicles (optional): Sort: CREATION_TIME_DESCEND, PRICE_ASCEND, VEHICLE_MILEAGE_ASCEND, etc. rentals (optional): Sort: CREATION_TIME_DESCEND, PRICE_ASCEND, BEST_MATCH."
           },
           "is_c2c_listing_only": {
             "type": "string",
-            "description": "For vehicles: Individual sellers only."
+            "description": "vehicles (optional): Individual sellers only."
           },
           "filter_bedrooms_min": {
             "type": "string",
-            "description": "For rentals: Minimum number of bedrooms, e.g. 2."
+            "description": "rentals (optional): Minimum number of bedrooms, e.g. 2."
           },
           "filter_bedrooms_max": {
             "type": "string",
-            "description": "For rentals: Maximum number of bedrooms."
+            "description": "rentals (optional): Maximum number of bedrooms."
           },
           "filter_bathrooms_min": {
             "type": "string",
-            "description": "For rentals: Minimum number of bathrooms, e.g. 1."
+            "description": "rentals (optional): Minimum number of bathrooms, e.g. 1."
           },
           "filter_bathrooms_max": {
             "type": "string",
-            "description": "For rentals: Maximum number of bathrooms."
+            "description": "rentals (optional): Maximum number of bathrooms."
           },
           "listing_id": {
             "type": "string",
-            "description": "For listing: Marketplace listing ID, from a Marketplace search result."
+            "description": "listing (required): Marketplace listing ID, from a Marketplace search result."
           },
           "seller_id": {
             "type": "string",
-            "description": "For seller: Seller ID, from the seller field of action=listing."
+            "description": "seller (required): Seller ID, from the seller field of action=listing."
           },
           "city": {
             "type": "string",
-            "description": "For city_coordinates: City name, e.g. Austin."
+            "description": "city_coordinates (required): City name, e.g. Austin."
           },
           "country": {
             "type": "string",
-            "description": "For city_coordinates: Country name or code."
+            "description": "city_coordinates (optional): Country name or code."
           },
           "exactly_one": {
             "type": "string",
-            "description": "For city_coordinates: When \"true\", return exactly one result."
+            "description": "city_coordinates (optional): When \"true\", return exactly one result."
           }
         },
         "required": [
@@ -629,7 +629,7 @@
     {
       "name": "facebook_media_download",
       "title": "Facebook: Media Download",
-      "description": "Resolve a Facebook media URL (image, video or audio, e.g. from a post or reel) to direct downloadable file URLs. Returns URLs, not file bytes. Pricing: 1 credit per call. Requires: url.",
+      "description": "Resolve a Facebook media URL (image, video or audio, e.g. from a post or reel) to direct downloadable file URLs. Returns URLs, not file bytes. Pricing: 1 credit per call. Inputs: url (required).",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -677,7 +677,7 @@
     {
       "name": "instagram_profile",
       "title": "Instagram: Profile",
-      "description": "Instagram profiles: details, user ID, posts, reels, highlights and highlight stories.\n\nActions:\n- action=details: Get an Instagram profile by username: bio, follower and post counts, verification status and related profiles. Pricing: 1 credit per call. Requires: username.\n- action=id: Resolve an Instagram username or profile URL to its numeric user ID. Needed by action=reels and action=highlights. Pricing: 1 credit per call.\n- action=posts: List an Instagram profile's posts (photos, videos, carousels) with captions, like and comment counts and media URLs. Pass username (returns more results) or user_id. Returns an end_cursor for the next page. For reels only, use action=reels. Pricing: 1 credit per call.\n- action=reels: List an Instagram profile's reels with play counts, captions, video URLs and audio metadata. Needs the numeric user_id from action=id. Returns an end_cursor for the next page. Pricing: 1 credit per call. Requires: user_id.\n- action=highlights: List an Instagram profile's story highlights with titles, cover images and highlight IDs. Needs the numeric user_id from action=id. Use action=highlight_details to get the stories in one highlight. Pricing: 1 credit per call. Requires: user_id.\n- action=highlight_details: Get the stories inside one Instagram highlight. Needs a highlight_id from action=highlights. Pricing: 1 credit per call. Requires: highlight_id.",
+      "description": "Instagram profiles: details, user ID, posts, reels, highlights and highlight stories.\n\nActions:\n- action=details: Get an Instagram profile by username: bio, follower and post counts, verification status and related profiles. Pricing: 1 credit per call. Inputs: username (required), link (optional).\n- action=id: Resolve an Instagram username or profile URL to its numeric user ID. Needed by action=reels and action=highlights. Pricing: 1 credit per call. Inputs: link (optional), username (optional).\n- action=posts: List an Instagram profile's posts (photos, videos, carousels) with captions, like and comment counts and media URLs. Pass username (returns more results) or user_id. Returns an end_cursor for the next page. For reels only, use action=reels. Pricing: 1 credit per call. Inputs: username (optional), user_id (optional), end_cursor (optional).\n- action=reels: List an Instagram profile's reels with play counts, captions, video URLs and audio metadata. Needs the numeric user_id from action=id. Returns an end_cursor for the next page. Pricing: 1 credit per call. Inputs: user_id (required), end_cursor (optional).\n- action=highlights: List an Instagram profile's story highlights with titles, cover images and highlight IDs. Needs the numeric user_id from action=id. Use action=highlight_details to get the stories in one highlight. Pricing: 1 credit per call. Inputs: user_id (required).\n- action=highlight_details: Get the stories inside one Instagram highlight. Needs a highlight_id from action=highlights. Pricing: 1 credit per call. Inputs: highlight_id (required).",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -695,23 +695,23 @@
           },
           "username": {
             "type": "string",
-            "description": "For details, id: Instagram username. For posts: Instagram username (recommended — returns more results)."
+            "description": "details (required): Instagram username. id (optional): Instagram username. posts (optional): Instagram username (recommended — returns more results)."
           },
           "link": {
             "type": "string",
-            "description": "For details: Instagram profile URL (alternative to username). For id: Instagram profile URL."
+            "description": "details (optional): Instagram profile URL (alternative to username). id (optional): Instagram profile URL."
           },
           "user_id": {
             "type": "string",
-            "description": "For posts: Instagram user ID (alternative). For reels, highlights: Instagram user ID."
+            "description": "posts (optional): Instagram user ID (alternative). reels, highlights (required): Instagram user ID."
           },
           "end_cursor": {
             "type": "string",
-            "description": "For posts, reels: Pagination cursor for next page."
+            "description": "posts, reels (optional): Pagination cursor for next page."
           },
           "highlight_id": {
             "type": "string",
-            "description": "For highlight_details: Highlight ID (from profile highlights endpoint)."
+            "description": "highlight_details (required): Highlight ID (from profile highlights endpoint)."
           }
         },
         "required": [
@@ -753,7 +753,7 @@
     {
       "name": "instagram_post",
       "title": "Instagram: Post",
-      "description": "Instagram posts: full post details, or the shortcode from a post URL.\n\nActions:\n- action=details: Get one Instagram post or reel in full: caption, media URLs, engagement counts, timestamp and owner. Needs the shortcode (the part after /p/ or /reel/ in the URL, or from action=id). Pricing: 1 credit per call. Requires: shortcode.\n- action=id: Extract the shortcode from an Instagram post or reel URL. action=details needs the shortcode. Pricing: 1 credit per call. Requires: link.",
+      "description": "Instagram posts: full post details, or the shortcode from a post URL.\n\nActions:\n- action=details: Get one Instagram post or reel in full: caption, media URLs, engagement counts, timestamp and owner. Needs the shortcode (the part after /p/ or /reel/ in the URL, or from action=id). Pricing: 1 credit per call. Inputs: shortcode (required).\n- action=id: Extract the shortcode from an Instagram post or reel URL. action=details needs the shortcode. Pricing: 1 credit per call. Inputs: link (required).",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -767,11 +767,11 @@
           },
           "shortcode": {
             "type": "string",
-            "description": "For details: Instagram post shortcode (e.g., DMF-GjGO0-q)."
+            "description": "details (required): Instagram post shortcode (e.g., DMF-GjGO0-q)."
           },
           "link": {
             "type": "string",
-            "description": "For id: Instagram post URL."
+            "description": "id (required): Instagram post URL."
           }
         },
         "required": [
@@ -813,7 +813,7 @@
     {
       "name": "instagram_reels",
       "title": "Instagram: Reels",
-      "description": "Instagram Reels: the trending feed, or reels that use a given audio track.\n\nActions:\n- action=feed: Get Instagram's recommended and trending reels. Pass clips_media_id from a previous result to continue the feed or get similar reels by the same author. Not tied to a user; for one profile's reels use instagram_profile (action=reels). Pricing: 1 credit per call.\n- action=by_audio: List Instagram reels that use a given sound. Needs the audio_id (music/audio cluster ID) found in reel results' audio metadata. Pass max_id from the previous response for the next page. Pricing: 1 credit per call. Requires: audio_id.",
+      "description": "Instagram Reels: the trending feed, or reels that use a given audio track.\n\nActions:\n- action=feed: Get Instagram's recommended and trending reels. Pass clips_media_id from a previous result to continue the feed or get similar reels by the same author. Not tied to a user; for one profile's reels use instagram_profile (action=reels). Pricing: 1 credit per call. Inputs: clips_media_id (optional).\n- action=by_audio: List Instagram reels that use a given sound. Needs the audio_id (music/audio cluster ID) found in reel results' audio metadata. Pass max_id from the previous response for the next page. Pricing: 1 credit per call. Inputs: audio_id (required), max_id (optional).",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -827,15 +827,15 @@
           },
           "clips_media_id": {
             "type": "string",
-            "description": "For feed: Clip media ID for chaining/pagination (from previous response)."
+            "description": "feed (optional): Clip media ID for chaining/pagination (from previous response)."
           },
           "audio_id": {
             "type": "string",
-            "description": "For by_audio: Audio cluster ID (music ID)."
+            "description": "by_audio (required): Audio cluster ID (music ID)."
           },
           "max_id": {
             "type": "string",
-            "description": "For by_audio: Pagination cursor for next page."
+            "description": "by_audio (optional): Pagination cursor for next page."
           }
         },
         "required": [
@@ -877,7 +877,7 @@
     {
       "name": "instagram_search",
       "title": "Instagram: Search",
-      "description": "Search Instagram by keyword and get the top matching users, hashtags and places. Use it to find a username, or a place's location_id for instagram_location (action=posts). Returns an end_cursor for more. Pricing: 1 credit per call. Requires: keyword.",
+      "description": "Search Instagram by keyword and get the top matching users, hashtags and places. Use it to find a username, or a place's location_id for instagram_location (action=posts). Returns an end_cursor for more. Pricing: 1 credit per call. Inputs: keyword (required), end_cursor (optional).",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -929,7 +929,7 @@
     {
       "name": "instagram_location",
       "title": "Instagram: Location",
-      "description": "Instagram locations: posts tagged at a place, and nearby places.\n\nActions:\n- action=posts: List Instagram posts tagged at a location: top posts (tab=ranked) or most recent (tab=recent). Needs a location_id, e.g. from a place in instagram_search (action=search). Returns an end_cursor for the next page. Pricing: 1 credit per call. Requires: location_id.\n- action=nearby: List Instagram places near a given location, with name, category, coordinates and post count. Needs a location_id, e.g. from a place in instagram_search (action=search). Pricing: 1 credit per call. Requires: location_id.",
+      "description": "Instagram locations: posts tagged at a place, and nearby places.\n\nActions:\n- action=posts: List Instagram posts tagged at a location: top posts (tab=ranked) or most recent (tab=recent). Needs a location_id, e.g. from a place in instagram_search (action=search). Returns an end_cursor for the next page. Pricing: 1 credit per call. Inputs: location_id (required), tab (optional), end_cursor (optional).\n- action=nearby: List Instagram places near a given location, with name, category, coordinates and post count. Needs a location_id, e.g. from a place in instagram_search (action=search). Pricing: 1 credit per call. Inputs: location_id (required).",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -943,15 +943,15 @@
           },
           "location_id": {
             "type": "string",
-            "description": "For posts, nearby: Instagram location ID."
+            "description": "posts, nearby (required): Instagram location ID."
           },
           "tab": {
             "type": "string",
-            "description": "For posts: Filter: \"recent\" or \"ranked\"."
+            "description": "posts (optional): Filter: \"recent\" or \"ranked\"."
           },
           "end_cursor": {
             "type": "string",
-            "description": "For posts: Pagination cursor for next page."
+            "description": "posts (optional): Pagination cursor for next page."
           }
         },
         "required": [
@@ -991,6 +991,6 @@
       }
     }
   ],
-  "version": "2.0.0",
+  "version": "2.0.1",
   "authorUrl": "https://github.com/SocialAPIsHub"
 }

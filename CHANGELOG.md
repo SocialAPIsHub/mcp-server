@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.1] - 2026-10-08
+
+### Changed
+- **Per-action inputs are spelled out.** Grouped tools share one input list, so it wasn't clear which parameters each action takes. Each action in a tool description now lists all its inputs, marked required or optional (e.g. `action=comments: … Inputs: link (required), limit (optional), end_cursor (optional), include_reply_info (optional).`). Each parameter description now names the actions that use it and whether it's required for each (e.g. `link: details, id (required): Facebook post URL.`).
+
+No tools, actions or schemas changed. Only description text.
+
 ## [2.0.0] - 2026-10-06
 
 ### Changed
