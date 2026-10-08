@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "socialapis",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Facebook & Instagram data for AI agents: pages, posts, groups, Ads Library, Marketplace, profiles and reels. 12 read-only tools (47 actions) with structured output. Requires a SocialAPIs API key in the SOCIALAPIS_API_KEY environment variable (free tier at socialapis.io).",
   "author": { "name": "SocialAPIs", "email": "support@socialapis.io", "url": "https://socialapis.io" },
   "homepage": "https://socialapis.io",

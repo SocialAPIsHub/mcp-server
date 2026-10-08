@@ -186,9 +186,10 @@ function buildGroupTool(group) {
       if (!params.has(pname)) params.set(pname, { schema: rest, uses: [] });
       const entry = params.get(pname);
       entry.schema = mergeSchemas(entry.schema, rest, `${group.name}.${pname}`);
-      const same = entry.uses.find((u) => u.description === description);
+      const required = (tool.inputSchema.required || []).includes(pname);
+      const same = entry.uses.find((u) => u.description === description && u.required === required);
       if (same) same.actions.push(action);
-      else entry.uses.push({ actions: [action], description });
+      else entry.uses.push({ actions: [action], description, required });
     }
   }
 
@@ -204,13 +205,20 @@ function buildGroupTool(group) {
     const sentence = (text) => (/[.!?]$/.test(text) ? text : `${text}.`);
     const description = single
       ? uses[0].description
-      : uses.map((u) => `For ${u.actions.join(', ')}: ${sentence(u.description)}`).join(' ');
+      : uses
+          .map((u) => `${u.actions.join(', ')} (${u.required ? 'required' : 'optional'}): ${sentence(u.description)}`)
+          .join(' ');
     properties[pname] = { ...schema, description };
   }
 
   const actionLines = entries.map(([action, tool]) => {
     const required = tool.inputSchema.required || [];
-    const needs = required.length ? ` Requires: ${required.join(', ')}.` : '';
+    const optional = Object.keys(tool.inputSchema.properties || {}).filter((p) => !required.includes(p));
+    const inputs = [
+      ...required.map((p) => `${p} (required)`),
+      ...optional.map((p) => `${p} (optional)`),
+    ];
+    const needs = inputs.length ? ` Inputs: ${inputs.join(', ')}.` : ' Inputs: none.';
     const text = rewriteReferences(tool.description, group.name);
     return single ? `${text}${needs}` : `- action=${action}: ${text}${needs}`;
   });
