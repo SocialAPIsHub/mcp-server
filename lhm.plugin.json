@@ -40,37 +40,37 @@
           },
           "link": {
             "type": "string",
-            "description": "details, posts, reels (required): Facebook page URL. id (required): Facebook page URL (e.g., https://facebook.com/nike). videos (optional): Facebook page URL."
+            "description": "Facebook page URL, e.g. https://facebook.com/nike. For videos you can pass profile_id instead. Required for: details, id, posts, reels. Optional for: videos."
           },
           "exact_followers_count": {
             "type": "boolean",
-            "description": "details (optional): When true, performs a deeper scrape to return the exact follower count (e.g. 38,493,217 instead of \"38M\"). Charges 5 credits when true, 1 credit otherwise. Default: false."
+            "description": "When true, performs a deeper scrape to return the exact follower count (e.g. 38,493,217 instead of \"38M\"). Charges 5 credits when true, 1 credit otherwise. Default: false. Optional for: details."
           },
           "limit": {
             "type": "number",
             "minimum": 3,
             "maximum": 12,
-            "description": "posts (optional): Maximum number of posts to return. Default: 3. Minimum: 3. Maximum: 9. videos (optional): Maximum number of videos to return. Default: 6. Minimum: 6. Maximum: 12."
+            "description": "Results per call. posts: 3-9 (default 3) · videos: 6-12 (default 6). Optional for: posts, videos."
           },
           "end_cursor": {
             "type": "string",
-            "description": "posts (optional): Pagination cursor for next page of results. videos, reels (optional): Pagination cursor."
+            "description": "Pagination cursor from the previous response. Optional for: posts, videos, reels."
           },
           "after_time": {
             "type": "string",
-            "description": "posts (optional): ISO 8601 timestamp - only return posts after this time."
+            "description": "ISO 8601 timestamp - only return posts after this time. Optional for: posts."
           },
           "before_time": {
             "type": "string",
-            "description": "posts (optional): ISO 8601 timestamp - only return posts before this time."
+            "description": "ISO 8601 timestamp - only return posts before this time. Optional for: posts."
           },
           "timezone": {
             "type": "string",
-            "description": "posts (optional): Timezone for timestamps (e.g., UTC, America/New_York)."
+            "description": "Timezone for timestamps (e.g., UTC, America/New_York). Optional for: posts."
           },
           "profile_id": {
             "type": "string",
-            "description": "videos (optional): Facebook profile ID (alternative to link)."
+            "description": "Facebook profile ID (alternative to link). Optional for: videos."
           }
         },
         "required": [
@@ -128,29 +128,29 @@
           },
           "link": {
             "type": "string",
-            "description": "details, id, posts, videos (required): Facebook group URL."
+            "description": "Facebook group URL. Required for: details, id, posts, videos."
           },
           "limit": {
             "type": "number",
             "minimum": 3,
             "maximum": 9,
-            "description": "posts (optional): Maximum number of posts to return. Default: 3. Minimum: 3. Maximum: 9."
+            "description": "Maximum number of posts to return. Default: 3. Minimum: 3. Maximum: 9. Optional for: posts."
           },
           "end_cursor": {
             "type": "string",
-            "description": "posts, videos (optional): Pagination cursor."
+            "description": "Pagination cursor. Optional for: posts, videos."
           },
           "after_time": {
             "type": "string",
-            "description": "posts (optional): ISO 8601 timestamp."
+            "description": "ISO 8601 timestamp. Optional for: posts."
           },
           "before_time": {
             "type": "string",
-            "description": "posts (optional): ISO 8601 timestamp."
+            "description": "ISO 8601 timestamp. Optional for: posts."
           },
           "timezone": {
             "type": "string",
-            "description": "posts (optional): IANA timezone for returned timestamps, e.g. UTC or America/New_York. Default: UTC."
+            "description": "IANA timezone for returned timestamps, e.g. UTC or America/New_York. Default: UTC. Optional for: posts."
           }
         },
         "required": [
@@ -211,36 +211,36 @@
           },
           "link": {
             "type": "string",
-            "description": "details, id (required): Facebook post URL. details_extended (required): Facebook post URL (works for reels, video posts, and regular posts). comments (required): Facebook post or reel URL."
+            "description": "Facebook post or reel URL (regular posts, video posts and reels). Required for: details, details_extended, id, comments."
           },
           "post_id": {
             "type": "string",
-            "description": "attachments (required): Numeric Facebook post ID, from action=id."
+            "description": "Numeric Facebook post ID, from action=id. Required for: attachments."
           },
           "video_id": {
             "type": "string",
-            "description": "video (required): Numeric Facebook video ID, e.g. the number in a facebook.com/.../videos/<id> URL."
+            "description": "Numeric Facebook video ID, e.g. the number in a facebook.com/.../videos/<id> URL. Required for: video."
           },
           "limit": {
             "type": "number",
             "maximum": 30,
-            "description": "comments (optional): Maximum number of comments to return. Default: 10. Maximum: 30."
+            "description": "Maximum number of comments to return. Default: 10. Maximum: 30. Optional for: comments."
           },
           "end_cursor": {
             "type": "string",
-            "description": "comments (optional): Pagination cursor for next page of comments."
+            "description": "Pagination cursor for next page of comments. Optional for: comments."
           },
           "include_reply_info": {
             "type": "string",
-            "description": "comments (optional): When \"true\", includes comment_feedback_id and expansion_token for fetching replies."
+            "description": "When \"true\", includes comment_feedback_id and expansion_token for fetching replies. Optional for: comments."
           },
           "comment_feedback_id": {
             "type": "string",
-            "description": "comment_replies (required): Feedback ID from the comments endpoint with include_reply_info=true."
+            "description": "Feedback ID from the comments endpoint with include_reply_info=true. Required for: comment_replies."
           },
           "expansion_token": {
             "type": "string",
-            "description": "comment_replies (required): Expansion token from the comments endpoint with include_reply_info=true."
+            "description": "Expansion token from the comments endpoint with include_reply_info=true. Required for: comment_replies."
           }
         },
         "required": [
@@ -299,39 +299,39 @@
           },
           "query": {
             "type": "string",
-            "description": "pages (required): Keyword to search for, e.g. a brand or business name. people (required): Name or keyword to search for. posts (required): Keyword or phrase to search post text for. videos (required): Keyword or phrase to search videos for. locations (required): Search query (city, place, landmark)."
+            "description": "Search keyword. pages: a brand or business name · people: a name · posts, videos: words in the text · locations: a city, place or landmark. Required for: pages, people, posts, videos, locations."
           },
           "location_uid": {
             "type": "string",
-            "description": "pages (optional): Location UID for filtering (from search/locations endpoint). people, posts (optional): Location UID for filtering."
+            "description": "Location UID from action=locations, to limit results to a place. Optional for: pages, people, posts."
           },
           "end_cursor": {
             "type": "string",
-            "description": "pages, people, posts, videos (optional): Pagination cursor."
+            "description": "Pagination cursor. Optional for: pages, people, posts, videos."
           },
           "start_time": {
             "type": "string",
-            "description": "posts (optional): Filter posts after this date (YYYY-MM-DD)."
+            "description": "Filter posts after this date (YYYY-MM-DD). Optional for: posts."
           },
           "end_time": {
             "type": "string",
-            "description": "posts (optional): Filter posts before this date (YYYY-MM-DD)."
+            "description": "Filter posts before this date (YYYY-MM-DD). Optional for: posts."
           },
           "recent_posts": {
             "type": "string",
-            "description": "posts (optional): When \"true\", shows only recent posts."
+            "description": "When \"true\", shows only recent posts. Optional for: posts."
           },
           "most_recent": {
             "type": "string",
-            "description": "videos (optional): When \"true\", shows most recent videos first."
+            "description": "When \"true\", shows most recent videos first. Optional for: videos."
           },
           "videos_live": {
             "type": "string",
-            "description": "videos (optional): When \"true\", filters for live videos only."
+            "description": "When \"true\", filters for live videos only. Optional for: videos."
           },
           "fields": {
             "type": "string",
-            "description": "videos (optional): Comma-separated list of response fields to include."
+            "description": "Comma-separated list of response fields to include. Optional for: videos."
           }
         },
         "required": [
@@ -390,51 +390,51 @@
           },
           "query": {
             "type": "string",
-            "description": "search (optional): Search keyword for ads. keywords (required): Keyword to find advertisers for, e.g. running shoes."
+            "description": "Keyword. search: words in the ads (or pass ad_page_id instead) · keywords: a topic to find advertisers for, e.g. running shoes. Required for: keywords. Optional for: search."
           },
           "ad_page_id": {
             "type": "string",
-            "description": "search (optional): Facebook AD Page ID (alternative to query)."
+            "description": "Facebook AD Page ID (alternative to query). Optional for: search."
           },
           "country": {
             "type": "string",
-            "description": "search, keywords, archive_details (optional): ISO country code or \"ALL\"."
+            "description": "ISO country code or \"ALL\". Optional for: search, keywords, archive_details."
           },
           "activeStatus": {
             "type": "string",
-            "description": "search (optional): Filter: ALL, Active, or Inactive."
+            "description": "Filter: ALL, Active, or Inactive. Optional for: search."
           },
           "after_time": {
             "type": "string",
-            "description": "search (optional): Filter ads after this date (YYYY-MM-DD)."
+            "description": "Filter ads after this date (YYYY-MM-DD). Optional for: search."
           },
           "before_time": {
             "type": "string",
-            "description": "search (optional): Filter ads before this date (YYYY-MM-DD)."
+            "description": "Filter ads before this date (YYYY-MM-DD). Optional for: search."
           },
           "sort_data": {
             "type": "string",
-            "description": "search (optional): Sort by \"impressions\" or \"recent\"."
+            "description": "Sort by \"impressions\" or \"recent\". Optional for: search."
           },
           "end_cursor": {
             "type": "string",
-            "description": "search (optional): Pagination cursor."
+            "description": "Pagination cursor. Optional for: search."
           },
           "page_id": {
             "type": "string",
-            "description": "page_details (required): Advertiser page ID: ad_page_id from facebook_page (action=details), or page_id from action=keywords. archive_details (optional): Facebook Page ID."
+            "description": "Advertiser page ID: ad_page_id from facebook_page (action=details), or page_id from action=keywords. Required for: page_details. Optional for: archive_details."
           },
           "ad_archive_id": {
             "type": "string",
-            "description": "archive_details (required): Ad Library archive ID of the ad (ad_archive_id from a action=search result)."
+            "description": "Ad Library archive ID of the ad (ad_archive_id from a action=search result). Required for: archive_details."
           },
           "is_ad_non_political": {
             "type": "string",
-            "description": "archive_details (optional): Filter non-political ads."
+            "description": "Filter non-political ads. Optional for: archive_details."
           },
           "is_ad_not_aaa_eligible": {
             "type": "string",
-            "description": "archive_details (optional): Filter AAA eligibility."
+            "description": "Filter AAA eligibility. Optional for: archive_details."
           }
         },
         "required": [
@@ -495,99 +495,99 @@
           },
           "query": {
             "type": "string",
-            "description": "search (optional): Keyword to search listings for, e.g. iphone 15."
+            "description": "Keyword to search listings for, e.g. iphone 15. Optional for: search."
           },
           "category_url": {
             "type": "string",
-            "description": "search (optional): Category URL slug."
+            "description": "Category URL slug. Optional for: search."
           },
           "commerce_search_sort_by": {
             "type": "string",
-            "description": "search (optional): Sort: BEST_MATCH, CREATION_TIME_DESCEND, PRICE_ASCEND, etc."
+            "description": "Sort: BEST_MATCH, CREATION_TIME_DESCEND, PRICE_ASCEND, etc. Optional for: search."
           },
           "commerce_search_and_rp_condition": {
             "type": "string",
-            "description": "search (optional): Condition: new, used_like_new, used_good, used_fair."
+            "description": "Condition: new, used_like_new, used_good, used_fair. Optional for: search."
           },
           "filter_location_latitude": {
             "type": "string",
-            "description": "search, vehicles, rentals (optional): Latitude of the search center, e.g. 30.2672 (from action=city_coordinates)."
+            "description": "Latitude of the search center, e.g. 30.2672 (from action=city_coordinates). Optional for: search, vehicles, rentals."
           },
           "filter_location_longitude": {
             "type": "string",
-            "description": "search, vehicles, rentals (optional): Longitude of the search center, e.g. -97.7431 (from action=city_coordinates)."
+            "description": "Longitude of the search center, e.g. -97.7431 (from action=city_coordinates). Optional for: search, vehicles, rentals."
           },
           "filter_price_lower_bound": {
             "type": "string",
-            "description": "search, vehicles, rentals (optional): Minimum price in the local currency, whole number, e.g. 100."
+            "description": "Minimum price in the local currency, whole number, e.g. 100. Optional for: search, vehicles, rentals."
           },
           "filter_price_upper_bound": {
             "type": "string",
-            "description": "search, vehicles, rentals (optional): Maximum price in the local currency, whole number, e.g. 2000."
+            "description": "Maximum price in the local currency, whole number, e.g. 2000. Optional for: search, vehicles, rentals."
           },
           "filter_radius_km": {
             "type": "string",
-            "description": "search, vehicles, rentals (optional): Search radius around the center in kilometres, e.g. 40."
+            "description": "Search radius around the center in kilometres, e.g. 40. Optional for: search, vehicles, rentals."
           },
           "posted_today": {
             "type": "string",
-            "description": "search (optional): When \"true\", limit to items posted today."
+            "description": "When \"true\", limit to items posted today. Optional for: search."
           },
           "exact_match": {
             "type": "string",
-            "description": "search (optional): When \"true\", exact match search."
+            "description": "When \"true\", exact match search. Optional for: search."
           },
           "limit": {
             "type": "number",
-            "description": "search (optional): Maximum number of items to return. Default: 24."
+            "description": "Maximum number of items to return. Default: 24. Optional for: search."
           },
           "end_cursor": {
             "type": "string",
-            "description": "search, vehicles, rentals (optional): Pagination cursor."
+            "description": "Pagination cursor. Optional for: search, vehicles, rentals."
           },
           "sort_by": {
             "type": "string",
-            "description": "vehicles (optional): Sort: CREATION_TIME_DESCEND, PRICE_ASCEND, VEHICLE_MILEAGE_ASCEND, etc. rentals (optional): Sort: CREATION_TIME_DESCEND, PRICE_ASCEND, BEST_MATCH."
+            "description": "Sort order. vehicles: CREATION_TIME_DESCEND, PRICE_ASCEND, VEHICLE_MILEAGE_ASCEND, … · rentals: CREATION_TIME_DESCEND, PRICE_ASCEND, BEST_MATCH. Optional for: vehicles, rentals."
           },
           "is_c2c_listing_only": {
             "type": "string",
-            "description": "vehicles (optional): Individual sellers only."
+            "description": "Individual sellers only. Optional for: vehicles."
           },
           "filter_bedrooms_min": {
             "type": "string",
-            "description": "rentals (optional): Minimum number of bedrooms, e.g. 2."
+            "description": "Minimum number of bedrooms, e.g. 2. Optional for: rentals."
           },
           "filter_bedrooms_max": {
             "type": "string",
-            "description": "rentals (optional): Maximum number of bedrooms."
+            "description": "Maximum number of bedrooms. Optional for: rentals."
           },
           "filter_bathrooms_min": {
             "type": "string",
-            "description": "rentals (optional): Minimum number of bathrooms, e.g. 1."
+            "description": "Minimum number of bathrooms, e.g. 1. Optional for: rentals."
           },
           "filter_bathrooms_max": {
             "type": "string",
-            "description": "rentals (optional): Maximum number of bathrooms."
+            "description": "Maximum number of bathrooms. Optional for: rentals."
           },
           "listing_id": {
             "type": "string",
-            "description": "listing (required): Marketplace listing ID, from a Marketplace search result."
+            "description": "Marketplace listing ID, from a Marketplace search result. Required for: listing."
           },
           "seller_id": {
             "type": "string",
-            "description": "seller (required): Seller ID, from the seller field of action=listing."
+            "description": "Seller ID, from the seller field of action=listing. Required for: seller."
           },
           "city": {
             "type": "string",
-            "description": "city_coordinates (required): City name, e.g. Austin."
+            "description": "City name, e.g. Austin. Required for: city_coordinates."
           },
           "country": {
             "type": "string",
-            "description": "city_coordinates (optional): Country name or code."
+            "description": "Country name or code. Optional for: city_coordinates."
           },
           "exactly_one": {
             "type": "string",
-            "description": "city_coordinates (optional): When \"true\", return exactly one result."
+            "description": "When \"true\", return exactly one result. Optional for: city_coordinates."
           }
         },
         "required": [
@@ -695,23 +695,23 @@
           },
           "username": {
             "type": "string",
-            "description": "details (required): Instagram username. id (optional): Instagram username. posts (optional): Instagram username (recommended — returns more results)."
+            "description": "Instagram username, without the @. For posts it returns more results than user_id. Required for: details. Optional for: id, posts."
           },
           "link": {
             "type": "string",
-            "description": "details (optional): Instagram profile URL (alternative to username). id (optional): Instagram profile URL."
+            "description": "Instagram profile URL (alternative to username). Optional for: details, id."
           },
           "user_id": {
             "type": "string",
-            "description": "posts (optional): Instagram user ID (alternative). reels, highlights (required): Instagram user ID."
+            "description": "Numeric Instagram user ID, from action=id. For posts, an alternative to username. Required for: reels, highlights. Optional for: posts."
           },
           "end_cursor": {
             "type": "string",
-            "description": "posts, reels (optional): Pagination cursor for next page."
+            "description": "Pagination cursor for next page. Optional for: posts, reels."
           },
           "highlight_id": {
             "type": "string",
-            "description": "highlight_details (required): Highlight ID (from profile highlights endpoint)."
+            "description": "Highlight ID (from profile highlights endpoint). Required for: highlight_details."
           }
         },
         "required": [
@@ -767,11 +767,11 @@
           },
           "shortcode": {
             "type": "string",
-            "description": "details (required): Instagram post shortcode (e.g., DMF-GjGO0-q)."
+            "description": "Instagram post shortcode (e.g., DMF-GjGO0-q). Required for: details."
           },
           "link": {
             "type": "string",
-            "description": "id (required): Instagram post URL."
+            "description": "Instagram post URL. Required for: id."
           }
         },
         "required": [
@@ -827,15 +827,15 @@
           },
           "clips_media_id": {
             "type": "string",
-            "description": "feed (optional): Clip media ID for chaining/pagination (from previous response)."
+            "description": "Clip media ID for chaining/pagination (from previous response). Optional for: feed."
           },
           "audio_id": {
             "type": "string",
-            "description": "by_audio (required): Audio cluster ID (music ID)."
+            "description": "Audio cluster ID (music ID). Required for: by_audio."
           },
           "max_id": {
             "type": "string",
-            "description": "by_audio (optional): Pagination cursor for next page."
+            "description": "Pagination cursor for next page. Optional for: by_audio."
           }
         },
         "required": [
@@ -943,15 +943,15 @@
           },
           "location_id": {
             "type": "string",
-            "description": "posts, nearby (required): Instagram location ID."
+            "description": "Instagram location ID. Required for: posts, nearby."
           },
           "tab": {
             "type": "string",
-            "description": "posts (optional): Filter: \"recent\" or \"ranked\"."
+            "description": "Filter: \"recent\" or \"ranked\". Optional for: posts."
           },
           "end_cursor": {
             "type": "string",
-            "description": "posts (optional): Pagination cursor for next page."
+            "description": "Pagination cursor for next page. Optional for: posts."
           }
         },
         "required": [
@@ -991,6 +991,6 @@
       }
     }
   ],
-  "version": "2.0.1",
+  "version": "2.0.2",
   "authorUrl": "https://github.com/SocialAPIsHub"
 }

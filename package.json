@@ -1,6 +1,6 @@
 {
   "name": "@socialapis/mcp",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "MCP server for SocialAPIs \u2014 Facebook & Instagram data in Claude, Cursor and any MCP client. Run locally via npx or use the hosted endpoint at https://mcp.socialapis.io/mcp",
   "mcpName": "io.github.SocialAPIsHub/social-media-api",
   "type": "module",
