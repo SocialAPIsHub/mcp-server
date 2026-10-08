@@ -172,6 +172,37 @@ function mergeSchemas(a, b, label) {
   return merged;
 }
 
+// One plain description for parameters that several actions share but that
+// tools.js words differently per action. Per-action differences that matter
+// (ranges, what a query means) go on one compact line. Every shared
+// parameter with more than one wording must have an entry here; the
+// build fails otherwise, so new actions can't silently reintroduce the
+// long "For x: … For y: …" text.
+const SHARED_PARAM_TEXT = {
+  'facebook_page.link': 'Facebook page URL, e.g. https://facebook.com/nike. For videos you can pass profile_id instead.',
+  'facebook_page.limit': 'Results per call. posts: 3-9 (default 3) · videos: 6-12 (default 6).',
+  'facebook_page.end_cursor': 'Pagination cursor from the previous response.',
+  'facebook_post.link': 'Facebook post or reel URL (regular posts, video posts and reels).',
+  'facebook_search.query': 'Search keyword. pages: a brand or business name · people: a name · posts, videos: words in the text · locations: a city, place or landmark.',
+  'facebook_search.location_uid': 'Location UID from action=locations, to limit results to a place.',
+  'facebook_ads.query': 'Keyword. search: words in the ads (or pass ad_page_id instead) · keywords: a topic to find advertisers for, e.g. running shoes.',
+  'facebook_ads.page_id': 'Advertiser page ID: ad_page_id from facebook_page (action=details), or page_id from action=keywords.',
+  'facebook_marketplace.sort_by': 'Sort order. vehicles: CREATION_TIME_DESCEND, PRICE_ASCEND, VEHICLE_MILEAGE_ASCEND, … · rentals: CREATION_TIME_DESCEND, PRICE_ASCEND, BEST_MATCH.',
+  'instagram_profile.username': 'Instagram username, without the @. For posts it returns more results than user_id.',
+  'instagram_profile.link': 'Instagram profile URL (alternative to username).',
+  'instagram_profile.user_id': 'Numeric Instagram user ID, from action=id. For posts, an alternative to username.',
+};
+
+function usageSuffix(uses, order) {
+  const byOrder = (a, b) => order.indexOf(a) - order.indexOf(b);
+  const req = uses.filter((u) => u.required).flatMap((u) => u.actions).sort(byOrder);
+  const opt = uses.filter((u) => !u.required).flatMap((u) => u.actions).sort(byOrder);
+  const parts = [];
+  if (req.length) parts.push(`Required for: ${req.join(', ')}.`);
+  if (opt.length) parts.push(`Optional for: ${opt.join(', ')}.`);
+  return parts.join(' ');
+}
+
 function buildGroupTool(group) {
   const entries = Object.entries(group.actions).map(([action, legacyName]) => [action, legacyByName.get(legacyName)]);
   const single = entries.length === 1;
@@ -201,13 +232,20 @@ function buildGroupTool(group) {
       description: 'Which operation to run. See the tool description for what each action returns and which parameters it needs.',
     };
   }
+  const sentence = (text) => (/[.!?]$/.test(text) ? text : `${text}.`);
   for (const [pname, { schema, uses }] of params) {
-    const sentence = (text) => (/[.!?]$/.test(text) ? text : `${text}.`);
-    const description = single
-      ? uses[0].description
-      : uses
-          .map((u) => `${u.actions.join(', ')} (${u.required ? 'required' : 'optional'}): ${sentence(u.description)}`)
-          .join(' ');
+    let description;
+    if (single) {
+      description = uses[0].description;
+    } else {
+      const wordings = new Set(uses.map((u) => u.description));
+      const key = `${group.name}.${pname}`;
+      let base;
+      if (wordings.size === 1) base = sentence(uses[0].description);
+      else if (SHARED_PARAM_TEXT[key]) base = SHARED_PARAM_TEXT[key];
+      else throw new Error(`groups.js: ${key} has different wording per action; add it to SHARED_PARAM_TEXT`);
+      description = `${base}\n${usageSuffix(uses, Object.keys(group.actions))}`;
+    }
     properties[pname] = { ...schema, description };
   }
 
@@ -218,9 +256,11 @@ function buildGroupTool(group) {
       ...required.map((p) => `${p} (required)`),
       ...optional.map((p) => `${p} (optional)`),
     ];
-    const needs = inputs.length ? ` Inputs: ${inputs.join(', ')}.` : ' Inputs: none.';
+    // Own line, indented under its action. Clients that keep line breaks
+    // show it as a sub-line; ones that flatten (Glama) turn it into a space.
+    const needs = inputs.length ? `\n  Inputs: ${inputs.join(', ')}.` : '\n  Inputs: none.';
     const text = rewriteReferences(tool.description, group.name);
-    return single ? `${text}${needs}` : `- action=${action}: ${text}${needs}`;
+    return single ? `${text}${needs.replace('\n  ', '\n')}` : `- action=${action}: ${text}${needs}`;
   });
 
   const description = single

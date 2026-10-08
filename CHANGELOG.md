@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.2] - 2026-10-08
+
+### Changed
+- **Shorter parameter descriptions.** A parameter shared by several actions now has one plain description followed by `Required for: …` / `Optional for: …`, instead of one sentence per action. Real per-action differences stay on one line, e.g. `limit`: "Results per call. posts: 3-9 (default 3) · videos: 6-12 (default 6)." Much easier to scan in tool forms (Glama, Smithery, MCP Inspector).
+- **Line breaks for structure.** Each action's `Inputs:` sits on its own indented line under the action, and `Required for` / `Optional for` sits on its own line under a parameter's description. Clients that keep line breaks (MCP Inspector, Claude) show the structure; clients that flatten text (Glama) show a space instead.
+
+### Added
+- **Call log.** The server writes one JSON line per tool call, prefixed `[mcp]`: transport (hosted or npm), client, tool, action, endpoint, HTTP status, credits charged, latency, and a short irreversible fingerprint of the API key. Hosted `initialize` requests log the client name and version. Arguments and keys are never logged.
+- The npm client sends an `x-mcp-client` header (MCP client name/version) so calls through it show which client is in use.
+
+No tools, actions or schemas changed.
+
 ## [2.0.1] - 2026-10-08
 
 ### Changed

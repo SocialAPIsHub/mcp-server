@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import express from 'express';
 import cors from 'cors';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
@@ -13,7 +14,7 @@ import { SERVER_IDENTITY, enrichTool, buildStructuredResult } from './src/toolMe
 const app = express();
 const PORT = process.env.PORT || 3001;
 const API_BASE_URL = process.env.API_BASE_URL || 'https://api.socialapis.io';
-const SERVER_VERSION = '2.0.1';
+const SERVER_VERSION = '2.0.2';
 
 // Upstream scraping calls can take up to ~85s (api-scraping axios timeout).
 // Give the backend fetch a little more so we return the API's own error
@@ -46,6 +47,23 @@ const publicTools = tools.map((tool) => ({
 // The 47 per-endpoint names above stay callable through resolveCall.
 const fullTools = groupedTools.map(enrichTool);
 
+// One JSON line per event, prefixed "[mcp]" so it's easy to grep:
+//   docker logs mcp-server --since 24h 2>&1 | grep '^\[mcp\]'
+// Never log arguments (they can carry URLs and names) or the API key. `key`
+// is a short irreversible fingerprint, enough to count distinct users.
+const keyFingerprint = (key) => (key ? createHash('sha256').update(key).digest('hex').slice(0, 10) : null);
+
+function logEvent(fields) {
+  console.log(`[mcp] ${JSON.stringify({ t: new Date().toISOString(), ...fields })}`);
+}
+
+function creditsFrom(response, data) {
+  const header = Number(response.headers.get('x-socialapis-credits-deducted'));
+  if (Number.isFinite(header) && header > 0) return header;
+  const meta = data && !Array.isArray(data) && typeof data === 'object' ? data.meta : undefined;
+  return Number.isInteger(meta?.creditsCharged) ? meta.creditsCharged : null;
+}
+
 /**
  * Call the SocialAPIs REST backend for one tool invocation.
  * Shared by the legacy /proxy route (used by the npm stdio client) and the
@@ -54,9 +72,22 @@ const fullTools = groupedTools.map(enrichTool);
  *
  * @returns {{ status: number, ok: boolean, data: any }}
  */
-async function callBackend(toolName, rawArgs, apiKey) {
+async function callBackend(toolName, rawArgs, apiKey, ctx = {}) {
+  const started = Date.now();
+  const isGrouped = groupedTools.some((t) => t.name === toolName);
+  const base = {
+    event: 'call',
+    via: ctx.via,
+    client: ctx.client || null,
+    tool: toolName,
+    action: isGrouped ? (rawArgs?.action ?? null) : null,
+    legacy: !isGrouped,
+    key: keyFingerprint(apiKey),
+  };
+
   const resolved = resolveCall(toolName, rawArgs);
   if (resolved.error) {
+    logEvent({ ...base, status: 400, error: 'invalid_call', ms: Date.now() - started });
     return { status: 400, ok: false, data: { error: resolved.error } };
   }
   const { tool: toolDef, args } = resolved;
@@ -68,14 +99,18 @@ async function callBackend(toolName, rawArgs, apiKey) {
     }
   }
 
-  console.log(`📡 [${toolDef.method}] ${url.pathname}`);
-
-  const response = await fetch(url.toString(), {
-    method: toolDef.method,
-    headers: { 'x-api-token': apiKey, 'Content-Type': 'application/json' },
-    body: toolDef.method === 'POST' ? JSON.stringify(args ?? {}) : undefined,
-    signal: AbortSignal.timeout(BACKEND_TIMEOUT_MS),
-  });
+  let response;
+  try {
+    response = await fetch(url.toString(), {
+      method: toolDef.method,
+      headers: { 'x-api-token': apiKey, 'Content-Type': 'application/json' },
+      body: toolDef.method === 'POST' ? JSON.stringify(args ?? {}) : undefined,
+      signal: AbortSignal.timeout(BACKEND_TIMEOUT_MS),
+    });
+  } catch (error) {
+    logEvent({ ...base, endpoint: url.pathname, status: 0, error: error.name || 'fetch_failed', ms: Date.now() - started });
+    throw error;
+  }
 
   let data;
   try {
@@ -83,6 +118,13 @@ async function callBackend(toolName, rawArgs, apiKey) {
   } catch {
     data = { error: `Backend returned non-JSON response (HTTP ${response.status})` };
   }
+  logEvent({
+    ...base,
+    endpoint: url.pathname,
+    status: response.status,
+    credits: response.ok ? creditsFrom(response, data) : 0,
+    ms: Date.now() - started,
+  });
   return { status: response.status, ok: response.ok, data };
 }
 
@@ -99,7 +141,7 @@ function extractApiKey(req) {
 }
 
 /** Build a fresh MCP server bound to one caller's API key. */
-function createMcpServer(apiKey) {
+function createMcpServer(apiKey, ctx) {
   const server = new Server(
     { ...SERVER_IDENTITY, version: SERVER_VERSION },
     { capabilities: { tools: {} } },
@@ -113,6 +155,7 @@ function createMcpServer(apiKey) {
     const { name, arguments: args } = request.params;
 
     if (!apiKey) {
+      logEvent({ event: 'call', via: ctx.via, client: ctx.client, tool: name, status: 401, error: 'missing_key' });
       return {
         isError: true,
         content: [{
@@ -124,7 +167,7 @@ function createMcpServer(apiKey) {
     }
 
     try {
-      const { ok, data } = await callBackend(name, args, apiKey);
+      const { ok, data } = await callBackend(name, args, apiKey, ctx);
       // Text content stays for clients that ignore structured output.
       // structuredContent only on success: errors carry isError and are
       // exempt from outputSchema validation.
@@ -172,7 +215,8 @@ app.post('/proxy', async (req, res) => {
       });
     }
 
-    const { status, ok, data } = await callBackend(tool, args, apiKey);
+    const ctx = { via: 'npm', client: req.headers['x-mcp-client'] || 'npm (client <2.0.2)' };
+    const { status, ok, data } = await callBackend(tool, args, apiKey, ctx);
     res.status(status).json({ success: ok, data });
   } catch (error) {
     console.error('❌ Proxy error:', error);
@@ -184,7 +228,16 @@ app.post('/proxy', async (req, res) => {
 // transport per request: no session state to share across PM2/containers,
 // and each request carries its own API key.
 app.post('/mcp', async (req, res) => {
-  const server = createMcpServer(extractApiKey(req));
+  const ua = req.headers['user-agent'] || null;
+  // Stateless: clientInfo only arrives on `initialize`, so log it there with
+  // the user agent; later calls log the user agent, which maps back to it.
+  for (const msg of Array.isArray(req.body) ? req.body : [req.body]) {
+    if (msg?.method === 'initialize') {
+      const info = msg.params?.clientInfo || {};
+      logEvent({ event: 'initialize', via: 'mcp', client: info.name || null, clientVersion: info.version || null, protocol: msg.params?.protocolVersion || null, ua });
+    }
+  }
+  const server = createMcpServer(extractApiKey(req), { via: 'mcp', client: ua });
   const transport = new StreamableHTTPServerTransport({
     sessionIdGenerator: undefined,
     // Plain JSON responses instead of SSE — simpler behind nginx/Cloudflare

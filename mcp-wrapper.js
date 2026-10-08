@@ -20,7 +20,7 @@ if (!API_KEY) {
 const server = new Server(
   {
     ...SERVER_IDENTITY,
-    version: '2.0.1',
+    version: '2.0.2',
   },
   {
     capabilities: {
@@ -45,6 +45,11 @@ async function getTools() {
 
 let cachedTools = null;
 
+function clientLabel() {
+  const info = server.getClientVersion();
+  return info?.name ? `${info.name}/${info.version || '?'} (npm 2.0.2)` : 'unknown (npm 2.0.2)';
+}
+
 server.setRequestHandler(ListToolsRequestSchema, async () => {
   if (!cachedTools) {
     cachedTools = await getTools();
@@ -61,6 +66,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       headers: {
         'x-api-key': API_KEY,
         'Content-Type': 'application/json',
+        // Lets the server's call log say which MCP client is in use.
+        'x-mcp-client': clientLabel(),
       },
       body: JSON.stringify({
         tool: name,
