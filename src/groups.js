@@ -244,7 +244,7 @@ function buildGroupTool(group) {
       if (wordings.size === 1) base = sentence(uses[0].description);
       else if (SHARED_PARAM_TEXT[key]) base = SHARED_PARAM_TEXT[key];
       else throw new Error(`groups.js: ${key} has different wording per action; add it to SHARED_PARAM_TEXT`);
-      description = `${base} ${usageSuffix(uses, Object.keys(group.actions))}`;
+      description = `${base}\n${usageSuffix(uses, Object.keys(group.actions))}`;
     }
     properties[pname] = { ...schema, description };
   }
@@ -256,9 +256,11 @@ function buildGroupTool(group) {
       ...required.map((p) => `${p} (required)`),
       ...optional.map((p) => `${p} (optional)`),
     ];
-    const needs = inputs.length ? ` Inputs: ${inputs.join(', ')}.` : ' Inputs: none.';
+    // Own line, indented under its action. Clients that keep line breaks
+    // show it as a sub-line; ones that flatten (Glama) turn it into a space.
+    const needs = inputs.length ? `\n  Inputs: ${inputs.join(', ')}.` : '\n  Inputs: none.';
     const text = rewriteReferences(tool.description, group.name);
-    return single ? `${text}${needs}` : `- action=${action}: ${text}${needs}`;
+    return single ? `${text}${needs.replace('\n  ', '\n')}` : `- action=${action}: ${text}${needs}`;
   });
 
   const description = single
