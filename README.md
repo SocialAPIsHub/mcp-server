@@ -9,6 +9,7 @@
 [![npm version](https://badge.fury.io/js/%40socialapis%2Fmcp.svg)](https://www.npmjs.com/package/@socialapis/mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![GitHub stars](https://img.shields.io/github/stars/SocialAPIsHub/mcp-server.svg)](https://github.com/SocialAPIsHub/mcp-server/stargazers)
+[![SocialAPIs MCP Server MCP server – quality and maintenance score on Glama](https://glama.ai/mcp/servers/SocialAPIsHub/mcp-server/badges/score.svg)](https://glama.ai/mcp/servers/SocialAPIsHub/mcp-server)
 
 [Website](https://socialapis.io) • [Documentation](https://docs.socialapis.io) • [Discord](https://discord.gg/D5bQskrwV) • [npm](https://www.npmjs.com/package/@socialapis/mcp)
 
@@ -385,6 +386,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Built with [Model Context Protocol](https://modelcontextprotocol.io)
 - Powered by [Anthropic Claude](https://anthropic.com)
 - Inspired by the AI agent community
+
+---
+
+## 📇 Listed on
+
+[![SocialAPIs MCP Server MCP server – quality and maintenance score on Glama](https://glama.ai/mcp/servers/SocialAPIsHub/mcp-server/badges/card.svg)](https://glama.ai/mcp/servers/SocialAPIsHub/mcp-server)
+
+Also on the [Official MCP Registry](https://registry.modelcontextprotocol.io/v0/servers?search=io.github.SocialAPIsHub/social-media-api), [Smithery](https://smithery.ai/server/oussemaf/socialapis), [LobeHub](https://lobehub.com/mcp/socialapis-mcp-server), [mcp.so](https://mcp.so/servers/socialapis-facebook-instagram-data), [mcpservers.org](https://mcpservers.org/servers/socialapishub/mcp-server), [cursor.directory](https://cursor.directory/plugins/socialapis-facebook-instagram-data) and [awesome-remote-mcp-servers](https://github.com/punkpeye/awesome-remote-mcp-servers).
 
 ---
 
