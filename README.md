@@ -334,6 +334,7 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for deta
 - [API Reference](https://docs.socialapis.io/api-reference/facebook)
 - [MCP Guide](https://docs.socialapis.io/mcp)
 - [Examples](https://github.com/SocialAPIsHub/examples)
+- [Agent skill](https://github.com/SocialAPIsHub/skills): teaches Claude Code, Cursor, Codex and other coding agents to use SocialAPIs (`npx skills add SocialAPIsHub/skills`)
 
 ---
 
@@ -359,6 +360,7 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for deta
 - [x] **Python SDK** — [`socialapis-sdk`](https://pypi.org/project/socialapis-sdk/) on PyPI (50 endpoints, MIT)
 - [x] **JavaScript / TypeScript SDK** — [`socialapis-sdk`](https://www.npmjs.com/package/socialapis-sdk) on npm (Node 18+, Bun, Deno, browsers)
 - [x] **Go SDK** — [github.com/SocialAPIsHub/socialapis-go](https://github.com/SocialAPIsHub/socialapis-go) (idiomatic, zero deps)
+- [x] **Agent skill** — [github.com/SocialAPIsHub/skills](https://github.com/SocialAPIsHub/skills) for Claude Code, Cursor, Codex and other coding agents
 
 **Upcoming:**
 
