@@ -57,6 +57,18 @@ function logEvent(fields) {
   console.log(`[mcp] ${JSON.stringify({ t: new Date().toISOString(), ...fields })}`);
 }
 
+// Tell the API this call came through MCP, so its request log can show MCP
+// usage per account (transport and client name, nothing from the call).
+// Header values must be printable ASCII.
+function clientHeaders(ctx) {
+  const clean = (v) => String(v).replace(/[^\x20-\x7e]/g, '').slice(0, 120);
+  return {
+    'x-socialapis-client': 'mcp',
+    'x-socialapis-mcp-via': ctx.via === 'npm' ? 'npm' : 'hosted',
+    ...(ctx.client ? { 'x-socialapis-mcp-client': clean(ctx.client) } : {}),
+  };
+}
+
 function creditsFrom(response, data) {
   const header = Number(response.headers.get('x-socialapis-credits-deducted'));
   if (Number.isFinite(header) && header > 0) return header;
@@ -103,7 +115,7 @@ async function callBackend(toolName, rawArgs, apiKey, ctx = {}) {
   try {
     response = await fetch(url.toString(), {
       method: toolDef.method,
-      headers: { 'x-api-token': apiKey, 'Content-Type': 'application/json' },
+      headers: { 'x-api-token': apiKey, 'Content-Type': 'application/json', ...clientHeaders(ctx) },
       body: toolDef.method === 'POST' ? JSON.stringify(args ?? {}) : undefined,
       signal: AbortSignal.timeout(BACKEND_TIMEOUT_MS),
     });
