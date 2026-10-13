@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **Calls tell the API they came through MCP.** Each call the server forwards to the SocialAPIs API carries `x-socialapis-client: mcp`, the transport (`x-socialapis-mcp-via: npm` or `hosted`) and the client name (`x-socialapis-mcp-client`, e.g. the MCP client's name/version or user agent). The API stores these on its request log so MCP usage can be seen per account. No arguments or keys are added; the npm package is unchanged.
+
 ## [2.0.2] - 2026-10-08
 
 ### Changed
