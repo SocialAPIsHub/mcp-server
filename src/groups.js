@@ -1,10 +1,10 @@
-// Groups the 47 per-endpoint tool definitions in tools.js into 12 MCP tools,
+// Groups the 50 per-endpoint tool definitions in tools.js into 12 MCP tools,
 // one per resource, each taking an `action` argument. tools.js stays the
 // source of truth for endpoints and parameters; this file only decides how
 // they're presented. Fewer, broader tools keep the list under client limits
 // (Cursor caps the total tool count) and make tool selection easier.
 //
-// The original 47 names stay callable (resolveCall) so existing configs,
+// The per-endpoint names stay callable (resolveCall) so existing configs,
 // prompts and npm clients <= 1.2.x keep working. They're just not listed.
 
 import { tools } from './tools.js';
@@ -12,23 +12,27 @@ import { tools } from './tools.js';
 export const GROUPS = [
   {
     name: 'facebook_page',
-    summary: 'Facebook pages: profile details, page ID, posts, videos and reels.',
+    summary: 'Facebook pages: profile details, page ID, posts, videos, reels and photo albums.',
     actions: {
       details: 'facebook_get_page_details',
       id: 'facebook_get_page_id',
       posts: 'facebook_get_page_posts',
       videos: 'facebook_get_page_videos',
       reels: 'facebook_get_page_reels',
+      albums: 'facebook_get_page_albums',
+      album_items: 'facebook_get_album_items',
     },
   },
   {
     name: 'facebook_group',
-    summary: 'Public Facebook groups: details, group ID, posts and videos.',
+    summary: 'Public Facebook groups: details, group ID, posts, videos and photo albums.',
     actions: {
       details: 'facebook_get_group_details',
       id: 'facebook_get_group_id',
       posts: 'facebook_get_group_posts',
       videos: 'facebook_get_group_videos',
+      albums: 'facebook_get_group_albums',
+      album_items: 'facebook_get_album_items',
     },
   },
   {
@@ -129,12 +133,14 @@ export const GROUPS = [
 
 const legacyByName = new Map(tools.map((t) => [t.name, t]));
 
-// legacy tool name -> { group, action }
+// legacy tool name -> [{ group, action }]. Usually one; an endpoint shared by
+// two resources (facebook_get_album_items: page and group albums) is listed
+// in both groups.
 const legacyToGroup = new Map();
 for (const group of GROUPS) {
   for (const [action, legacyName] of Object.entries(group.actions)) {
     if (!legacyByName.has(legacyName)) throw new Error(`groups.js: unknown tool ${legacyName}`);
-    legacyToGroup.set(legacyName, { group: group.name, action });
+    legacyToGroup.set(legacyName, [...(legacyToGroup.get(legacyName) || []), { group: group.name, action }]);
   }
 }
 if (legacyToGroup.size !== tools.length) {
@@ -151,8 +157,10 @@ const legacyNamePattern = new RegExp(`\\b(${legacyNames.join('|')})\\b`, 'g');
 
 function rewriteReferences(text, currentGroup) {
   return text.replace(legacyNamePattern, (name) => {
-    const { group, action } = legacyToGroup.get(name);
-    return group === currentGroup ? `action=${action}` : `${group} (action=${action})`;
+    const places = legacyToGroup.get(name);
+    const here = places.find((p) => p.group === currentGroup);
+    if (here) return `action=${here.action}`;
+    return `${places[0].group} (action=${places[0].action})`;
   });
 }
 
@@ -180,8 +188,10 @@ function mergeSchemas(a, b, label) {
 // long "For x: … For y: …" text.
 const SHARED_PARAM_TEXT = {
   'facebook_page.link': 'Facebook page URL, e.g. https://facebook.com/nike. For videos you can pass profile_id instead.',
-  'facebook_page.limit': 'Results per call. posts: 3-9 (default 3) · videos: 6-12 (default 6).',
+  'facebook_page.limit': 'Results per call. posts: 3-9 (default 3) · videos: 6-12 (default 6) · albums: 8-16 (default 8).',
   'facebook_page.end_cursor': 'Pagination cursor from the previous response.',
+  'facebook_page.profile_id': 'Numeric Facebook page ID, from action=id. For videos, an alternative to link.',
+  'facebook_group.limit': 'Results per call. posts: 3-9 (default 3) · albums: 8-16 (default 8).',
   'facebook_post.link': 'Facebook post or reel URL (regular posts, video posts and reels).',
   'facebook_search.query': 'Search keyword. pages: a brand or business name · people: a name · posts, videos: words in the text · locations: a city, place or landmark.',
   'facebook_search.location_uid': 'Location UID from action=locations, to limit results to a place.',

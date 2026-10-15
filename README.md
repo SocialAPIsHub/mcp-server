@@ -154,12 +154,12 @@ Get Nike's Facebook page details
 
 ## 🛠️ Available Tools
 
-12 tools covering 47 actions across Facebook and Instagram. Each tool groups one resource and takes an `action` argument; every action maps to one REST endpoint on `api.socialapis.io`. Tool descriptions list each action, the parameters it needs and its credit cost.
+12 tools covering 50 actions across Facebook and Instagram. Each tool groups one resource and takes an `action` argument; every action maps to one REST endpoint on `api.socialapis.io`. Tool descriptions list each action, the parameters it needs and its credit cost.
 
 | Tool | Actions |
 |---|---|
-| `facebook_page` | `details` (followers, contact info, category; `exact_followers_count=true` costs 5 credits), `id`, `posts` (`limit` 3-9, date filters), `videos` (`limit` 6-12), `reels` |
-| `facebook_group` | `details`, `id`, `posts` (`limit` 3-9, date filters), `videos` |
+| `facebook_page` | `details` (followers, contact info, category; `exact_followers_count=true` costs 5 credits), `id`, `posts` (`limit` 3-9, date filters), `videos` (`limit` 6-12), `reels`, `albums` (`profile_id` from `id`, `limit` 8-16), `album_items` (photos and videos in an album) |
+| `facebook_group` | `details`, `id`, `posts` (`limit` 3-9, date filters), `videos`, `albums` (`group_id` from `id`, `limit` 8-16), `album_items` |
 | `facebook_post` | `details`, `details_extended` (view counts, video URLs, audio metadata), `id`, `attachments` (5 credits), `video`, `comments`, `comment_replies` |
 | `facebook_search` | `pages`, `people`, `posts`, `videos`, `locations` (location UIDs for the other searches) |
 | `facebook_ads` | `search` (ads by keyword, page, country, status), `keywords` (advertisers for a keyword), `page_details`, `archive_details`, `countries` |
@@ -173,7 +173,7 @@ Get Nike's Facebook page details
 
 Example call: `facebook_page` with `{"action": "posts", "link": "https://www.facebook.com/nike", "limit": 9}`.
 
-**Upgrading from 1.x:** the 47 earlier tool names (`facebook_get_page_details`, `instagram_get_profile_posts`, …) still work when called directly, so existing prompts and scripts keep running. They're no longer listed. If your client auto-approves tools by name, add the new names.
+**Upgrading from 1.x:** the earlier per-endpoint tool names (`facebook_get_page_details`, `instagram_get_profile_posts`, …) still work when called directly, so existing prompts and scripts keep running. They're no longer listed. If your client auto-approves tools by name, add the new names.
 
 ### Not supported yet
 Only Facebook and Instagram are live today. TikTok, X / Twitter, LinkedIn and YouTube are on the roadmap with no committed dates — tools for them will appear here only once they ship.
@@ -272,7 +272,7 @@ npm run serve
 ```
 mcp-server/
 ├── src/
-│   ├── tools.js          # The 47 endpoint definitions (one per action)
+│   ├── tools.js          # The 50 endpoint definitions (one per action)
 │   └── groups.js         # Groups them into the 12 listed tools
 ├── mcp-wrapper.js        # MCP client (runs locally)
 ├── server.js             # HTTP proxy server
