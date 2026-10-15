@@ -77,6 +77,26 @@ export const tools = [
     method: 'GET',
   },
   {
+    name: 'facebook_get_page_albums',
+    description: 'List the photo albums of a Facebook page, with album_id, title, cover photo and item count. Needs the numeric page ID (profile_id) from facebook_get_page_id. Returns an end_cursor for the next page. To get the photos in an album, pass its album_id to facebook_get_album_items. Pricing: 1 credit per call.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        profile_id: { type: 'string', description: 'Facebook page ID, from facebook_get_page_id' },
+        limit: {
+          type: 'number',
+          description: 'Maximum number of albums to return. Default: 8. Minimum: 8. Maximum: 16.',
+          minimum: 8,
+          maximum: 16,
+        },
+        end_cursor: { type: 'string', description: 'Pagination cursor' },
+      },
+      required: ['profile_id'],
+    },
+    endpoint: '/facebook/pages/albums',
+    method: 'GET',
+  },
+  {
     name: 'facebook_get_page_reels',
     description: 'List a Facebook page\'s reels (short-form videos). Returns an end_cursor for the next page. For long-form videos, use facebook_get_page_videos. Pricing: 1 credit per call.',
     inputSchema: {
@@ -155,6 +175,39 @@ export const tools = [
       required: ['link'],
     },
     endpoint: '/facebook/groups/videos',
+    method: 'GET',
+  },
+  {
+    name: 'facebook_get_group_albums',
+    description: 'List the photo albums of a public Facebook group, with album_id, title, cover photo and item count. Needs the numeric group ID (group_id) from facebook_get_group_id. To get the photos in an album, pass its album_id to facebook_get_album_items. Pricing: 1 credit per call.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        group_id: { type: 'string', description: 'Facebook group ID, from facebook_get_group_id' },
+        limit: {
+          type: 'number',
+          description: 'Maximum number of albums to return. Default: 8. Minimum: 8. Maximum: 16.',
+          minimum: 8,
+          maximum: 16,
+        },
+      },
+      required: ['group_id'],
+    },
+    endpoint: '/facebook/groups/albums',
+    method: 'GET',
+  },
+  {
+    name: 'facebook_get_album_items',
+    description: 'Get the photos and videos inside a Facebook album (from a page or a group), with id, type, image URL, caption and link. Needs an album_id from facebook_get_page_albums or facebook_get_group_albums. Returns an end_cursor for the next page. Pricing: 1 credit per call.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        album_id: { type: 'string', description: 'Album ID, from facebook_get_page_albums or facebook_get_group_albums' },
+        end_cursor: { type: 'string', description: 'Pagination cursor' },
+      },
+      required: ['album_id'],
+    },
+    endpoint: '/facebook/albums/items',
     method: 'GET',
   },
 

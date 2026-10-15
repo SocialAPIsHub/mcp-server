@@ -14,7 +14,7 @@ import { SERVER_IDENTITY, enrichTool, buildStructuredResult } from './src/toolMe
 const app = express();
 const PORT = process.env.PORT || 3001;
 const API_BASE_URL = process.env.API_BASE_URL || 'https://api.socialapis.io';
-const SERVER_VERSION = '2.0.2';
+const SERVER_VERSION = '2.1.0';
 
 // Upstream scraping calls can take up to ~85s (api-scraping axios timeout).
 // Give the backend fetch a little more so we return the API's own error
@@ -44,7 +44,7 @@ const publicTools = tools.map((tool) => ({
 
 // Full definitions (title, annotations, outputSchema) for the hosted /mcp
 // endpoint and npm client >= 1.2.0: the 12 grouped tools (src/groups.js).
-// The 47 per-endpoint names above stay callable through resolveCall.
+// The 50 per-endpoint names above stay callable through resolveCall.
 const fullTools = groupedTools.map(enrichTool);
 
 // One JSON line per event, prefixed "[mcp]" so it's easy to grep:
@@ -80,7 +80,7 @@ function creditsFrom(response, data) {
  * Call the SocialAPIs REST backend for one tool invocation.
  * Shared by the legacy /proxy route (used by the npm stdio client) and the
  * hosted /mcp endpoint, so both paths hit the API identically. Accepts a
- * grouped tool name with an `action` argument, or one of the 47 legacy names.
+ * grouped tool name with an `action` argument, or one of the 50 per-endpoint names.
  *
  * @returns {{ status: number, ok: boolean, data: any }}
  */
