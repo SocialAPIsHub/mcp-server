@@ -80,6 +80,20 @@ Before submitting:
 3. Check for console errors
 4. Test on different platforms if possible
 
+## Releasing (maintainers)
+
+1. Bump the version in `package.json`, `server.json`, `plugin.json`, `lhm.plugin.json`, `server.js` (`SERVER_VERSION`) and `mcp-wrapper.js`, and add a `CHANGELOG.md` entry. Merge the PR.
+2. Publish to npm from `main`: `npm publish`. Check it's live with `npm view @socialapis/mcp version`.
+3. Tag the release and push the tag:
+
+   ```bash
+   git tag v2.1.1
+   git push origin v2.1.1
+   ```
+
+   The **Publish to MCP Registry** workflow (`.github/workflows/publish-mcp-registry.yml`) checks the tag matches `server.json`, waits for the version on npm, signs in with GitHub Actions OIDC and publishes `server.json`. No personal registry login is needed. To re-run it, use **Run workflow** on the Actions tab.
+4. Update LobeHub: `npx -y @lobehub/market-cli plugin update --dir .`
+
 ## Code of Conduct
 
 - Be respectful and inclusive
