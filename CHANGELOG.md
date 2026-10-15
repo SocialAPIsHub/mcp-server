@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.1.0] - 2026-10-15
 
 ### Added
-- **Facebook photo albums.** `facebook_page` and `facebook_group` get `action=albums` (album_id, title, cover photo, item count; pages take `profile_id` from `action=id`, groups take `group_id`; 8-16 per call) and `action=album_items` (the photos and videos in an album, from a page or a group, with pagination). New REST endpoints: `/facebook/pages/albums`, `/facebook/groups/albums`, `/facebook/albums/items`. 1 credit per call. 50 actions (was 47), still 12 tools.
+- **Facebook photo albums.** `facebook_page` and `facebook_group` get `action=albums` (album_id, album_title, url, thumbnail_uri and item counts; pages take `profile_id` from `action=id`, groups take `group_id`; 8-16 per call) and `action=album_items` (the photos and videos in an album, from a page or a group, with pagination). New REST endpoints: `/facebook/pages/albums`, `/facebook/groups/albums`, `/facebook/albums/items`. 1 credit per call. 50 actions (was 47), still 12 tools.
 - **Calls tell the API they came through MCP.** Each call the server forwards to the SocialAPIs API carries `x-socialapis-client: mcp`, the transport (`x-socialapis-mcp-via: npm` or `hosted`) and the client name (`x-socialapis-mcp-client`, e.g. the MCP client's name/version or user agent). The API stores these on its request log so MCP usage can be seen per account. No arguments or keys are added.
 
 ### Changed

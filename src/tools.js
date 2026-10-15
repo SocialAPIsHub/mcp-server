@@ -78,7 +78,7 @@ export const tools = [
   },
   {
     name: 'facebook_get_page_albums',
-    description: 'List the photo albums of a Facebook page, with album_id, title, cover photo and item count. Needs the numeric page ID (profile_id) from facebook_get_page_id. Returns an end_cursor for the next page. To get the photos in an album, pass its album_id to facebook_get_album_items. Pricing: 1 credit per call.',
+    description: 'List the photo albums of a Facebook page, with album_id, album_title, url, thumbnail_uri and album_items_count (text, e.g. "400 items"). Needs the numeric page ID (profile_id) from facebook_get_page_id. Returns an end_cursor for the next page. To get the photos in an album, pass its album_id to facebook_get_album_items. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -179,7 +179,7 @@ export const tools = [
   },
   {
     name: 'facebook_get_group_albums',
-    description: 'List the photo albums of a public Facebook group, with album_id, title, cover photo and item count. Needs the numeric group ID (group_id) from facebook_get_group_id. To get the photos in an album, pass its album_id to facebook_get_album_items. Pricing: 1 credit per call.',
+    description: 'List the photo albums of a public Facebook group, with album_id, album_title, url, thumbnail_uri, photos_count and videos_count. Returns an end_cursor for the next page. Needs the numeric group ID (group_id) from facebook_get_group_id. To get the photos in an album, pass its album_id to facebook_get_album_items. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -198,7 +198,7 @@ export const tools = [
   },
   {
     name: 'facebook_get_album_items',
-    description: 'Get the photos and videos inside a Facebook album (from a page or a group), with id, type, image URL, caption and link. Needs an album_id from facebook_get_page_albums or facebook_get_group_albums. Returns an end_cursor for the next page. Pricing: 1 credit per call.',
+    description: 'Get the photos and videos inside a Facebook album (from a page or a group): media_id, media_type, url, thumbnail_uri and timestamp (Unix seconds). Needs an album_id from facebook_get_page_albums or facebook_get_group_albums. Returns an end_cursor for the next page. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
