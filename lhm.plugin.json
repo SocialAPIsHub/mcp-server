@@ -693,7 +693,7 @@
     {
       "name": "instagram_profile",
       "title": "Instagram: Profile",
-      "description": "Instagram profiles: details, user ID, posts, reels, highlights and highlight stories.\n\nActions:\n- action=details: Get an Instagram profile by username: bio, follower and post counts, verification status and related profiles. Pricing: 1 credit per call.\n  Inputs: username (required), link (optional).\n- action=id: Resolve an Instagram username or profile URL to its numeric user ID. Needed by action=reels and action=highlights. Pricing: 1 credit per call.\n  Inputs: link (optional), username (optional).\n- action=posts: List an Instagram profile's posts (photos, videos, carousels) with captions, like and comment counts and media URLs. Pass username (returns more results) or user_id. Returns an end_cursor for the next page. For reels only, use action=reels. Pricing: 1 credit per call.\n  Inputs: username (optional), user_id (optional), end_cursor (optional).\n- action=reels: List an Instagram profile's reels with play counts, captions, video URLs and audio metadata. Needs the numeric user_id from action=id. Returns an end_cursor for the next page. Pricing: 1 credit per call.\n  Inputs: user_id (required), end_cursor (optional).\n- action=highlights: List an Instagram profile's story highlights with titles, cover images and highlight IDs. Needs the numeric user_id from action=id. Use action=highlight_details to get the stories in one highlight. Pricing: 1 credit per call.\n  Inputs: user_id (required).\n- action=highlight_details: Get the stories inside one Instagram highlight. Needs a highlight_id from action=highlights. Pricing: 1 credit per call.\n  Inputs: highlight_id (required).",
+      "description": "Instagram profiles: details, user ID, posts, reels, highlights and highlight stories.\n\nActions:\n- action=details: Get an Instagram profile by username: bio, follower and post counts, verification status and related profiles. Pricing: 1 credit per call.\n  Inputs: username (required), link (optional).\n- action=id: Resolve an Instagram username or profile URL to its two IDs: user_id (long, e.g. 17841401474538262), used by action=posts and action=reels, and pk (short, e.g. 528817151), used by action=highlights. Pricing: 1 credit per call.\n  Inputs: link (optional), username (optional).\n- action=posts: List an Instagram profile's posts (photos, videos, carousels) with captions, like and comment counts and media URLs. Pass username (returns more results) or user_id (the long user_id from action=id, not the pk). Returns an end_cursor for the next page. For reels only, use action=reels. Pricing: 1 credit per call.\n  Inputs: username (optional), user_id (optional), end_cursor (optional).\n- action=reels: List an Instagram profile's reels with play counts, captions, video URLs and audio metadata. Needs the long user_id from action=id (not the pk). Returns an end_cursor for the next page. Pricing: 1 credit per call.\n  Inputs: user_id (required), end_cursor (optional).\n- action=highlights: List an Instagram profile's story highlights with titles, cover images and highlight IDs. Needs the profile's pk from action=id, passed as user_id (not the long user_id). Use action=highlight_details to get the stories in one highlight. Pricing: 1 credit per call.\n  Inputs: user_id (required).\n- action=highlight_details: Get the stories inside one Instagram highlight. Needs a highlight_id from action=highlights. Pricing: 1 credit per call.\n  Inputs: highlight_id (required).",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -719,7 +719,7 @@
           },
           "user_id": {
             "type": "string",
-            "description": "Numeric Instagram user ID, from action=id. For posts, an alternative to username.\nRequired for: reels, highlights. Optional for: posts."
+            "description": "Instagram profile ID from action=id. posts, reels: its long user_id (e.g. 17841401474538262) · highlights: its pk (e.g. 528817151). For posts, an alternative to username.\nRequired for: reels, highlights. Optional for: posts."
           },
           "end_cursor": {
             "type": "string",
@@ -1007,6 +1007,6 @@
       }
     }
   ],
-  "version": "2.1.0",
+  "version": "2.1.1",
   "authorUrl": "https://github.com/SocialAPIsHub"
 }

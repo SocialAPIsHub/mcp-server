@@ -352,8 +352,8 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for deta
 
 **Shipped:**
 
-- [x] Facebook API support — 7 tools, 31 actions (Pages, Groups, Posts, Search, Ads Library, Marketplace, Media)
-- [x] **Instagram support** — 5 tools, 16 actions (Profiles, Posts, Reels, Highlights, Discovery / Locations)
+- [x] Facebook API support — 7 tools, 37 actions (Pages, Groups, Posts, Search, Ads Library, Marketplace, Media)
+- [x] **Instagram support** — 5 tools, 13 actions (Profiles, Posts, Reels, Highlights, Discovery / Locations)
 - [x] MCP server implementation
 - [x] HTTP proxy server
 - [x] npm package published — [`@socialapis/mcp`](https://www.npmjs.com/package/@socialapis/mcp)

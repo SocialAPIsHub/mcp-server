@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.1] - 2026-10-16
+
+### Fixed
+- **Instagram IDs.** `instagram_get_user_id` (`instagram_profile` action=id) returns two IDs, `user_id` (long, e.g. `17841401474538262`) and `pk` (short, e.g. `528817151`), and the endpoints need different ones. Tool and parameter descriptions now say so: posts and reels take the long `user_id`; highlights takes the `pk` (passed as `user_id`). Before, every description said "the numeric user_id", so agents sent the wrong ID to highlights. Description text only; no tools, actions or schemas changed.
+- README roadmap counts: Facebook 7 tools / 37 actions, Instagram 5 tools / 13 actions (50 in total; the old split predated the album actions).
+
 ## [2.1.0] - 2026-10-15
 
 ### Added

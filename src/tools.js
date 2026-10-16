@@ -621,7 +621,7 @@ export const tools = [
   // ===========================================
   {
     name: 'instagram_get_user_id',
-    description: 'Resolve an Instagram username or profile URL to its numeric user ID. Needed by instagram_get_profile_reels and instagram_get_profile_highlights. Pricing: 1 credit per call.',
+    description: 'Resolve an Instagram username or profile URL to its two IDs: user_id (long, e.g. 17841401474538262), used by instagram_get_profile_posts and instagram_get_profile_reels, and pk (short, e.g. 528817151), used by instagram_get_profile_highlights. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -649,12 +649,12 @@ export const tools = [
   },
   {
     name: 'instagram_get_profile_posts',
-    description: 'List an Instagram profile\'s posts (photos, videos, carousels) with captions, like and comment counts and media URLs. Pass username (returns more results) or user_id. Returns an end_cursor for the next page. For reels only, use instagram_get_profile_reels. Pricing: 1 credit per call.',
+    description: 'List an Instagram profile\'s posts (photos, videos, carousels) with captions, like and comment counts and media URLs. Pass username (returns more results) or user_id (the long user_id from instagram_get_user_id, not the pk). Returns an end_cursor for the next page. For reels only, use instagram_get_profile_reels. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
         username: { type: 'string', description: 'Instagram username (recommended — returns more results)' },
-        user_id: { type: 'string', description: 'Instagram user ID (alternative)' },
+        user_id: { type: 'string', description: 'Long Instagram user ID: user_id from instagram_get_user_id (e.g. 17841401474538262), not the pk. Alternative to username.' },
         end_cursor: { type: 'string', description: 'Pagination cursor for next page' },
       },
       required: [],
@@ -664,11 +664,11 @@ export const tools = [
   },
   {
     name: 'instagram_get_profile_reels',
-    description: 'List an Instagram profile\'s reels with play counts, captions, video URLs and audio metadata. Needs the numeric user_id from instagram_get_user_id. Returns an end_cursor for the next page. Pricing: 1 credit per call.',
+    description: 'List an Instagram profile\'s reels with play counts, captions, video URLs and audio metadata. Needs the long user_id from instagram_get_user_id (not the pk). Returns an end_cursor for the next page. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
-        user_id: { type: 'string', description: 'Instagram user ID' },
+        user_id: { type: 'string', description: 'Long Instagram user ID: user_id from instagram_get_user_id (e.g. 17841401474538262), not the pk.' },
         end_cursor: { type: 'string', description: 'Pagination cursor for next page' },
       },
       required: ['user_id'],
@@ -678,11 +678,11 @@ export const tools = [
   },
   {
     name: 'instagram_get_profile_highlights',
-    description: 'List an Instagram profile\'s story highlights with titles, cover images and highlight IDs. Needs the numeric user_id from instagram_get_user_id. Use instagram_get_highlight_details to get the stories in one highlight. Pricing: 1 credit per call.',
+    description: 'List an Instagram profile\'s story highlights with titles, cover images and highlight IDs. Needs the profile\'s pk from instagram_get_user_id, passed as user_id (not the long user_id). Use instagram_get_highlight_details to get the stories in one highlight. Pricing: 1 credit per call.',
     inputSchema: {
       type: 'object',
       properties: {
-        user_id: { type: 'string', description: 'Instagram user ID' },
+        user_id: { type: 'string', description: "The profile's pk from instagram_get_user_id (e.g. 528817151), not the long user_id." },
       },
       required: ['user_id'],
     },
