@@ -20,7 +20,7 @@ if (!API_KEY) {
 const server = new Server(
   {
     ...SERVER_IDENTITY,
-    version: '2.1.0',
+    version: '2.1.1',
   },
   {
     capabilities: {
@@ -47,7 +47,7 @@ let cachedTools = null;
 
 function clientLabel() {
   const info = server.getClientVersion();
-  return info?.name ? `${info.name}/${info.version || '?'} (npm 2.1.0)` : 'unknown (npm 2.1.0)';
+  return info?.name ? `${info.name}/${info.version || '?'} (npm 2.1.1)` : 'unknown (npm 2.1.1)';
 }
 
 server.setRequestHandler(ListToolsRequestSchema, async () => {

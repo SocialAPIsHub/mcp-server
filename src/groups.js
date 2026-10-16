@@ -200,7 +200,7 @@ const SHARED_PARAM_TEXT = {
   'facebook_marketplace.sort_by': 'Sort order. vehicles: CREATION_TIME_DESCEND, PRICE_ASCEND, VEHICLE_MILEAGE_ASCEND, … · rentals: CREATION_TIME_DESCEND, PRICE_ASCEND, BEST_MATCH.',
   'instagram_profile.username': 'Instagram username, without the @. For posts it returns more results than user_id.',
   'instagram_profile.link': 'Instagram profile URL (alternative to username).',
-  'instagram_profile.user_id': 'Numeric Instagram user ID, from action=id. For posts, an alternative to username.',
+  'instagram_profile.user_id': 'Instagram profile ID from action=id. posts, reels: its long user_id (e.g. 17841401474538262) · highlights: its pk (e.g. 528817151). For posts, an alternative to username.',
 };
 
 function usageSuffix(uses, order) {
