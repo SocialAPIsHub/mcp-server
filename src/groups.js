@@ -6,6 +6,10 @@
 //
 // The per-endpoint names stay callable (resolveCall) so existing configs,
 // prompts and npm clients <= 1.2.x keep working. They're just not listed.
+//
+// buildGroupedTools / resolveCall take the tool list to use, so the server
+// can pass the live-overlaid one (src/liveCatalog.js). Names never change:
+// the overlay only edits descriptions, prices and parameters.
 
 import { tools } from './tools.js';
 
@@ -213,8 +217,8 @@ function usageSuffix(uses, order) {
   return parts.join(' ');
 }
 
-function buildGroupTool(group) {
-  const entries = Object.entries(group.actions).map(([action, legacyName]) => [action, legacyByName.get(legacyName)]);
+function buildGroupTool(group, byName = legacyByName) {
+  const entries = Object.entries(group.actions).map(([action, legacyName]) => [action, byName.get(legacyName)]);
   const single = entries.length === 1;
 
   // Merge parameters. A parameter shared by several actions keeps one entry;
@@ -288,17 +292,35 @@ function buildGroupTool(group) {
   };
 }
 
-/** The 12 grouped tool definitions (name, description, inputSchema). */
-export const groupedTools = GROUPS.map(buildGroupTool);
+const toMap = (list) => (list === tools ? legacyByName : new Map(list.map((t) => [t.name, t])));
+
+/**
+ * The 12 grouped tool definitions (name, description, inputSchema) for a
+ * per-endpoint tool list with the same names as tools.js. Throws if a name
+ * is missing or two actions can no longer be merged (callers keep their
+ * previous set then).
+ */
+export function buildGroupedTools(list = tools) {
+  const byName = toMap(list);
+  for (const name of legacyByName.keys()) {
+    if (!byName.has(name)) throw new Error(`groups.js: tool ${name} missing from the list`);
+  }
+  return GROUPS.map((g) => buildGroupTool(g, byName));
+}
+
+/** The 12 grouped tool definitions built from the bundled tools.js. */
+export const groupedTools = buildGroupedTools(tools);
 
 /**
  * Resolve a tool call to the underlying endpoint tool.
  * Accepts a grouped name with an `action` argument, or a legacy tool name.
+ * `list` = the per-endpoint tools to validate against (default: tools.js).
  *
  * @returns {{ tool: object, args: object } | { error: string }}
  */
-export function resolveCall(name, args = {}) {
-  const legacy = legacyByName.get(name);
+export function resolveCall(name, args = {}, list = tools) {
+  const byName = toMap(list);
+  const legacy = byName.get(name);
   if (legacy) return { tool: legacy, args };
 
   const group = GROUPS.find((g) => g.name === name);
@@ -317,7 +339,7 @@ export function resolveCall(name, args = {}) {
     return { error: `Unknown action "${chosen}" for ${name}. One of: ${actionNames.join(', ')}.` };
   }
 
-  const tool = legacyByName.get(legacyName);
+  const tool = byName.get(legacyName);
   const missing = (tool.inputSchema.required || []).filter((p) => rest[p] === undefined || rest[p] === null || rest[p] === '');
   if (missing.length) {
     return { error: `${name} action=${chosen} requires: ${missing.join(', ')}.` };

@@ -7,14 +7,14 @@ import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
-import { tools } from './src/tools.js';
-import { groupedTools, resolveCall } from './src/groups.js';
+import { GROUPS, resolveCall } from './src/groups.js';
+import { currentTools, currentGroupedTools, catalogStatus, startLiveCatalog } from './src/liveCatalog.js';
 import { SERVER_IDENTITY, enrichTool, buildStructuredResult } from './src/toolMeta.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 const API_BASE_URL = process.env.API_BASE_URL || 'https://api.socialapis.io';
-const SERVER_VERSION = '2.1.1';
+const SERVER_VERSION = '2.2.0';
 
 // Upstream scraping calls can take up to ~85s (api-scraping axios timeout).
 // Give the backend fetch a little more so we return the API's own error
@@ -36,7 +36,7 @@ app.use(express.json({ limit: '1mb' }));
 // list from this endpoint but never return structuredContent, and MCP
 // clients reject tools that declare an outputSchema without it — so this
 // shape must not gain outputSchema. Newer clients request ?format=full.
-const publicTools = tools.map((tool) => ({
+const publicTools = () => currentTools().map((tool) => ({
   name: tool.name,
   description: tool.description,
   inputSchema: tool.inputSchema,
@@ -45,7 +45,16 @@ const publicTools = tools.map((tool) => ({
 // Full definitions (title, annotations, outputSchema) for the hosted /mcp
 // endpoint and npm client >= 1.2.0: the 12 grouped tools (src/groups.js).
 // The 50 per-endpoint names above stay callable through resolveCall.
-const fullTools = groupedTools.map(enrichTool);
+// Built from the live catalog overlay (src/liveCatalog.js): prices,
+// descriptions and parameters follow the API; names never change. Memoized
+// per definitions object, so it's rebuilt only after a catalog change.
+let fullCache = { from: null, tools: [] };
+const fullTools = () => {
+  const grouped = currentGroupedTools();
+  if (fullCache.from !== grouped) fullCache = { from: grouped, tools: grouped.map(enrichTool) };
+  return fullCache.tools;
+};
+const groupNames = new Set(GROUPS.map((g) => g.name));
 
 // One JSON line per event, prefixed "[mcp]" so it's easy to grep:
 //   docker logs mcp-server --since 24h 2>&1 | grep '^\[mcp\]'
@@ -86,7 +95,7 @@ function creditsFrom(response, data) {
  */
 async function callBackend(toolName, rawArgs, apiKey, ctx = {}) {
   const started = Date.now();
-  const isGrouped = groupedTools.some((t) => t.name === toolName);
+  const isGrouped = groupNames.has(toolName);
   const base = {
     event: 'call',
     via: ctx.via,
@@ -97,7 +106,7 @@ async function callBackend(toolName, rawArgs, apiKey, ctx = {}) {
     key: keyFingerprint(apiKey),
   };
 
-  const resolved = resolveCall(toolName, rawArgs);
+  const resolved = resolveCall(toolName, rawArgs, currentTools());
   if (resolved.error) {
     logEvent({ ...base, status: 400, error: 'invalid_call', ms: Date.now() - started });
     return { status: 400, ok: false, data: { error: resolved.error } };
@@ -160,8 +169,10 @@ function createMcpServer(apiKey, ctx) {
   );
 
   // Tool discovery is public (same data as GET /tools) so directories and
-  // clients can list tools before the user has entered a key.
-  server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools: fullTools }));
+  // clients can list tools before the user has entered a key. A server is
+  // created per request (stateless), so each list reflects the current
+  // catalog overlay; no list_changed notification is needed.
+  server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools: fullTools() }));
 
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const { name, arguments: args } = request.params;
@@ -204,14 +215,15 @@ app.get('/health', (req, res) => {
     status: 'ok',
     service: 'socialapis-mcp-server',
     version: SERVER_VERSION,
-    tools: fullTools.length,
-    actions: tools.length,
+    tools: fullTools().length,
+    actions: currentTools().length,
+    catalog: catalogStatus(),
   });
 });
 
 // List available tools (used by the npm stdio client)
 app.get('/tools', (req, res) => {
-  res.json({ tools: req.query.format === 'full' ? fullTools : publicTools });
+  res.json({ tools: req.query.format === 'full' ? fullTools() : publicTools() });
 });
 
 // Legacy proxy endpoint used by the npm stdio client (mcp-wrapper.js)
@@ -287,6 +299,10 @@ const methodNotAllowed = (req, res) => {
 };
 app.get('/mcp', methodNotAllowed);
 app.delete('/mcp', methodNotAllowed);
+
+// Follow the live endpoint catalog. Startup waits for the first fetch at
+// most ~3s; on failure the bundled tools.js is served and retried later.
+await startLiveCatalog();
 
 app.listen(PORT, () => {
   console.log(`✅ MCP server running on port ${PORT}`);

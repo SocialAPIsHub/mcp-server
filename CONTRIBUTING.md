@@ -87,8 +87,8 @@ Before submitting:
 3. Tag the release and push the tag:
 
    ```bash
-   git tag v2.1.1
-   git push origin v2.1.1
+   git tag v2.2.0
+   git push origin v2.2.0
    ```
 
    The **Publish to MCP Registry** workflow (`.github/workflows/publish-mcp-registry.yml`) checks the tag matches `server.json`, waits for the version on npm, signs in with GitHub Actions OIDC and publishes `server.json`. No personal registry login is needed. To re-run it, use **Run workflow** on the Actions tab.

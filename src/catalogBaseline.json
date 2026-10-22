@@ -1,0 +1,1283 @@
+{
+  "endpoints": [
+    {
+      "route": "/facebook/ads/archive-details",
+      "method": "get",
+      "description": "Get detailed info about a specific archived ad by archive ID.",
+      "queryParams": [
+        {
+          "name": "ad_archive_id",
+          "type": "string",
+          "required": true,
+          "description": "Ad Archive ID"
+        },
+        {
+          "name": "page_id",
+          "type": "string",
+          "required": false,
+          "description": "Facebook Page ID"
+        },
+        {
+          "name": "country",
+          "type": "string",
+          "required": false,
+          "description": "ISO country code or ALL"
+        },
+        {
+          "name": "is_ad_non_political",
+          "type": "boolean",
+          "required": false,
+          "description": "Filter non-political ads"
+        },
+        {
+          "name": "is_ad_not_aaa_eligible",
+          "type": "boolean",
+          "required": false,
+          "description": "Filter AAA eligibility"
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/facebook/ads/countries",
+      "method": "get",
+      "description": "Get list of supported country codes for Meta Ads Library filtering.",
+      "queryParams": [],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/facebook/ads/keywords",
+      "method": "get",
+      "description": "Search for ads by keyword with optional country filter.",
+      "queryParams": [
+        {
+          "name": "query",
+          "type": "string",
+          "required": true,
+          "description": "Search keyword"
+        },
+        {
+          "name": "country",
+          "type": "string",
+          "required": false,
+          "description": "ISO country code or ALL"
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/facebook/ads/page-details",
+      "method": "get",
+      "description": "Get detailed info about a specific Facebook page from the Ads Library.",
+      "queryParams": [
+        {
+          "name": "page_id",
+          "type": "string",
+          "required": true,
+          "description": "Facebook Page ID"
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/facebook/ads/search",
+      "method": "get",
+      "description": "Search ads in the Meta Ad Library by keyword or page ID with filters.",
+      "queryParams": [
+        {
+          "name": "query",
+          "type": "string",
+          "required": false,
+          "description": "Search keyword for ads"
+        },
+        {
+          "name": "ad_page_id",
+          "type": "string",
+          "required": false,
+          "description": "Facebook AD Page ID. Used only if query is not provided."
+        },
+        {
+          "name": "country",
+          "type": "string",
+          "required": false,
+          "description": "ISO country code or ALL"
+        },
+        {
+          "name": "activeStatus",
+          "type": "string",
+          "required": false,
+          "description": "Filter by ad status: ALL, Active, or Inactive"
+        },
+        {
+          "name": "after_time",
+          "type": "string",
+          "required": false,
+          "description": "Filter ads after this date (YYYY-MM-DD)"
+        },
+        {
+          "name": "before_time",
+          "type": "string",
+          "required": false,
+          "description": "Filter ads before this date (YYYY-MM-DD)"
+        },
+        {
+          "name": "sort_data",
+          "type": "string",
+          "required": false,
+          "description": "Sort: impressions (high to low) or recent (most recent)"
+        },
+        {
+          "name": "end_cursor",
+          "type": "string",
+          "required": false,
+          "description": "Pagination cursor"
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/facebook/albums/items",
+      "method": "get",
+      "description": "Get the photos and videos inside a Facebook album, from a page or a group. Takes the album id returned by /facebook/pages/albums or /facebook/groups/albums.",
+      "queryParams": [
+        {
+          "name": "album_id",
+          "type": "string",
+          "required": true,
+          "description": "Album ID from /facebook/pages/albums or /facebook/groups/albums"
+        },
+        {
+          "name": "end_cursor",
+          "type": "string",
+          "required": false,
+          "description": "Cursor for pagination to retrieve the next set of items"
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/facebook/groups/albums",
+      "method": "get",
+      "description": "List the photo albums of a Facebook group (album_id, album_title, url, thumbnail_uri, photos_count, videos_count). Use the album_id with /facebook/albums/items to get the photos.",
+      "queryParams": [
+        {
+          "name": "group_id",
+          "type": "string",
+          "required": true,
+          "description": "Facebook group ID (get it from /facebook/groups/id)"
+        },
+        {
+          "name": "limit",
+          "type": "number",
+          "required": false,
+          "description": "Number of albums to return. Default: 8. Minimum: 8. Maximum: 16."
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/facebook/groups/details",
+      "method": "get",
+      "description": "Get detailed metadata and statistics about a Facebook group including member count, description, and rules.",
+      "queryParams": [
+        {
+          "name": "link",
+          "type": "string",
+          "required": true,
+          "description": "Facebook group URL"
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/facebook/groups/id",
+      "method": "get",
+      "description": "Retrieve the Facebook Group ID from a public group link.",
+      "queryParams": [
+        {
+          "name": "link",
+          "type": "string",
+          "required": true,
+          "description": "Facebook group URL"
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/facebook/groups/posts",
+      "method": "get",
+      "description": "Fetch recent posts from a Facebook group, including text, media, reactions, and comments. Pricing: round(limit / 3) credits per call when limit is above 3, minimum 1: limit 3-4 = 1 credit, 5-7 = 2, 8-9 = 3.",
+      "queryParams": [
+        {
+          "name": "link",
+          "type": "string",
+          "required": true,
+          "description": "Facebook group URL"
+        },
+        {
+          "name": "limit",
+          "type": "number",
+          "required": false,
+          "description": "Maximum number of posts to return. Default: 3. Minimum: 3. Maximum: 9."
+        },
+        {
+          "name": "end_cursor",
+          "type": "string",
+          "required": false,
+          "description": "Cursor for pagination to retrieve the next set of posts"
+        },
+        {
+          "name": "after_time",
+          "type": "string",
+          "required": false,
+          "description": "Return posts published after this timestamp (ISO 8601 or Unix)"
+        },
+        {
+          "name": "before_time",
+          "type": "string",
+          "required": false,
+          "description": "Return posts published before this timestamp (ISO 8601 or Unix)"
+        },
+        {
+          "name": "timezone",
+          "type": "string",
+          "required": false,
+          "description": "Timezone for returned timestamps, e.g., UTC"
+        }
+      ],
+      "creditsRequired": 1,
+      "creditRules": [
+        {
+          "param": "limit",
+          "op": "per",
+          "value": "3",
+          "credits": 3
+        }
+      ],
+      "pricing": "1 credit; round(limit ÷ 3) credits when limit is set, up to 3"
+    },
+    {
+      "route": "/facebook/groups/videos",
+      "method": "get",
+      "description": "Get videos from a Facebook group with pagination. Pricing: 1 credit per call.",
+      "queryParams": [
+        {
+          "name": "link",
+          "type": "string",
+          "required": true,
+          "description": "Facebook group URL"
+        },
+        {
+          "name": "end_cursor",
+          "type": "string",
+          "required": false,
+          "description": "Cursor for pagination to retrieve the next set of videos"
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/facebook/marketplace/categories",
+      "method": "get",
+      "description": "Get all Marketplace categories with seo_url and category ID values.",
+      "queryParams": [],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/facebook/marketplace/city-coordinates",
+      "method": "get",
+      "description": "Get GPS coordinates for a city to use as Marketplace location filters.",
+      "queryParams": [
+        {
+          "name": "city",
+          "type": "string",
+          "required": true,
+          "description": "City name"
+        },
+        {
+          "name": "country",
+          "type": "string",
+          "required": false,
+          "description": "Country name or code"
+        },
+        {
+          "name": "exactly_one",
+          "type": "boolean",
+          "required": false,
+          "description": "Return exactly one result"
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/facebook/marketplace/listing",
+      "method": "get",
+      "description": "Get detailed info about a single Marketplace listing.",
+      "queryParams": [
+        {
+          "name": "listing_id",
+          "type": "string",
+          "required": true,
+          "description": "Marketplace Listing ID"
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/facebook/marketplace/rentals",
+      "method": "get",
+      "description": "Search Marketplace rental property listings with filters for bedrooms, bathrooms, location, and price.",
+      "queryParams": [
+        {
+          "name": "sort_by",
+          "type": "string",
+          "required": false,
+          "description": "Sort: CREATION_TIME_DESCEND, PRICE_ASCEND, BEST_MATCH, etc."
+        },
+        {
+          "name": "filter_location_latitude",
+          "type": "string",
+          "required": false,
+          "description": "GPS latitude"
+        },
+        {
+          "name": "filter_location_longitude",
+          "type": "string",
+          "required": false,
+          "description": "GPS longitude"
+        },
+        {
+          "name": "filter_price_lower_bound",
+          "type": "number",
+          "required": false,
+          "description": "Minimum price"
+        },
+        {
+          "name": "filter_price_upper_bound",
+          "type": "number",
+          "required": false,
+          "description": "Maximum price"
+        },
+        {
+          "name": "filter_radius_km",
+          "type": "number",
+          "required": false,
+          "description": "Radius in km"
+        },
+        {
+          "name": "filter_bedrooms_min",
+          "type": "number",
+          "required": false,
+          "description": "Min bedrooms"
+        },
+        {
+          "name": "filter_bedrooms_max",
+          "type": "number",
+          "required": false,
+          "description": "Max bedrooms"
+        },
+        {
+          "name": "filter_bathrooms_min",
+          "type": "number",
+          "required": false,
+          "description": "Min bathrooms"
+        },
+        {
+          "name": "filter_bathrooms_max",
+          "type": "number",
+          "required": false,
+          "description": "Max bathrooms"
+        },
+        {
+          "name": "is_c2c_listing_only",
+          "type": "boolean",
+          "required": false,
+          "description": "Individual sellers only"
+        },
+        {
+          "name": "end_cursor",
+          "type": "string",
+          "required": false,
+          "description": "Pagination cursor"
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/facebook/marketplace/search",
+      "method": "get",
+      "description": "Search Facebook Marketplace items with filters for location, price, category, condition, and more.",
+      "queryParams": [
+        {
+          "name": "query",
+          "type": "string",
+          "required": false,
+          "description": "Search term"
+        },
+        {
+          "name": "category_url",
+          "type": "string",
+          "required": false,
+          "description": "Category URL slug"
+        },
+        {
+          "name": "proxy_country",
+          "type": "string",
+          "required": false,
+          "description": "Optional premium proxy country"
+        },
+        {
+          "name": "commerce_search_sort_by",
+          "type": "string",
+          "required": false,
+          "description": "Sort: BEST_MATCH, CREATION_TIME_DESCEND, PRICE_ASCEND, etc."
+        },
+        {
+          "name": "commerce_search_and_rp_condition",
+          "type": "string",
+          "required": false,
+          "description": "Condition filter: new, used_like_new, used_good, used_fair"
+        },
+        {
+          "name": "filter_location_latitude",
+          "type": "string",
+          "required": false,
+          "description": "GPS latitude coordinate"
+        },
+        {
+          "name": "filter_location_longitude",
+          "type": "string",
+          "required": false,
+          "description": "GPS longitude coordinate"
+        },
+        {
+          "name": "filter_price_lower_bound",
+          "type": "number",
+          "required": false,
+          "description": "Minimum price"
+        },
+        {
+          "name": "filter_price_upper_bound",
+          "type": "number",
+          "required": false,
+          "description": "Maximum price"
+        },
+        {
+          "name": "filter_radius_km",
+          "type": "number",
+          "required": false,
+          "description": "Search radius in km"
+        },
+        {
+          "name": "posted_today",
+          "type": "boolean",
+          "required": false,
+          "description": "Limit to items posted today"
+        },
+        {
+          "name": "exact_match",
+          "type": "boolean",
+          "required": false,
+          "description": "Exact match search"
+        },
+        {
+          "name": "end_cursor",
+          "type": "string",
+          "required": false,
+          "description": "Pagination cursor"
+        },
+        {
+          "name": "fields",
+          "type": "string",
+          "required": false,
+          "description": "Comma-separated keys to include (e.g. 'items.id,items.title,page_info.end_cursor'). Invalid keys are ignored."
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/facebook/marketplace/seller",
+      "method": "get",
+      "description": "Get seller profile, ratings, reviews, and badges.",
+      "queryParams": [
+        {
+          "name": "seller_id",
+          "type": "string",
+          "required": true,
+          "description": "Seller ID"
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/facebook/marketplace/vehicles",
+      "method": "get",
+      "description": "Search Marketplace vehicle listings with filters for location, price, mileage, year, and more.",
+      "queryParams": [
+        {
+          "name": "sort_by",
+          "type": "string",
+          "required": false,
+          "description": "Sort: CREATION_TIME_DESCEND, PRICE_ASCEND, VEHICLE_MILEAGE_ASCEND, VEHICLE_YEAR_ASCEND, etc."
+        },
+        {
+          "name": "filter_location_latitude",
+          "type": "string",
+          "required": false,
+          "description": "GPS latitude"
+        },
+        {
+          "name": "filter_location_longitude",
+          "type": "string",
+          "required": false,
+          "description": "GPS longitude"
+        },
+        {
+          "name": "filter_price_lower_bound",
+          "type": "number",
+          "required": false,
+          "description": "Minimum price"
+        },
+        {
+          "name": "filter_price_upper_bound",
+          "type": "number",
+          "required": false,
+          "description": "Maximum price"
+        },
+        {
+          "name": "filter_radius_km",
+          "type": "number",
+          "required": false,
+          "description": "Radius in km"
+        },
+        {
+          "name": "is_c2c_listing_only",
+          "type": "boolean",
+          "required": false,
+          "description": "Individual sellers only"
+        },
+        {
+          "name": "exact_match",
+          "type": "boolean",
+          "required": false,
+          "description": "Exact match search"
+        },
+        {
+          "name": "end_cursor",
+          "type": "string",
+          "required": false,
+          "description": "Pagination cursor"
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/facebook/media/download",
+      "method": "get",
+      "description": "Download media (images, videos, audio) from Facebook URLs. Pricing: 1 credit per MB of the file (rounded up), minimum 1, up to 100 credits (files up to 100 MB). The price is known after the download; if your balance is lower, only what is left is charged.",
+      "queryParams": [
+        {
+          "name": "url",
+          "type": "string",
+          "required": true,
+          "description": "Facebook media URL to download"
+        }
+      ],
+      "creditsRequired": 1,
+      "pricing": "1 credit; up to 100 credits per call depending on the result"
+    },
+    {
+      "route": "/facebook/pages/albums",
+      "method": "get",
+      "description": "List the photo albums of a Facebook page (album_id, album_title, url, thumbnail_uri, album_items_count). Use the album_id with /facebook/albums/items to get the photos.",
+      "queryParams": [
+        {
+          "name": "profile_id",
+          "type": "string",
+          "required": true,
+          "description": "Facebook page ID (get it from /facebook/pages/id)"
+        },
+        {
+          "name": "limit",
+          "type": "number",
+          "required": false,
+          "description": "Number of albums to return. Default: 8. Minimum: 8. Maximum: 16."
+        },
+        {
+          "name": "end_cursor",
+          "type": "string",
+          "required": false,
+          "description": "Cursor for pagination to retrieve the next set of albums"
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/facebook/pages/details",
+      "method": "get",
+      "description": "Get Facebook page details. Pricing: 1 credit per call by default; 5 credits when exact_followers_count=true (deeper scrape to resolve exact follower count instead of the rounded display value).",
+      "queryParams": [
+        {
+          "name": "link",
+          "type": "string",
+          "required": true,
+          "description": "Facebook page URL"
+        },
+        {
+          "name": "exact_followers_count",
+          "type": "boolean",
+          "required": false,
+          "description": "When true, performs a deeper scrape to return the exact follower count (e.g. 38_493_217 instead of '38M'). Default: false. Pricing: charges 5 credits when true, 1 credit otherwise."
+        },
+        {
+          "name": "page_section",
+          "type": "string",
+          "required": false,
+          "description": "Which section to return. `default`: the page's standard details. `about`: details read from the page's About tab. `work_and_education`: the standard details plus the profile's work and education history (`work_and_education.work`, `.college`, `.high_school`; each entry has title, organization, period, location and description). Default: default."
+        }
+      ],
+      "creditsRequired": 1,
+      "creditRules": [
+        {
+          "param": "exact_followers_count",
+          "op": "equals",
+          "value": "true",
+          "credits": 5
+        }
+      ],
+      "pricing": "1 credit; 5 credits when exact_followers_count=true"
+    },
+    {
+      "route": "/facebook/pages/id",
+      "method": "get",
+      "description": "Get Facebook page id",
+      "queryParams": [
+        {
+          "name": "link",
+          "type": "string",
+          "required": true,
+          "description": "Facebook page URL"
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/facebook/pages/posts",
+      "method": "get",
+      "description": "Get Facebook page posts. Pricing: round(limit / 3) credits per call when limit is above 3, minimum 1: limit 3-4 = 1 credit, 5-7 = 2, 8-9 = 3.",
+      "queryParams": [
+        {
+          "name": "link",
+          "type": "string",
+          "required": true,
+          "description": "Facebook page URL from which to extract posts"
+        },
+        {
+          "name": "limit",
+          "type": "number",
+          "required": false,
+          "description": "Maximum number of posts to return. Default: 3. Minimum: 3. Maximum: 9."
+        },
+        {
+          "name": "end_cursor",
+          "type": "string",
+          "required": false,
+          "description": "Cursor for pagination to retrieve the next set of posts"
+        },
+        {
+          "name": "after_time",
+          "type": "string",
+          "required": false,
+          "description": "Only include posts published after this timestamp (ISO 8601 format)"
+        },
+        {
+          "name": "before_time",
+          "type": "string",
+          "required": false,
+          "description": "Only include posts published before this timestamp (ISO 8601 format)"
+        },
+        {
+          "name": "timezone",
+          "type": "string",
+          "required": false,
+          "description": "Timezone used for formatting post timestamps (e.g., 'UTC', 'America/New_York')"
+        }
+      ],
+      "creditsRequired": 1,
+      "creditRules": [
+        {
+          "param": "limit",
+          "op": "per",
+          "value": "3",
+          "credits": 3
+        }
+      ],
+      "pricing": "1 credit; round(limit ÷ 3) credits when limit is set, up to 3"
+    },
+    {
+      "route": "/facebook/pages/reels",
+      "method": "get",
+      "description": "Get Facebook page reels",
+      "queryParams": [
+        {
+          "name": "link",
+          "type": "string",
+          "required": true,
+          "description": "Facebook page URL"
+        },
+        {
+          "name": "end_cursor",
+          "type": "string",
+          "required": false,
+          "description": "Cursor for pagination to retrieve the next set of posts"
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/facebook/pages/videos",
+      "method": "get",
+      "description": "Get Facebook page videos",
+      "queryParams": [
+        {
+          "name": "link",
+          "type": "string",
+          "required": true,
+          "description": "Facebook page URL"
+        },
+        {
+          "name": "end_cursor",
+          "type": "string",
+          "required": false,
+          "description": "Cursor for pagination to retrieve the next set of posts"
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/facebook/posts/attachments",
+      "method": "get",
+      "description": "Get details of all media attachments for a given Facebook post. Pricing: 5 credits per call (deeper scrape than the standard post-details endpoint).",
+      "queryParams": [
+        {
+          "name": "post_id",
+          "type": "string",
+          "required": true,
+          "description": "Facebook post ID"
+        }
+      ],
+      "creditsRequired": 5,
+      "pricing": "5 credits"
+    },
+    {
+      "route": "/facebook/posts/comments",
+      "method": "get",
+      "description": "Retrieve top-level comments from a Facebook post or reel.",
+      "queryParams": [
+        {
+          "name": "link",
+          "type": "string",
+          "required": true,
+          "description": "Facebook post or reel URL"
+        },
+        {
+          "name": "end_cursor",
+          "type": "string",
+          "required": false,
+          "description": "Pagination cursor to retrieve the next page of comments"
+        },
+        {
+          "name": "include_reply_info",
+          "type": "boolean",
+          "required": false,
+          "description": "When true, includes comment_feedback_id and expansion_token in each comment. These are required to fetch replies via the /facebook/posts/comments/replies endpoint."
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/facebook/posts/comments/replies",
+      "method": "get",
+      "description": "Fetch replies to a specific comment on a Facebook post. Requires comment_feedback_id and expansion_token obtained from the /facebook/posts/comments endpoint with include_reply_info=true.",
+      "queryParams": [
+        {
+          "name": "comment_feedback_id",
+          "type": "string",
+          "required": true,
+          "description": "The feedback ID of the parent comment. Obtained from the comments endpoint with include_reply_info=true."
+        },
+        {
+          "name": "expansion_token",
+          "type": "string",
+          "required": true,
+          "description": "Pagination token for loading replies. Obtained from the comments endpoint with include_reply_info=true."
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/facebook/posts/details",
+      "method": "get",
+      "description": "Get detailed data about a Facebook post including reactions, media, and user info.",
+      "queryParams": [
+        {
+          "name": "link",
+          "type": "string",
+          "required": true,
+          "description": "Facebook post URL"
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/facebook/posts/details/extended",
+      "method": "get",
+      "description": "Get extended details about a Facebook post including views, video URLs, music info, and author verification.",
+      "queryParams": [
+        {
+          "name": "link",
+          "type": "string",
+          "required": true,
+          "description": "Facebook post URL"
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/facebook/posts/id",
+      "method": "get",
+      "description": "Extract the Facebook post ID from a given post link.",
+      "queryParams": [
+        {
+          "name": "link",
+          "type": "string",
+          "required": true,
+          "description": "Facebook post URL"
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/facebook/posts/video",
+      "method": "get",
+      "description": "Retrieve video metadata, feedback stats, and post context for a Facebook video post.",
+      "queryParams": [
+        {
+          "name": "video_id",
+          "type": "string",
+          "required": true,
+          "description": "Facebook video ID"
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/facebook/search/locations",
+      "method": "get",
+      "description": "Search for Facebook locations by keyword. Returns location UIDs that can be used to filter other search endpoints.",
+      "queryParams": [
+        {
+          "name": "query",
+          "type": "string",
+          "required": true,
+          "description": "Search query (city, place, landmark, etc.)"
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/facebook/search/pages",
+      "method": "get",
+      "description": "Search for Facebook pages by keyword with optional location filtering.",
+      "queryParams": [
+        {
+          "name": "query",
+          "type": "string",
+          "required": true,
+          "description": "Search query"
+        },
+        {
+          "name": "location_uid",
+          "type": "string",
+          "required": false,
+          "description": "Location UID for filtering. Obtain from the /facebook/search/locations endpoint."
+        },
+        {
+          "name": "end_cursor",
+          "type": "string",
+          "required": false,
+          "description": "Pagination cursor to retrieve the next page of results"
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/facebook/search/people",
+      "method": "get",
+      "description": "Search for Facebook people/profiles by keyword with optional location filtering.",
+      "queryParams": [
+        {
+          "name": "query",
+          "type": "string",
+          "required": true,
+          "description": "Search query"
+        },
+        {
+          "name": "location_uid",
+          "type": "string",
+          "required": false,
+          "description": "Location UID for filtering. Obtain from the /facebook/search/locations endpoint."
+        },
+        {
+          "name": "end_cursor",
+          "type": "string",
+          "required": false,
+          "description": "Pagination cursor to retrieve the next page of results"
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/facebook/search/posts",
+      "method": "get",
+      "description": "Search for Facebook posts by keyword with optional location and time filters.",
+      "queryParams": [
+        {
+          "name": "query",
+          "type": "string",
+          "required": true,
+          "description": "Search query"
+        },
+        {
+          "name": "location_uid",
+          "type": "string",
+          "required": false,
+          "description": "Location UID for filtering. Obtain from the /facebook/search/locations endpoint."
+        },
+        {
+          "name": "start_time",
+          "type": "string",
+          "required": false,
+          "description": "Filter posts after this date (YYYY-MM-DD)"
+        },
+        {
+          "name": "end_time",
+          "type": "string",
+          "required": false,
+          "description": "Filter posts before this date (YYYY-MM-DD)"
+        },
+        {
+          "name": "recent_posts",
+          "type": "boolean",
+          "required": false,
+          "description": "When true, shows only recent posts"
+        },
+        {
+          "name": "end_cursor",
+          "type": "string",
+          "required": false,
+          "description": "Pagination cursor to retrieve the next page of results"
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/facebook/search/videos",
+      "method": "get",
+      "description": "Search for Facebook videos by keyword with optional recency and live filters.",
+      "queryParams": [
+        {
+          "name": "query",
+          "type": "string",
+          "required": true,
+          "description": "Search query"
+        },
+        {
+          "name": "most_recent",
+          "type": "boolean",
+          "required": false,
+          "description": "When true, shows most recent videos first"
+        },
+        {
+          "name": "videos_live",
+          "type": "boolean",
+          "required": false,
+          "description": "When true, filters for live videos only"
+        },
+        {
+          "name": "fields",
+          "type": "string",
+          "required": false,
+          "description": "Comma-separated list of keys to include in the response. Supports dot notation."
+        },
+        {
+          "name": "end_cursor",
+          "type": "string",
+          "required": false,
+          "description": "Pagination cursor to retrieve the next page of results"
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/instagram/highlight/details",
+      "method": "get",
+      "description": "Get details of a specific highlight by ID.",
+      "queryParams": [
+        {
+          "name": "highlight_id",
+          "type": "string",
+          "required": true,
+          "description": "Highlight ID (from profile highlights endpoint)"
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/instagram/location/nearby",
+      "method": "get",
+      "description": "Get nearby places/locations for a specific Instagram location.",
+      "queryParams": [
+        {
+          "name": "location_id",
+          "type": "string",
+          "required": true,
+          "description": "Instagram location ID"
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/instagram/location/posts",
+      "method": "get",
+      "description": "Get Instagram posts from a specific location (ranked or recent).",
+      "queryParams": [
+        {
+          "name": "location_id",
+          "type": "string",
+          "required": true,
+          "description": "Instagram location ID"
+        },
+        {
+          "name": "tab",
+          "type": "string",
+          "required": false,
+          "description": "Filter: recent or ranked"
+        },
+        {
+          "name": "end_cursor",
+          "type": "string",
+          "required": false,
+          "description": "Pagination cursor for next page"
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/instagram/post/details",
+      "method": "get",
+      "description": "Get details of a specific Instagram post.",
+      "queryParams": [
+        {
+          "name": "shortcode",
+          "type": "string",
+          "required": true,
+          "description": "Instagram post shortcode"
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/instagram/post/id",
+      "method": "get",
+      "description": "Extract the post shortcode from an Instagram URL.",
+      "queryParams": [
+        {
+          "name": "link",
+          "type": "string",
+          "required": true,
+          "description": "Instagram post URL"
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/instagram/profile/details",
+      "method": "get",
+      "description": "Get user profile information by username including bio, followers, posts count, and related profiles.",
+      "queryParams": [
+        {
+          "name": "username",
+          "type": "string",
+          "required": true,
+          "description": "Instagram username"
+        },
+        {
+          "name": "link",
+          "type": "string",
+          "required": false,
+          "description": "Instagram profile URL (alternative to username)"
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/instagram/profile/highlights",
+      "method": "get",
+      "description": "Get all highlights from a user profile.",
+      "queryParams": [
+        {
+          "name": "user_id",
+          "type": "string",
+          "required": true,
+          "description": "Instagram user ID"
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/instagram/profile/posts",
+      "method": "get",
+      "description": "Get posts from a user profile with pagination.",
+      "queryParams": [
+        {
+          "name": "username",
+          "type": "string",
+          "required": false,
+          "description": "Instagram username (recommended — returns more results)"
+        },
+        {
+          "name": "user_id",
+          "type": "string",
+          "required": false,
+          "description": "Instagram user ID (alternative to username)"
+        },
+        {
+          "name": "end_cursor",
+          "type": "string",
+          "required": false,
+          "description": "Pagination cursor for next page"
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/instagram/profile/reels",
+      "method": "get",
+      "description": "Get reels from a user profile with pagination.",
+      "queryParams": [
+        {
+          "name": "user_id",
+          "type": "string",
+          "required": true,
+          "description": "Instagram user ID"
+        },
+        {
+          "name": "end_cursor",
+          "type": "string",
+          "required": false,
+          "description": "Pagination cursor for next page"
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/instagram/reels/audio",
+      "method": "get",
+      "description": "Get Instagram Reels associated with a specific audio/music ID.",
+      "queryParams": [
+        {
+          "name": "audio_id",
+          "type": "string",
+          "required": true,
+          "description": "Audio cluster ID (music ID)"
+        },
+        {
+          "name": "max_id",
+          "type": "string",
+          "required": false,
+          "description": "Pagination cursor for next page"
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/instagram/reels/feed",
+      "method": "get",
+      "description": "Get Instagram Reels feed with recommended, trending, or chained clips.",
+      "queryParams": [
+        {
+          "name": "clips_media_id",
+          "type": "string",
+          "required": false,
+          "description": "Clip media ID for chaining/pagination"
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/instagram/search",
+      "method": "get",
+      "description": "Search Instagram by keyword and get popular results (users, hashtags, places).",
+      "queryParams": [
+        {
+          "name": "keyword",
+          "type": "string",
+          "required": true,
+          "description": "Search keyword/query"
+        },
+        {
+          "name": "end_cursor",
+          "type": "string",
+          "required": false,
+          "description": "Pagination cursor for next page"
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/instagram/user/id",
+      "method": "get",
+      "description": "Get the unique ID of any Instagram profile from link or username.",
+      "queryParams": [
+        {
+          "name": "link",
+          "type": "string",
+          "required": false,
+          "description": "Instagram profile URL"
+        },
+        {
+          "name": "username",
+          "type": "string",
+          "required": false,
+          "description": "Instagram username"
+        }
+      ],
+      "creditsRequired": 1
+    },
+    {
+      "route": "/usage",
+      "method": "get",
+      "description": "Get current credit usage and plan info. Free — does not consume credits.",
+      "queryParams": [],
+      "creditsRequired": 0,
+      "pricing": "Free"
+    },
+    {
+      "route": "/usage/limits",
+      "method": "get",
+      "description": "Get plan limits (rate limit, max tasks, allowed top-ups). Free — does not consume credits.",
+      "queryParams": [],
+      "creditsRequired": 0,
+      "pricing": "Free"
+    },
+    {
+      "route": "/usage/top-ups",
+      "method": "get",
+      "description": "Get auto top-up settings and recent history. Free — does not consume credits.",
+      "queryParams": [],
+      "creditsRequired": 0,
+      "pricing": "Free"
+    }
+  ]
+}
