@@ -121,6 +121,15 @@ MCP_PROXY_URL=https://mcp.socialapis.io
 | `MCP_PROXY_URL` | MCP proxy server URL | `https://mcp.socialapis.io` |
 | `PORT` | HTTP server port | `3001` |
 | `API_BASE_URL` | Backend API URL | `https://api.socialapis.io` |
+| `SOCIALAPIS_CATALOG_URL` | Live endpoint catalog the server follows (server only) | `https://auth.socialapis.io/api/public/endpoints` |
+| `SOCIALAPIS_CATALOG_REFRESH_MS` | How often the catalog (server) or tool list (npm client) is re-read | `600000` (10 min) |
+| `SOCIALAPIS_LIVE_CATALOG` | `0` = always use the bundled definitions (server only) | on |
+
+### Live catalog
+
+Prices, descriptions and parameters follow the SocialAPIs API without a new release. The server reads the public endpoint catalog at startup (3 s timeout) and every 10 minutes, compares it with `src/catalogBaseline.json` (the catalog `src/tools.js` was written against) and applies only what changed since: a new price replaces the tool's `Pricing:` sentence, an edited description or parameter replaces ours, added and removed parameters are added and removed, and a disabled endpoint's action says "Currently unavailable." Tool and action names never change, and new endpoints don't become tools until a release adds them. If the catalog can't be read, or a change would make two actions' parameters conflict, the last good definitions (at first the bundled ones) stay. `GET /health` shows `catalog: { source, version, fetchedAt, routes }`. The npm client re-reads the tool list every 10 minutes and sends `notifications/tools/list_changed` when it changes.
+
+After updating `tools.js` to match the API, refresh the baseline: `node scripts/snapshot-catalog.mjs --from https://auth.socialapis.io/api/public/endpoints` (public fields only).
 
 ### Get API Key
 
@@ -273,7 +282,12 @@ npm run serve
 mcp-server/
 ├── src/
 │   ├── tools.js          # The 50 endpoint definitions (one per action)
-│   └── groups.js         # Groups them into the 12 listed tools
+│   ├── groups.js         # Groups them into the 12 listed tools
+│   ├── catalogBaseline.json  # The API catalog tools.js was written against
+│   ├── catalogOverlay.js # Applies live catalog changes to the definitions
+│   └── liveCatalog.js    # Fetches the live catalog (startup + every 10 min)
+├── scripts/snapshot-catalog.mjs  # Rewrites catalogBaseline.json
+├── test/                 # node --test (npm run test:unit)
 ├── mcp-wrapper.js        # MCP client (runs locally)
 ├── server.js             # HTTP proxy server
 ├── package.json
@@ -283,6 +297,9 @@ mcp-server/
 
 ### Testing
 ```bash
+# Unit tests
+npm run test:unit
+
 # Test MCP client locally
 node mcp-wrapper.js YOUR_API_KEY
 

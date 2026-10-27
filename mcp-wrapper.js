@@ -20,41 +20,57 @@ if (!API_KEY) {
 const server = new Server(
   {
     ...SERVER_IDENTITY,
-    version: '2.1.1',
+    version: '2.2.0',
   },
   {
     capabilities: {
-      tools: {},
+      // The tool list follows the live SocialAPIs catalog (prices,
+      // descriptions, parameters): re-fetched every 10 minutes, and clients
+      // are told when it changes. Tool and action names never change.
+      tools: { listChanged: true },
     },
   }
 );
 
-// Fetch tools from server
+const TOOLS_REFRESH_MS = Number(process.env.SOCIALAPIS_CATALOG_REFRESH_MS) || 600_000;
+
+// Fetch tools from server. null on failure (the caller keeps what it has).
 async function getTools() {
   try {
     // format=full adds titles, annotations and outputSchema. This client
     // returns structuredContent on success, which outputSchema requires.
-    const response = await fetch(`${MCP_PROXY_URL}/tools?format=full`);
+    const response = await fetch(`${MCP_PROXY_URL}/tools?format=full`, { signal: AbortSignal.timeout(10_000) });
     const data = await response.json();
-    return data.tools;
+    return Array.isArray(data?.tools) && data.tools.length ? data.tools : null;
   } catch (error) {
     console.error('Failed to fetch tools:', error);
-    return [];
+    return null;
   }
 }
 
 let cachedTools = null;
+let cachedAt = 0;
+
+/** Re-fetch the list; true if it changed. Keeps the last good list on failure. */
+async function refreshTools() {
+  const fresh = await getTools();
+  if (!fresh) return false;
+  const changed = cachedTools !== null && JSON.stringify(fresh) !== JSON.stringify(cachedTools);
+  cachedTools = fresh;
+  cachedAt = Date.now();
+  return changed;
+}
 
 function clientLabel() {
   const info = server.getClientVersion();
-  return info?.name ? `${info.name}/${info.version || '?'} (npm 2.1.1)` : 'unknown (npm 2.1.1)';
+  return info?.name ? `${info.name}/${info.version || '?'} (npm 2.2.0)` : 'unknown (npm 2.2.0)';
 }
 
 server.setRequestHandler(ListToolsRequestSchema, async () => {
-  if (!cachedTools) {
-    cachedTools = await getTools();
+  if (!cachedTools || Date.now() - cachedAt > TOOLS_REFRESH_MS) {
+    await refreshTools();
   }
-  return { tools: cachedTools };
+  return { tools: cachedTools || [] };
 });
 
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
@@ -120,6 +136,14 @@ async function main() {
   console.error('✅ SocialAPIs MCP Client running');
   console.error(`🔑 Using API key: ${API_KEY.substring(0, 8)}...`);
   console.error(`🌐 Proxy URL: ${MCP_PROXY_URL}`);
+
+  // Tell the client when prices, descriptions or parameters change.
+  const timer = setInterval(async () => {
+    if (cachedTools && (await refreshTools())) {
+      server.sendToolListChanged().catch(() => {});
+    }
+  }, TOOLS_REFRESH_MS);
+  timer.unref();
 }
 
 main().catch((error) => {
