@@ -10,6 +10,7 @@ import {
 import { GROUPS, resolveCall } from './src/groups.js';
 import { currentTools, currentGroupedTools, catalogStatus, startLiveCatalog } from './src/liveCatalog.js';
 import { SERVER_IDENTITY, enrichTool, buildStructuredResult } from './src/toolMeta.js';
+import { withGuidance } from './src/errorGuidance.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -139,6 +140,9 @@ async function callBackend(toolName, rawArgs, apiKey, ctx = {}) {
   } catch {
     data = { error: `Backend returned non-JSON response (HTTP ${response.status})` };
   }
+  // Errors also carry a plain `hint` (and retryAfterSeconds on a 429) so
+  // agents know whether to wait, top up or stop, instead of retrying blindly.
+  if (!response.ok) data = withGuidance(response.status, response.headers, data);
   logEvent({
     ...base,
     endpoint: url.pathname,
