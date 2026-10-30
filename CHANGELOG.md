@@ -5,12 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.2.0] - 2026-10-22
+## [2.2.0] - 2026-10-27
 
 ### Added
 - **Live catalog.** Tool prices, descriptions and parameters now follow the SocialAPIs API without a new release. The hosted server reads the public endpoint catalog (`https://auth.socialapis.io/api/public/endpoints`) at startup and every 10 minutes and applies only what changed since the catalog `src/tools.js` was written against (`src/catalogBaseline.json`): new prices, edited descriptions and parameter text, added / removed / now-required parameters, and "Currently unavailable." on a disabled endpoint's action. If the catalog can't be read, or a change can't be merged into a grouped tool, the last good definitions stay (the bundled ones at first). `GET /health` gains `catalog: { source, version, fetchedAt, routes }`. New env vars: `SOCIALAPIS_CATALOG_URL`, `SOCIALAPIS_CATALOG_REFRESH_MS`, `SOCIALAPIS_LIVE_CATALOG=0` (off).
 - The npm client re-reads the tool list every 10 minutes (it used to keep the first one until restart), declares `tools.listChanged` and sends `notifications/tools/list_changed` when the list changes. A failed fetch keeps the last list instead of an empty one.
 - `scripts/snapshot-catalog.mjs` rewrites the baseline from the catalog URL or an `endpoints.json` file (public fields only), and unit tests (`npm run test:unit`).
+
+- **Errors say what to do next.** A failed call keeps the API's own JSON and adds a plain `hint`: on a rate limit (HTTP 429) how long to wait (`retryAfterSeconds`, from `Retry-After`) and not to retry at once; on missing credits how many the call needs and that retrying won't help; on a paused or expired plan, a bad key or a temporary server error, the next step. Nothing changes on successful calls.
+
+### Fixed
+- `npm run test:unit` runs on Node 22+ (`node --test` no longer expands a directory).
 
 No tool or action names changed.
 

@@ -12,7 +12,7 @@
     "start": "node mcp-wrapper.js",
     "serve": "node server.js",
     "test": "node mcp-wrapper.js test-key",
-    "test:unit": "node --test test/"
+    "test:unit": "node --test test/*.test.js"
   },
   "keywords": [
     "mcp",
